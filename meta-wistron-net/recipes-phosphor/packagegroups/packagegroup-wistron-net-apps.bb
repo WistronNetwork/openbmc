@@ -5,10 +5,11 @@ inherit packagegroup
 
 PROVIDES = "${PACKAGES}"
 PACKAGES = " \
-        ${PN}-extras \
         ${PN}-fans \
         ${PN}-flash \
         ${PN}-system \
+        ${PN}-chassis \
+        ${PN}-hostmgmt \
         "
 
 PROVIDES += "virtual/obmc-chassis-mgmt"
@@ -24,7 +25,7 @@ RPROVIDES:${PN}-system += "virtual-obmc-system-mgmt"
 SUMMARY:${PN}-chassis = "Wistron Network Chassis"
 RDEPENDS:${PN}-chassis = " \
         x86-power-control \
-        "
+       "
 
 SUMMARY:${PN}-fans = "Wistron Network Fans"
 RDEPENDS:${PN}-fans = ""
@@ -35,20 +36,18 @@ RDEPENDS:${PN}-flash = " \
         obmc-control-bmc \
         "
 
-# RDEPENDS_PN_SYSTEM_EXTRAS:wistron-net-withhost =
-RDEPENDS_PN_SYSTEM_EXTRAS = " \
-        phosphor-sel-logger \
+SUMMARY:${PN}-system = "Wistron Network System"
+RDEPENDS:${PN}-system = " \
+        bmcweb \
+        webui-vue \
+        entity-manager \
+        dbus-sensors \
         ipmitool \
+        phosphor-virtual-sensor \
+        phosphor-sel-logger \
+        phosphor-ipmi-kcs \
+        phosphor-ipmi-ipmb \
         phosphor-post-code-manager \
         phosphor-host-postd \
         tzdata-core \
-        "
-
-SUMMARY:${PN}-system = "Wistron Network System"
-RDEPENDS:${PN}-system = " \
-        entity-manager \
-        dbus-sensors \
-        bmcweb \
-        webui-vue \
-        ${RDEPENDS_PN_SYSTEM_EXTRAS} \
         "

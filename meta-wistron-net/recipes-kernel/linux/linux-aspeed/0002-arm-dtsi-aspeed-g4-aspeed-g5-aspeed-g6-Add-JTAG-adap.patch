@@ -1,0 +1,140 @@
+From 2c80f3ebbaabfbb11d5402478834125b367637bb Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Wed, 25 May 2022 16:26:15 +0800
+Subject: [PATCH 2/2] arm: dtsi: aspeed-g4/aspeed-g5/aspeed-g6: Add JTAG
+ adapter support
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ Documentation/index.rst                       |  1 +
+ .../userspace-api/ioctl/ioctl-number.rst      |  2 ++
+ MAINTAINERS                                   | 12 +++++++++++
+ arch/arm/boot/dts/aspeed-g4.dtsi              | 10 ++++++++++
+ arch/arm/boot/dts/aspeed-g5.dtsi              | 10 ++++++++++
+ arch/arm/boot/dts/aspeed-g6.dtsi              | 20 +++++++++++++++++++
+ 6 files changed, 55 insertions(+)
+
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 54ce34fd6fbd..91f4f7923359 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -111,6 +111,7 @@ needed).
+    iio/index
+    isdn/index
+    infiniband/index
++   jtag/index
+    leds/index
+    netlabel/index
+    networking/index
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index 6655d929a351..c16d505dc443 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -345,6 +345,8 @@ Code  Seq#    Include File                                           Comments
+                                                                      <mailto:vgo@ratio.de>
+ 0xB1  00-1F                                                          PPPoX
+                                                                      <mailto:mostrows@styx.uwaterloo.ca>
++0xB2  00-0F  linux/jtag.h                                            JTAG driver
++                                                                     <mailto:oleksandrs@mellanox.com>
+ 0xB3  00     linux/mmc/ioctl.h
+ 0xB4  00-0F  linux/gpio.h                                            <mailto:linux-gpio@vger.kernel.org>
+ 0xB5  00-0F  uapi/linux/rpmsg.h                                      <mailto:linux-remoteproc@vger.kernel.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index de8a86e6c13a..31bc0610fa5e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10091,6 +10091,18 @@ L:	linux-serial@vger.kernel.org
+ S:	Orphan
+ F:	drivers/tty/serial/jsm/
+ 
++JTAG SUBSYSTEM
++M:	Oleksandr Shamray <oleksandrs@mellanox.com>
++M:	Vadim Pasternak <vadimp@mellanox.com>
++M	Ernesto Corona <ernesto.corona@intel.com>
++S:	Maintained
++F:	include/linux/jtag.h
++F:	include/uapi/linux/jtag.h
++F:	drivers/jtag/
++F:	Documentation/devicetree/bindings/jtag/
++F:	Documentation/ABI/testing/jtag-dev
++
++
+ K10TEMP HARDWARE MONITORING DRIVER
+ M:	Clemens Ladisch <clemens@ladisch.de>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+index 781bf46a84d6..087be4819aaf 100644
+--- a/arch/arm/boot/dts/aspeed-g4.dtsi
++++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+@@ -211,6 +211,16 @@ pinctrl: pinctrl@80 {
+ 				};
+ 			};
+ 
++			jtag: jtag@1e6e4000 {
++				compatible = "aspeed,ast2400-jtag";
++				reg= <0x1e6e4000 0x20>;
++				interrupts = <43>;
++				clocks = <&syscon ASPEED_CLK_APB>;
++				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
++				reset-names = "jtag";
++				status = "disabled";
++			};
++
+ 			rng: hwrng@1e6e2078 {
+ 				compatible = "timeriomem_rng";
+ 				reg = <0x1e6e2078 0x4>;
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index ea5c645f1d71..f80e0759d5ff 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -255,6 +255,16 @@ pinctrl: pinctrl@80 {
+ 				};
+ 			};
+ 
++			jtag: jtag@1e6e4000 {
++				compatible = "aspeed,ast2500-jtag";
++				reg= <0x1e6e4000 0x20>;
++				interrupts = <43>;
++				clocks = <&syscon ASPEED_CLK_APB>;
++				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
++				reset-names = "jtag";
++				status = "disabled";
++			};
++
+ 			rng: hwrng@1e6e2078 {
+ 				compatible = "timeriomem_rng";
+ 				reg = <0x1e6e2078 0x4>;
+diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
+index 0a48f495a300..2c1e732d1c6e 100644
+--- a/arch/arm/boot/dts/aspeed-g6.dtsi
++++ b/arch/arm/boot/dts/aspeed-g6.dtsi
+@@ -380,6 +380,26 @@ rng: hwrng@1e6e2524 {
+ 				quality = <100>;
+ 			};
+ 
++			jtag0: jtag@1e6e4000 {
++				compatible = "aspeed,ast2600-jtag";
++				reg= <0x1e6e4000 0x20>;
++				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&syscon ASPEED_CLK_AHB>;
++				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
++				status = "disabled";
++			};
++
++			jtag1: jtag@1e6e4100 {
++				compatible = "aspeed,ast2600-jtag";
++				reg= <0x1e6e4100 0x20>;
++				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&syscon ASPEED_CLK_AHB>;
++				resets = <&syscon ASPEED_RESET_JTAG_MASTER2>;
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_jtagm_default>;
++				status = "disabled";
++			};
++
+ 			gfx: display@1e6e6000 {
+ 				compatible = "aspeed,ast2600-gfx", "syscon";
+ 				reg = <0x1e6e6000 0x1000>;
+-- 
+2.25.1
+

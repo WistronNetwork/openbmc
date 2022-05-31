@@ -1,4 +1,5 @@
 RDEPENDS:${PN}-extras:append += " ethtool \
+                                  gpiocli \
                                   iperf3 \
                                   jq \
                                   libpeci \

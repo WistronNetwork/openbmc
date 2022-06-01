@@ -1,4 +1,5 @@
-RDEPENDS:${PN}-extras:append += " ethtool \
+RDEPENDS:${PN}-extras:append += " cpldupdate \
+                                  ethtool \
                                   gpiocli \
                                   iperf3 \
                                   jbi \

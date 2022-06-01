@@ -1,4 +1,5 @@
 RDEPENDS:${PN}-extras:append += " cpldupdate \
+                                  cpldupdate-jtag \
                                   ethtool \
                                   gpiocli \
                                   iperf3 \

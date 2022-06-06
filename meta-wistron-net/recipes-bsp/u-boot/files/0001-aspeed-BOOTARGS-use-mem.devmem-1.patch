@@ -1,0 +1,26 @@
+From 27664cb9ef19ae7bf85d3e0b64737cd17272bd72 Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Thu, 2 Jun 2022 13:16:59 +0800
+Subject: [PATCH] aspeed: BOOTARGS use mem.devmem=1
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ include/configs/ast-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/ast-common.h b/include/configs/ast-common.h
+index eff6d2b529..437d2ec04c 100644
+--- a/include/configs/ast-common.h
++++ b/include/configs/ast-common.h
+@@ -96,7 +96,7 @@
+ #define CONFIG_CMD_MTDPARTS
+ #endif
+ 
+-#define CONFIG_BOOTARGS			"console=ttyS4,115200n8 root=/dev/ram rw"
++#define CONFIG_BOOTARGS			"console=ttyS4,115200n8 root=/dev/ram rw mem.devmem=1"
+ 
+ #define CONFIG_AST_SPI_NOR    /* AST SPI NOR Flash */
+ #define CONFIG_FMC_CS			1
+-- 
+2.25.1
+

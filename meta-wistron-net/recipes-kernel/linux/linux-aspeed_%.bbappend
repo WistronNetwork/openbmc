@@ -1,8 +1,10 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 KERNEL_VERSION_SANITY_SKIP="1"
 
-LINUX_VERSION ?= "5.15.41"
-SRCREV="1f7f915b33cfaac6563f267ec9164e861ba19330"
+LINUX_VERSION = "5.15.41"
+SRCREV = "1f7f915b33cfaac6563f267ec9164e861ba19330"
+
+PV = "${LINUX_VERSION}+git${SRCPV}"
 
 SRC_URI += "\
 	file://common.cfg \
@@ -15,11 +17,12 @@ SRC_URI += "\
 	file://0004-arm-dtsi-aspeed-g4-aspeed-g5-aspeed-g6-Add-PECI-adap.patch \
 	file://0001-jtag-Add-support-for-aspeed-JTAG-adapter-driver.patch \
 	file://0002-arm-dtsi-aspeed-g4-aspeed-g5-aspeed-g6-Add-JTAG-adap.patch \
+	file://0001-hwmon-wistron-Add-support-wistron-CPLD.patch \
 	"
 
 do_kernel_prepare() {
   cp -rf ${WORKDIR}/Documentation ${STAGING_KERNEL_DIR}
-	cp -rf ${WORKDIR}/drivers ${STAGING_KERNEL_DIR}
-	cp -rf ${WORKDIR}/include ${STAGING_KERNEL_DIR}
+  cp -rf ${WORKDIR}/drivers ${STAGING_KERNEL_DIR}
+  cp -rf ${WORKDIR}/include ${STAGING_KERNEL_DIR}
 }
 addtask do_kernel_prepare after do_patch before do_configure

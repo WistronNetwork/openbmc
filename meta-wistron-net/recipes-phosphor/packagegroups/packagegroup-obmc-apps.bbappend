@@ -8,6 +8,7 @@ RDEPENDS:${PN}-extras:append += " cpldupdate \
                                   libpeci \
                                   lmsensors-sensors \
                                   memtester \
+                                  opkg \
                                   phosphor-misc-usb-ctrl \
                                   phytool \
                                   pv \

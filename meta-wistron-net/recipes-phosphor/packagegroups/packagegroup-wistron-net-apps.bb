@@ -43,7 +43,6 @@ RDEPENDS:${PN}-system = " \
         entity-manager \
         dbus-sensors \
         ipmitool \
-        phosphor-virtual-sensor \
         phosphor-sel-logger \
         phosphor-ipmi-kcs \
         phosphor-ipmi-ipmb \

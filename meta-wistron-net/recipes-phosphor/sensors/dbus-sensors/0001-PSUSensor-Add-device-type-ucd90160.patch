@@ -1,0 +1,35 @@
+From ecef7e29ffe49e3c132683eb59b3555bff62e386 Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Wed, 15 Jun 2022 11:25:23 +0800
+Subject: [PATCH] PSUSensor: Add device type ucd90160
+
+Add device type ucd90160 to the allowed list.
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ src/PSUSensorMain.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/PSUSensorMain.cpp b/src/PSUSensorMain.cpp
+index a523a5e1..eb9be263 100644
+--- a/src/PSUSensorMain.cpp
++++ b/src/PSUSensorMain.cpp
+@@ -75,6 +75,7 @@ static constexpr auto sensorTypes{std::to_array<const char*>(
+      "xyz.openbmc_project.Configuration.RAA229004",
+      "xyz.openbmc_project.Configuration.RAA229126",
+      "xyz.openbmc_project.Configuration.TPS546D24",
++     "xyz.openbmc_project.Configuration.UCD90160",
+      "xyz.openbmc_project.Configuration.XDPE12284"})};
+ 
+ // clang-format off
+@@ -113,6 +114,7 @@ static constexpr auto pmbusNames{std::to_array<const char*>({
+     "raa229004",
+     "raa229126",
+     "tps546d24",
++    "ucd90160",
+     "xdpe12284"
+ })};
+ //clang-format on
+-- 
+2.25.1
+

@@ -1,0 +1,29 @@
+From c59e29f4422791f0852ba352ea5c3bf904c489d7 Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Wed, 15 Jun 2022 11:57:27 +0800
+Subject: [PATCH] Add UCD90160 device type
+
+Add ucd90160 devices.
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ include/devices.hpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/devices.hpp b/include/devices.hpp
+index fb068781..c8ae1766 100644
+--- a/include/devices.hpp
++++ b/include/devices.hpp
+@@ -200,6 +200,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"LM95234",
+           ExportTemplate("lm95234 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"UCD90160",
++          ExportTemplate("ucd90160 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
+          {"TMP112",
+           ExportTemplate("tmp112 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+-- 
+2.25.1
+

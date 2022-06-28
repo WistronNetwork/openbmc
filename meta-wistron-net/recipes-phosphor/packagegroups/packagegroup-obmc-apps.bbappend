@@ -4,6 +4,8 @@ RDEPENDS:${PN}-extras:append += " cpldupdate \
                                   flashrom \
                                   gpiocli \
                                   iperf3 \
+                                  ipmitool \
+                                  ipmi-fru-parser \
                                   jbi \
                                   jq \
                                   libpeci \

@@ -13,4 +13,5 @@ RDEPENDS:${PN}-extras:append += " cpldupdate \
                                   phytool \
                                   pv \
                                   tcpdump \
+                                  wdtcli \
                                 "

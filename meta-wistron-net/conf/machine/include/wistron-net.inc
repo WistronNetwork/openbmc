@@ -22,6 +22,8 @@ PREFERRED_PROVIDER_virtual/obmc-host-ipmi-hw ?= "phosphor-ipmi-kcs"
 VIRTUAL-RUNTIME_obmc-host-state-manager ?= "x86-power-control"
 VIRTUAL-RUNTIME_obmc-chassis-state-manager ?= "x86-power-control"
 
+PREFERRED_VERSION_boost = "1.78.0"
+
 # It has no ikvm feature for our network device.
 IMAGE_FEATURES:remove = "obmc-ikvm"
 

@@ -8,6 +8,8 @@ LIC_FILES_CHKSUM = "file://gpio.c;beginline=4;endline=16;md5=da35978751a9d71b736
 inherit meson pkgconfig
 inherit ptest-meson
 
+PV = "0.1+git${SRCPV}"
+
 S = "${WORKDIR}/files"
 
 SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"

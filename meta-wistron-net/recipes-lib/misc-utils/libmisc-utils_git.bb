@@ -9,6 +9,8 @@ BBCLASSEXTEND = "native"
 
 inherit ptest
 
+PV = "0.1+git${SRCPV}"
+
 S = "${WORKDIR}/files"
 
 SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"

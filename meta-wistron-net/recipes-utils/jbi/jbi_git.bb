@@ -3,6 +3,8 @@ SECTION = "utils"
 LICENSE = "GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=eb723b61539feef013de476e68b5c50a"
 
+PV = "0.1+git${SRCPV}"
+
 S = "${WORKDIR}/files/code"
 
 SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"

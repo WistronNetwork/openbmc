@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c"
+DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c libgpio-ctrl"
 
 inherit cmake pkgconfig obmc-phosphor-ipmiprovider-symlink
 

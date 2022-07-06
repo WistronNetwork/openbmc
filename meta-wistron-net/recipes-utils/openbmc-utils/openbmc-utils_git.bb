@@ -14,6 +14,7 @@ SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"
 SRC_URI += "git://github.com/facebook/openbmc;branch=helium;protocol=https;subpath=common/recipes-utils/openbmc-utils/files/ \
             file://boot-info \
             file://board-utils.sh \
+            file://fan-util \
            "
 
 OPENBMC_UTILS_FILES = " \
@@ -21,14 +22,16 @@ OPENBMC_UTILS_FILES = " \
     shell-utils.sh \
     i2c-utils.sh \
     gpio-utils.sh \
+    fan-util \
     flashrom-utils.sh \
     boot_info.sh \
     board-utils.sh \
     "
 
-do_install:prepend() {
+do_configure() {
   cp -rfv ${WORKDIR}/board-utils.sh ${S}
   cp -rfv ${WORKDIR}/boot-info/${SOC_FAMILY}/boot_info.sh ${S}
+  cp -rfv ${WORKDIR}/fan-util ${S}
 }
 
 do_install() {

@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+. /usr/local/bin/openbmc-utils.sh
+
+PID_FILE=/var/run/fan-util.pid
+
+trap pid_file_remove INT TERM QUIT EXIT
+
+usage() {
+    prog=$(basename "$0")
+    printf "Usage: %s --get [Fan Unit]" "$prog"
+    printf "Usage: %s --set <PERCENT (0..100)> [Fan Unit]" "$prog"
+}
+
+duplicate_process_check() {
+    if [ -f $PID_FILE ]; then
+        printf "Another process is running..."
+        exit 255
+    fi
+
+    touch $PID_FILE
+    # Check the PID file
+    if [ ! -f $PID_FILE ]; then
+        printf "Cannot create PID file !"
+        exit 255
+    fi
+    echo $$ > $PID_FILE
+}
+
+pid_file_remove() {
+    local pid_num
+
+    if [ -f $PID_FILE ]; then
+        pid_num=$(cat $PID_FILE)
+        if [ "$pid_num" = "$$" ]; then
+            rm $PID_FILE
+        fi
+    fi
+}
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+duplicate_process_check
+
+OPERATION="$1"
+shift
+
+if [ "$OPERATION" = "--get" ]; then
+    get_fan_speed "$@"
+    ret=$?
+
+    if [ $ret -eq 1 ]; then
+        usage
+    fi
+elif [ "$OPERATION" = "--set" ]; then
+    set_fan_speed "$@"
+    ret=$?
+
+    if [ $ret -eq 1 ]; then
+        usage
+    fi
+else
+    usage
+    exit 1
+fi
+
+exit $ret

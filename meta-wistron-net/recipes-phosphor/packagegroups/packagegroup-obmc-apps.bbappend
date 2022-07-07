@@ -2,6 +2,7 @@ RDEPENDS:${PN}-extras:append += " cpldupdate \
                                   cpldupdate-jtag \
                                   ethtool \
                                   flashrom \
+                                  frugen \
                                   gpiocli \
                                   iperf3 \
                                   ipmitool \

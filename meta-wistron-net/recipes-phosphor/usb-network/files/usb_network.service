@@ -1,0 +1,12 @@
+[Unit]
+Description=Enable usb network
+Before=systemd-networkd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/usb-network-setup start
+ExecStop=/usr/local/bin/usb-network-setup stop
+
+[Install]
+WantedBy=multi-user.target

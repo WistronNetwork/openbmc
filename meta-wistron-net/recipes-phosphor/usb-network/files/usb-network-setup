@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+
+USBETH_UDC="/sys/kernel/config/usb_gadget/usbeth0/UDC"
+
+add_usb_devices() {
+    RETRY=10
+    # Initial usb0 interface
+    while [ ! -s "${USBETH_UDC}" ] && [ ${RETRY} != 0 ]
+    do
+        usb-ctrl ecm usbeth0 off 2&> /dev/null
+        sleep 0.5
+        usb-ctrl ecm usbeth0 on 02:00:00:00:00:01 02:00:00:00:00:02
+        sleep 0.5
+        RETRY=$((RETRY - 1))
+    done
+}
+
+ACTION=$1
+case "$ACTION" in
+  start)
+    add_usb_devices
+    ;;
+  stop)
+    usb-ctrl ecm usbeth0 off
+    exit 0
+    ;;
+  *)
+    N=${0##*/}
+    N=${N#[SK]??}
+    echo "Usage: $N {start|stop}" >&2
+    exit 1
+    ;;
+esac
+
+ifconfig usb0 txqueuelen 64

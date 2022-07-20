@@ -28,5 +28,9 @@ FILES:${PN}:append = " ${libdir}/net-ipmid/lib*${SOLIBS}"
 FILES:${PN}-dev:append = " ${libdir}/ipmid-providers/lib*${SOLIBSDEV}"
 
 do_configure:prepend() {
-    cp -rfv ${S}/fru/${MACHINE}_fru.hpp ${S}/include/fru.hpp
+    fru_file="${S}/fru/${MACHINE}_fru.hpp"
+
+    if [ -f "$fru_file" ]; then
+        cp -rfv ${fru_file} ${S}/include/fru.hpp
+    fi
 }

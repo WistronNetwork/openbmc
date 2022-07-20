@@ -14,20 +14,20 @@ trap pid_file_remove INT TERM QUIT EXIT
 
 usage() {
     prog=$(basename "$0")
-    printf "Usage: %s --get [Fan Unit]" "$prog"
-    printf "Usage: %s --set <PERCENT (0..100)> [Fan Unit]" "$prog"
+    printf "Usage: %s --get [Fan Unit]\n" "$prog"
+    printf "Usage: %s --set <PERCENT (0..100)> [Fan Unit]\n" "$prog"
 }
 
 duplicate_process_check() {
     if [ -f $PID_FILE ]; then
-        printf "Another process is running..."
+        printf "Another process is running...\n"
         exit 255
     fi
 
     touch $PID_FILE
     # Check the PID file
     if [ ! -f $PID_FILE ]; then
-        printf "Cannot create PID file !"
+        printf "Cannot create PID file !\n"
         exit 255
     fi
     echo $$ > $PID_FILE

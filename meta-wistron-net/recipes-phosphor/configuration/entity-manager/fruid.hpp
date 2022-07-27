@@ -18,6 +18,8 @@
 
 #include <map>
 
+#define FRU_BMC 0xff
+
 struct frupos {
     uint32_t bus;
     uint32_t addr;

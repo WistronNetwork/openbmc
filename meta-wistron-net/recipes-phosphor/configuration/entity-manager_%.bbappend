@@ -8,6 +8,7 @@ DEPENDS += "${PYTHON_PN}-jsonschema-native \
 SRC_URI:append = " \
     file://0001-Add-UCD90160-device-type.patch \
     file://0002-Add-Fruid-Item.patch \
+    file://0003-Add-baseoffset-to-process-bmc-fru.patch \
     file://fruid.hpp \
     "
 

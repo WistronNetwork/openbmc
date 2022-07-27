@@ -1,0 +1,26 @@
+From 80d6d4870f3b6a3140cdc0bcf35c9a818ca7a9b7 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Wed, 27 Jul 2022 08:33:02 +0000
+Subject: [PATCH] Add MacNonVolatile parameter
+
+---
+ yaml/xyz/openbmc_project/Network/MACAddress.interface.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/yaml/xyz/openbmc_project/Network/MACAddress.interface.yaml b/yaml/xyz/openbmc_project/Network/MACAddress.interface.yaml
+index 5c9daa0..c3f1bf1 100644
+--- a/yaml/xyz/openbmc_project/Network/MACAddress.interface.yaml
++++ b/yaml/xyz/openbmc_project/Network/MACAddress.interface.yaml
+@@ -11,3 +11,9 @@ properties:
+       errors:
+         - xyz.openbmc_project.Common.Error.InvalidArgument
+         - xyz.openbmc_project.Common.Error.InternalFailure
++    - name: MacNonVolatile
++      type: boolean
++      description: >
++          Whether mac need to be recorded in eeprom.
++          1 - records in eeprom
++          0 - not records in eeprom
+-- 
+2.25.1
+

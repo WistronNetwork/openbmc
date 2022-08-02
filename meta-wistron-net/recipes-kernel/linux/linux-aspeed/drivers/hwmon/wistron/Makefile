@@ -5,3 +5,4 @@
 
 obj-$(CONFIG_CPLD_SYSFS)		+= cpld_sysfs.o
 obj-$(CONFIG_WISTRON_CPLD)		+= wistron_cpld.o
+obj-$(CONFIG_SFPHWMON)			+= sfphwmon.o

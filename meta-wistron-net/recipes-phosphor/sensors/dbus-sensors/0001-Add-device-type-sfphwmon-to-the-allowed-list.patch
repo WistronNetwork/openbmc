@@ -1,0 +1,25 @@
+From 412051ebb6563817f2ff9d564df1f48ba8b141c8 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 1 Aug 2022 10:42:00 +0000
+Subject: [PATCH] Add device type sfphwmon to the allowed list.
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ src/HwmonTempMain.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/HwmonTempMain.cpp b/src/HwmonTempMain.cpp
+index a9d47481..c7a4416e 100644
+--- a/src/HwmonTempMain.cpp
++++ b/src/HwmonTempMain.cpp
+@@ -66,6 +66,7 @@ static auto sensorTypes{
+                                 "xyz.openbmc_project.Configuration.NCT6779",
+                                 "xyz.openbmc_project.Configuration.SBTSI",
+                                 "xyz.openbmc_project.Configuration.SI7020",
++                                "xyz.openbmc_project.Configuration.SFPHWMON",
+                                 "xyz.openbmc_project.Configuration.TMP112",
+                                 "xyz.openbmc_project.Configuration.TMP175",
+                                 "xyz.openbmc_project.Configuration.TMP421",
+-- 
+2.25.1
+

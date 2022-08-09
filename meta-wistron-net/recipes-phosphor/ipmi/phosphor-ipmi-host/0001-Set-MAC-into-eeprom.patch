@@ -15,7 +15,7 @@ index b2b7dce..9f5fd4d 100644
  using sdbusplus::xyz::openbmc_project::Network::server::IP;
  using sdbusplus::xyz::openbmc_project::Network::server::Neighbor;
  
-+#define BMC_PATH "/sys/bus/i2c/device/8-0051/eeprom"
++#define BMC_PATH "/sys/bus/i2c/devices/8-0051/eeprom"
 +
  namespace cipher
  {

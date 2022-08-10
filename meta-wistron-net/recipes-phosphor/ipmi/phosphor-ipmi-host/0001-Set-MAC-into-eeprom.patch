@@ -67,13 +67,14 @@ index b2b7dce..9f5fd4d 100644
  }
  
  RspType<message::Payload> getLanOem(uint8_t channel, uint8_t parameter,
-@@ -838,6 +871,21 @@ bool isValidMACAddress(const ether_addr& mac)
+@@ -838,6 +871,22 @@ bool isValidMACAddress(const ether_addr& mac)
      return true;
  }
  
 +int writeMacToEeprom(ether_addr mac)
 +{
 +    auto fp = open(BMC_PATH, O_RDWR);
++    lseek(fp, 16, SEEK_SET);
 +    ssize_t writtenBytes = write(fp, mac.ether_addr_octet, sizeof(mac.ether_addr_octet));
 +    if (writtenBytes < 0)
 +    {
@@ -89,7 +90,7 @@ index b2b7dce..9f5fd4d 100644
  RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
                   uint8_t parameter, message::Payload& req)
  {
-@@ -968,11 +1016,17 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
+@@ -968,11 +1017,17 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
                  return responseReqDataLenInvalid();
              }
              copyInto(mac, bytes);

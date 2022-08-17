@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+Usage() {
+    prog=$(basename "$0")
+    printf "Usage: %s <ethX> <fru bus> <fru addr>\n" "$prog"
+    printf "Example: %s eth1 3 0x50\n" "$prog"
+}
+
+read_mac_address() {
+    Bus=$1
+    Addr=$2
+    Addr=$(printf %x $((Addr)))
+
+    fru_eeprom_path="/sys/bus/i2c/devices/$Bus-00$Addr/eeprom"
+    mac_addr_bin="/tmp/mac_addr.bin"
+    dd if=$fru_eeprom_path of=$mac_addr_bin skip=16 bs=1 count=6
+
+    m1=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 3)
+    m2=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 4)
+    m3=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 5)
+    m4=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 6)
+    m5=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 7)
+    m6=$(hexdump -C $mac_addr_bin | grep "00000000" | cut -d " " -f 8)
+
+    echo "$m1:$m2:$m3:$m4:$m5:$m6"
+}
+
+ETH_INTF=$1
+FRU_BUS=$2
+FRU_ADDR=$3
+
+if [ -z "$FRU_ADDR" ];
+then
+    Usage
+    exit
+fi
+
+retry=0
+MAC_ADDR=""
+
+while [ -z "${MAC_ADDR}" ] && [ "$retry" -le 9 ];
+do
+    MAC_ADDR=$(read_mac_address "$FRU_BUS" "$FRU_ADDR")
+    ((retry++))
+done
+
+if echo "$MAC_ADDR" | grep -q -vE "^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$" ; then
+    echo "ERROR: Invalid BMC MAC Address from BMC FRU: $MAC_ADDR"
+    exit 0
+else
+    echo "Detect BMC MAC $MAC_ADDR at loop $retry"
+fi
+
+# Check if the Ethernet port has correct MAC Address
+ETH_INCLUDE_MAC=$(ifconfig "${ETH_INTF}" | grep -i "$MAC_ADDR")
+if [ -n "$ETH_INCLUDE_MAC" ]; then
+    echo "BMC MAC Address is already configured"
+    exit 0
+fi
+
+# Request to restart the service
+ifconfig "${ETH_INTF}" down
+fw_setenv bmc_macaddr "${MAC_ADDR}"
+ifconfig "${ETH_INTF}" hw ether "${MAC_ADDR}"
+ret=$?
+if [[ $ret -ne 0 ]]; then
+    echo "ERROR: Cannot configure MAC ADDR to ${ETH_INTF}"
+    exit 1
+fi
+ifconfig "${ETH_INTF}" up
+
+echo "Successfully update the MAC address ${MAC_ADDR} to ${ETH_INTF}"

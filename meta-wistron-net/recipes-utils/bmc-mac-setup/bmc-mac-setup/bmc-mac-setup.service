@@ -1,0 +1,15 @@
+[Unit]
+Description=BMC MAC Address Setup Service
+Requires=xyz.openbmc_project.EntityManager.service
+After=xyz.openbmc_project.EntityManager.service
+ConditionPathExists={envfiledir}/obmc/bmc-mac/mac-address.conf
+
+[Service]
+EnvironmentFile={envfiledir}/obmc/bmc-mac/mac-address.conf
+ExecStart=/usr/local/bin/bmc-mac-setup $INTERFACE $BUS $ADDRESS
+SyslogIdentifier=bmc-mac-setup
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy={SYSTEMD_DEFAULT_TARGET}

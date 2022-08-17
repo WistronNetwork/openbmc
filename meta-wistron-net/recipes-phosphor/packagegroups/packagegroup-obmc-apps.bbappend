@@ -1,4 +1,5 @@
-RDEPENDS:${PN}-extras:append += " cpldupdate \
+RDEPENDS:${PN}-extras:append += " bmc-mac-setup \
+                                  cpldupdate \
                                   cpldupdate-jtag \
                                   ethtool \
                                   flashrom \

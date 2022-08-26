@@ -10,8 +10,10 @@ inherit cmake
 SRC_URI = "git://github.com/ipmitool/frugen \
           "
 
+DEPENDS = "json-c"
+
 PV = "0.1+git${SRCPV}"
-SRCREV = "b043fef77999ce7df221e043428f47e78e30e288"
+SRCREV = "e30bb9cd6e76fb790a9aa67d544cdb2f0fdb5da6"
 
 S = "${WORKDIR}/git"
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=Check And Create A IPMI Dummy %I FRU
+Requires=xyz.openbmc_project.EntityManager.service
+Before=xyz.openbmc_project.EntityManager.service
+ConditionPathExists={envfiledir}/obmc/ipmi-dummy-fru/fruid_%I.conf
+
+[Service]
+EnvironmentFile={envfiledir}/obmc/ipmi-dummy-fru/fruid_%I.conf
+ExecStart=/usr/local/bin/ipmi-dummy-fru %I $BUS $ADDRESS
+SyslogIdentifier=ipmi-dummy-fru
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy={SYSTEMD_DEFAULT_TARGET}

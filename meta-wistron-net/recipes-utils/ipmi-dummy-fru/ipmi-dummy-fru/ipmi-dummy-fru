@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+Usage() {
+    prog=$(basename "$0")
+    printf "Usage: %s <fruid> <fru bus> <fru addr>\n" "$prog"
+    printf "Example: %s bmc 3 0x50\n" "$prog"
+}
+
+FRU_INTF=$1
+FRU_BUS=$2
+FRU_ADDR=$3
+
+if [ "$#" -ne 3 ];
+then
+    Usage
+    exit
+fi
+
+Addr=$(printf %x $((FRU_ADDR)))
+fru_eeprom_path="/sys/bus/i2c/devices/$FRU_BUS-00$Addr/eeprom"
+fru_file="/tmp/fru_$FRU_INTF.bin"
+
+if [ "$FRU_INTF" = "bmc" ]; then
+    dd if=$fru_eeprom_path of=$fru_file skip=32 bs=1 count=128
+    fru_parse_file=$fru_file
+else
+    fru_parse_file=$fru_eeprom_path
+fi
+
+result=$(ipmi-fru-parser -f $fru_parse_file -o /tmp/fru-parse)
+
+if [[ "$FRU_INTF" = *"fan"* ]]; then
+    FRU_INTF="fan"
+fi
+
+if [[ $result == *"Unknown"* ]] || [[ $result == *"Invalid"* ]]; then
+    frugen --json --from=/etc/frugen/fru_$FRU_INTF.json $fru_file
+    ret=$?
+
+    if [ "$ret" -ne 0 ]; then
+        echo "Cannot create dummy $FRU_INTF binary"
+        exit $ret
+    fi
+
+    if [ "$FRU_INTF" = "bmc" ]; then
+        dd if=$fru_file of=$fru_eeprom_path seek=32 bs=1
+    else
+        dd if=$fru_file of=$fru_eeprom_path bs=1
+    fi
+fi

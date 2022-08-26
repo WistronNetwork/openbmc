@@ -7,6 +7,7 @@ RDEPENDS:${PN}-extras:append += " bmc-mac-setup \
                                   gpiocli \
                                   iperf3 \
                                   ipmitool \
+                                  ipmi-dummy-fru \
                                   ipmi-fru-parser \
                                   jbi \
                                   jq \

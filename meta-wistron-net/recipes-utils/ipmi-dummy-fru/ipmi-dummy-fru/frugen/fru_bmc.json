@@ -1,0 +1,41 @@
+{
+	"chassis" : {
+		"type": 2,
+		"pn" : "123456789",
+		"serial": "123456789",
+		"custom" : [
+			{ "data" : "Wistron" },
+            { "data" : "Wistron" },
+			{ "type" : "binary", "data": "1234567890" },
+            { "type" : "binary", "data": "4567890123" }
+		]
+	},
+	"board" : {
+		"mfg" : "Wistron",
+		"pname" : "Wistron Network",
+		"serial" : "123456789",
+		"pn" : "123456789",
+		"file" : "Wistron Network",
+		"custom" : [
+			{ "type" : "binary", "data" : "1234567890" },
+            { "type" : "binary", "data" : "4567891230" },
+			{ "type" : "auto",   "data" : "Wistron Network" },
+			{ "type" : "auto",   "data" : "Wistron" }
+		]
+	},
+	"product" : {
+		"lang": 1,
+		"mfg" : "Wistron",
+		"pn" : "123456789",
+		"pname" : "Wistron Network",
+		"serial" : "123456789",
+		"atag" : "Wistron Network",
+		"file" : "Wistron Network",
+		"custom" : [
+			{ "type" : "auto",   "data" : "Wistron" },
+			{ "type" : "auto",   "data" : "Wistron" },
+			{ "type" : "auto",   "data" : "Wistron" },
+			{ "type" : "binary", "data" : "1234567890" }
+		]
+	}
+}

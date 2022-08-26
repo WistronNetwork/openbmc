@@ -1,0 +1,27 @@
+From d1fb7b40388ab3562c04d5962227ff2f1eae781f Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Wed, 24 Aug 2022 12:39:00 +0800
+Subject: [PATCH] Fix build error when ENABLE_FRU_AREA_RESIZE
+
+---
+ src/fru_device.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/fru_device.cpp b/src/fru_device.cpp
+index 8348c070..0f9c4e18 100644
+--- a/src/fru_device.cpp
++++ b/src/fru_device.cpp
+@@ -1316,8 +1316,8 @@ bool updateFRUProperty(
+         std::copy(restFRUAreasData.begin(), restFRUAreasData.end(),
+                   fruData.begin() + nextFRUAreaNewLoc);
+         // Update Common Header
+-        for (int fruArea = fruAreaInternal; fruArea <= fruAreaMultirecord;
+-             fruArea++)
++        for (fruAreas fruArea = fruAreas::fruAreaInternal;
++             fruArea <= fruAreas::fruAreaMultirecord; ++fruArea)
+         {
+             unsigned int fruAreaOffsetField = getHeaderAreaFieldOffset(fruArea);
+             size_t curFRUAreaOffset = fruData[fruAreaOffsetField];
+--
+2.25.1
+

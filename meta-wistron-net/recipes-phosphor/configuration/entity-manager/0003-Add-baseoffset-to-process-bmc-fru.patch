@@ -1,37 +1,36 @@
-From 2523bdc84146ee442925ca3bc94831d58fb1e49d Mon Sep 17 00:00:00 2001
+From 75a515408265f15fb7f794736a297dce56e22085 Mon Sep 17 00:00:00 2001
 From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
-Date: Wed, 27 Jul 2022 08:22:17 +0000
+Date: Wed, 24 Aug 2022 12:26:41 +0800
 Subject: [PATCH] Add baseoffset to process bmc fru
 
 ---
  include/fru_utils.hpp |  3 ++-
- src/fru_device.cpp    | 19 +++++++++++++++----
+ src/fru_device.cpp    | 18 ++++++++++++++++--
  src/fru_utils.cpp     |  4 ++--
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ 3 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/include/fru_utils.hpp b/include/fru_utils.hpp
-index c072ae5..076f49b 100644
+index e50b580f..d8f28c44 100644
 --- a/include/fru_utils.hpp
 +++ b/include/fru_utils.hpp
-@@ -156,7 +156,8 @@ bool findFRUHeader(int flag, int file, uint16_t address,
+@@ -146,7 +146,8 @@ bool findFRUHeader(FRUReader& reader, const std::string& errorHelp,
+ /// \param errorHelp and a helper string for failures
  /// \return the FRU contents from the file
- std::vector<uint8_t> readFRUContents(int flag, int file, uint16_t address,
-                                      const ReadBlockFunc& readBlock,
+ std::vector<uint8_t> readFRUContents(FRUReader& reader,
 -                                     const std::string& errorHelp);
 +                                     const std::string& errorHelp,
 +                                     off_t baseOffset);
- 
+
  /// \brief Validate an IPMI FRU common header
  /// \param blockData the bytes comprising the common header
 diff --git a/src/fru_device.cpp b/src/fru_device.cpp
-index defe5f5..8d2e130 100644
+index 31c58cdc..8348c070 100644
 --- a/src/fru_device.cpp
 +++ b/src/fru_device.cpp
-@@ -278,6 +278,14 @@ static std::vector<uint8_t> processEeprom(int bus, int address)
-     auto path = getEepromPath(bus, address);
- 
-     int file = open(path.c_str(), O_RDONLY);
-+
+@@ -286,13 +286,21 @@ static std::vector<uint8_t> processEeprom(int bus, int address)
+         return {};
+     }
+
 +    int fruid = fruid_map[{(uint32_t)bus, (uint32_t)address}];
 +    off_t baseOffset = 0;
 +    if (fruid == FRU_BMC) {
@@ -39,72 +38,57 @@ index defe5f5..8d2e130 100644
 +        baseOffset = 32;
 +    }
 +
-     if (file < 0)
-     {
-         std::cerr << "Unable to open eeprom file: " << path << "\n";
-@@ -287,7 +295,8 @@ static std::vector<uint8_t> processEeprom(int bus, int address)
      std::string errorMessage = "eeprom at " + std::to_string(bus) +
                                 " address " + std::to_string(address);
-     std::vector<uint8_t> device = readFRUContents(
--        0, file, static_cast<uint16_t>(address), readFromEeprom, errorMessage);
-+        0, file, static_cast<uint16_t>(address), readFromEeprom,
-+        errorMessage, baseOffset);
- 
+     auto readFunc = [file](off_t offset, size_t length, uint8_t* outbuf) {
+         return readFromEeprom(file, offset, length, outbuf);
+     };
+     FRUReader reader(std::move(readFunc));
+-    std::vector<uint8_t> device = readFRUContents(reader, errorMessage);
++    std::vector<uint8_t> device = readFRUContents(reader, errorMessage,
++                                                  baseOffset);
+
      close(file);
      return device;
-@@ -344,7 +353,6 @@ std::set<int> findI2CEeproms(int i2cBus,
-         // There is an eeprom file at this address, it may have invalid
-         // contents, but we found it.
-         foundList.insert(address);
--
-         std::vector<uint8_t> device = processEeprom(i2cBus, address);
-         if (!device.empty())
-         {
-@@ -448,7 +456,7 @@ int getBusFRUs(int file, int first, int last, int bus,
+@@ -458,7 +466,8 @@ int getBusFRUs(int file, int first, int last, int bus,
+             FRUReader reader(std::move(readFunc));
+             std::string errorMessage =
                  "bus " + std::to_string(bus) + " address " + std::to_string(ii);
-             std::vector<uint8_t> device =
-                 readFRUContents(flag, file, static_cast<uint16_t>(ii),
--                                readBlockData, errorMessage);
-+                                readBlockData, errorMessage, 0);
+-            std::vector<uint8_t> device = readFRUContents(reader, errorMessage);
++            std::vector<uint8_t> device = readFRUContents(reader,
++                                                          errorMessage, 0);
              if (device.empty())
              {
                  continue;
-@@ -557,7 +565,6 @@ static void findI2CDevices(const std::vector<fs::path>& i2cBuses,
-         {
-             continue;
-         }
--
-         auto file = open(i2cBus.c_str(), O_RDWR);
-         if (file < 0)
-         {
-@@ -848,6 +855,10 @@ bool writeFRU(uint8_t bus, uint8_t address, const std::vector<uint8_t>& fru)
-             throw DBusInternalError();
+@@ -860,6 +869,11 @@ bool writeFRU(uint8_t bus, uint8_t address, const std::vector<uint8_t>& fru)
              return false;
          }
+
 +        int fruid = fruid_map[{bus, address}];
 +        if (fruid == FRU_BMC) {
 +            lseek(eeprom, 32, SEEK_SET);
 +        }
- 
++
          ssize_t writtenBytes = write(eeprom, fru.data(), fru.size());
          if (writtenBytes < 0)
+         {
 diff --git a/src/fru_utils.cpp b/src/fru_utils.cpp
-index 62390c6..6f47c97 100644
+index bc59af8f..41a5f9de 100644
 --- a/src/fru_utils.cpp
 +++ b/src/fru_utils.cpp
-@@ -635,10 +635,10 @@ bool findFRUHeader(int flag, int file, uint16_t address,
- 
- std::vector<uint8_t> readFRUContents(int flag, int file, uint16_t address,
-                                      const ReadBlockFunc& readBlock,
+@@ -635,10 +635,10 @@ bool findFRUHeader(FRUReader& reader, const std::string& errorHelp,
+ }
+
+ std::vector<uint8_t> readFRUContents(FRUReader& reader,
 -                                     const std::string& errorHelp)
 +                                     const std::string& errorHelp,
 +                                     off_t baseOffset)
  {
-     std::array<uint8_t, I2C_SMBUS_BLOCK_MAX> blockData;
+     std::array<uint8_t, I2C_SMBUS_BLOCK_MAX> blockData{};
 -    off_t baseOffset = 0x0;
- 
-     if (!findFRUHeader(flag, file, address, readBlock, errorHelp, blockData,
-                        baseOffset))
--- 
+
+     if (!findFRUHeader(reader, errorHelp, blockData, baseOffset))
+     {
+--
 2.25.1
 

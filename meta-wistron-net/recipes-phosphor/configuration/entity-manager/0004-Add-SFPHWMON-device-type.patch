@@ -1,29 +1,26 @@
-From 3261e0d1c11e77e1fbc7e7443c86f89f4c9ddbdf Mon Sep 17 00:00:00 2001
+From dcc3b08c577aeecefd24b6090368f3b5c1e624d1 Mon Sep 17 00:00:00 2001
 From: Neal_Chen <neal_chen@wistron.com>
-Date: Fri, 12 Aug 2022 08:14:55 +0000
-Subject: [PATCH 4/4] Add SFPHWMON device type
+Date: Wed, 24 Aug 2022 12:31:19 +0800
+Subject: [PATCH] Add SFPHWMON device type
 
-Add sfphwmon devices.
-
-Signed-off-by: Neal_Chen <neal_chen@wistron.com>
 ---
  include/devices.hpp | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/include/devices.hpp b/include/devices.hpp
-index c8ae1766..79a427e9 100644
+index db57996c..f7fc450e 100644
 --- a/include/devices.hpp
 +++ b/include/devices.hpp
-@@ -188,6 +188,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+@@ -191,6 +191,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
           {"SBTSI",
            ExportTemplate("sbtsi $Address", "/sys/bus/i2c/devices/i2c-$Bus",
                           "new_device", "delete_device", true)},
 +         {"SFPHWMON",
 +          ExportTemplate("sfphwmon $Address", "/sys/bus/i2c/devices/i2c-$Bus",
 +                         "new_device", "delete_device", true)},
-          {"pmbus",
-           ExportTemplate("pmbus $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+          {"SIC450",
+           ExportTemplate("sic450 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
                           "new_device", "delete_device", true)},
--- 
+--
 2.25.1
 

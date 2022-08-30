@@ -1,13 +1,13 @@
-From 75a515408265f15fb7f794736a297dce56e22085 Mon Sep 17 00:00:00 2001
+From 0f9434ce746da76c20bea17cb36ea9d7f4afa633 Mon Sep 17 00:00:00 2001
 From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
 Date: Wed, 24 Aug 2022 12:26:41 +0800
 Subject: [PATCH] Add baseoffset to process bmc fru
 
 ---
  include/fru_utils.hpp |  3 ++-
- src/fru_device.cpp    | 18 ++++++++++++++++--
+ src/fru_device.cpp    | 22 ++++++++++++++++++++--
  src/fru_utils.cpp     |  4 ++--
- 3 files changed, 20 insertions(+), 5 deletions(-)
+ 3 files changed, 24 insertions(+), 5 deletions(-)
 
 diff --git a/include/fru_utils.hpp b/include/fru_utils.hpp
 index e50b580f..d8f28c44 100644
@@ -24,10 +24,21 @@ index e50b580f..d8f28c44 100644
  /// \brief Validate an IPMI FRU common header
  /// \param blockData the bytes comprising the common header
 diff --git a/src/fru_device.cpp b/src/fru_device.cpp
-index 31c58cdc..8348c070 100644
+index 31c58cdc..5ff7526a 100644
 --- a/src/fru_device.cpp
 +++ b/src/fru_device.cpp
-@@ -286,13 +286,21 @@ static std::vector<uint8_t> processEeprom(int bus, int address)
+@@ -59,6 +59,10 @@ extern "C"
+ #include <linux/i2c-dev.h>
+ }
+
++#ifndef FRU_BMC
++#define FRU_BMC 0x0
++#endif
++
+ namespace fs = std::filesystem;
+ static constexpr bool debug = false;
+ constexpr size_t maxFruSize = 512;
+@@ -286,13 +290,21 @@ static std::vector<uint8_t> processEeprom(int bus, int address)
          return {};
      }
 
@@ -50,7 +61,7 @@ index 31c58cdc..8348c070 100644
 
      close(file);
      return device;
-@@ -458,7 +466,8 @@ int getBusFRUs(int file, int first, int last, int bus,
+@@ -458,7 +470,8 @@ int getBusFRUs(int file, int first, int last, int bus,
              FRUReader reader(std::move(readFunc));
              std::string errorMessage =
                  "bus " + std::to_string(bus) + " address " + std::to_string(ii);
@@ -60,7 +71,7 @@ index 31c58cdc..8348c070 100644
              if (device.empty())
              {
                  continue;
-@@ -860,6 +869,11 @@ bool writeFRU(uint8_t bus, uint8_t address, const std::vector<uint8_t>& fru)
+@@ -860,6 +873,11 @@ bool writeFRU(uint8_t bus, uint8_t address, const std::vector<uint8_t>& fru)
              return false;
          }
 

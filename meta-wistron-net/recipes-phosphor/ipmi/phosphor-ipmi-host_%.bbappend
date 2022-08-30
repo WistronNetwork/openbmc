@@ -10,7 +10,7 @@ SRC_URI:append = " \
 
 inherit meson
 
-PACKAGECONFIG = "allowlist boot-flag-safe-mode softoff libuserlayer transport-oem"
+PACKAGECONFIG = "allowlist boot-flag-safe-mode softoff libuserlayer transport-oem sel-logger-clears-sel"
 PACKAGECONFIG[dynamic-sensors] = "-Ddynamic-sensors=enabled,-Ddynamic-sensors=disabled"
 PACKAGECONFIG[hybrid-sensors] = "-Dhybrid-sensors=enabled,-Dhybrid-sensors=disabled"
 PACKAGECONFIG[sel-logger-clears-sel] = "-Dsel-logger-clears-sel=enabled,-Dsel-logger-clears-sel=disabled"

@@ -1,0 +1,59 @@
+From 001f0e07e77f0aced4360af7f1c7c3356e13f6b1 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 6 Sep 2022 16:03:21 +0800
+Subject: [PATCH] drivers: mtd: spi: Support W25Q512JV
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ arch/arm/mach-aspeed/flash.c | 15 +++++++++++++++
+ drivers/mtd/spi/sf_params.c  |  1 +
+ 2 files changed, 16 insertions(+)
+
+diff --git a/arch/arm/mach-aspeed/flash.c b/arch/arm/mach-aspeed/flash.c
+index b8a438df75..eed8fb6614 100644
+--- a/arch/arm/mach-aspeed/flash.c
++++ b/arch/arm/mach-aspeed/flash.c
+@@ -74,6 +74,7 @@ flash_info_t flash_info[CONFIG_SYS_MAX_FLASH_BANKS];		/* FLASH chips info */
+ #define W25Q64BV		0x1740ef
+ #define W25Q128BV		0x1840ef
+ #define W25Q256FV		0x1940ef
++#define W25Q512JV		0x2040ef
+ #define MX25L1605D		0x1520C2
+ #define MX25L12805D		0x1820C2
+ #define MX25L25635E		0x1920C2
+@@ -932,6 +933,20 @@ static ulong flash_get_size (ulong base, flash_info_t *info)
+ #endif
+ 			break;
+ 
++		case W25Q512JV:
++			info->sector_count = 1024;
++			info->size = 0x4000000;
++			erase_region_size  = 0x10000;
++			info->readcmd = 0x0b;
++			info->dualport = 0;
++			info->dummybyte = 1;
++			info->buffersize = 512;
++			WriteClk = 50;
++			EraseClk = 20;
++			ReadClk  = 50;
++			info->address32 = 1;
++			break;
++
+ 		case S25FL064A:
+ 			info->sector_count = 128;
+ 			info->size = 0x800000;
+diff --git a/drivers/mtd/spi/sf_params.c b/drivers/mtd/spi/sf_params.c
+index c577d9ed6c..e9081091df 100644
+--- a/drivers/mtd/spi/sf_params.c
++++ b/drivers/mtd/spi/sf_params.c
+@@ -129,6 +129,7 @@ const struct spi_flash_params spi_flash_params_table[] = {
+ 	{"W25Q32DW",	   0xef6016, 0x0,	64 * 1024,    64, RD_FULL,	    WR_QPP | SECT_4K},
+ 	{"W25Q64DW",	   0xef6017, 0x0,	64 * 1024,   128, RD_FULL,	    WR_QPP | SECT_4K},
+ 	{"W25Q128FW",	   0xef6018, 0x0,	64 * 1024,   256, RD_FULL,	    WR_QPP | SECT_4K},
++	{"W25Q512JV",	   0xef4020, 0x0,	64 * 1024,   1024, RD_FULL,	    WR_QPP | SECT_4K},
+ #endif
+ 	{},	/* Empty entry to terminate the list */
+ 	/*
+-- 
+2.25.1
+

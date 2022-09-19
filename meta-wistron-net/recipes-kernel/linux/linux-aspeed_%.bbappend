@@ -18,6 +18,7 @@ SRC_URI += "\
 	file://0001-jtag-Add-support-for-aspeed-JTAG-adapter-driver.patch \
 	file://0002-arm-dtsi-aspeed-g4-aspeed-g5-aspeed-g6-Add-JTAG-adap.patch \
 	file://0001-hwmon-wistron-Add-support-wistron-CPLD.patch \
+	file://0001-hwmon-pmbus-Add-support-xdpe132g5.patch \
 	"
 
 do_kernel_prepare() {

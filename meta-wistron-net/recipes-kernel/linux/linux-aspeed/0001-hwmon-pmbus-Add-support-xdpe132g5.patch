@@ -1,0 +1,45 @@
+From fcd0255ec76df23c188c77efccb7752df6aaec88 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 19 Sep 2022 10:41:30 +0800
+Subject: [PATCH] hwmon: pmbus: Add support xdpe132g5
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/hwmon/pmbus/Kconfig  | 9 +++++++++
+ drivers/hwmon/pmbus/Makefile | 1 +
+ 2 files changed, 10 insertions(+)
+
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index b56bd8542864..d0a9fb710d7e 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -378,6 +378,15 @@ config SENSORS_XDPE122
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called xdpe12284.
+ 
++config SENSORS_XDPE132
++	tristate "Infineon XDPE132 family"
++	help
++	  If you say yes here you get hardware monitoring support for Infineon
++	  XDPE132G5C, XDPE132G5D, device.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called xdpe12284.
++
+ config SENSORS_ZL6100
+ 	tristate "Intersil ZL6100 and compatibles"
+ 	help
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index 61cdc24b1309..c9967c0ceffa 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -41,5 +41,6 @@ obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+ obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
+ obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
+ obj-$(CONFIG_SENSORS_XDPE122)	+= xdpe12284.o
++obj-$(CONFIG_SENSORS_XDPE132)	+= xdpe132g5.o
+ obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
+ obj-$(CONFIG_SENSORS_PIM4328)	+= pim4328.o
+-- 
+2.25.1
+

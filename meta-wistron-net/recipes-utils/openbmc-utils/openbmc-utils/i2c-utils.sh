@@ -134,8 +134,8 @@ i2c_driver_map() {
             echo "lm25066";;
         "ucd90160" | "ucd90124")
             echo "ucd9000";;
-        "xdpe132g5c")
-            echo "xdpe132g5c";;
+        "xdpe132g5c" | "xdpe132g5d")
+            echo "xdpe132g5";;
         "ir35215")
             echo "ir35215";;
         "xdpe12284")

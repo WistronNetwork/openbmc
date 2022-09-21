@@ -66,10 +66,11 @@ ifconfig "${ETH_INTF}" down
 fw_setenv bmc_macaddr "${MAC_ADDR}"
 ifconfig "${ETH_INTF}" hw ether "${MAC_ADDR}"
 ret=$?
+ifconfig "${ETH_INTF}" up
+
 if [[ $ret -ne 0 ]]; then
     echo "ERROR: Cannot configure MAC ADDR to ${ETH_INTF}"
     exit 1
 fi
-ifconfig "${ETH_INTF}" up
 
 echo "Successfully update the MAC address ${MAC_ADDR} to ${ETH_INTF}"

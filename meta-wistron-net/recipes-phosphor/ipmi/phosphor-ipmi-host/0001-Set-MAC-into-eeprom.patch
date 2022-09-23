@@ -1,26 +1,28 @@
-From b0697a81e1213708228bf9a820ec021880702592 Mon Sep 17 00:00:00 2001
+From e4e867647f1c957e71590f6bf88f0df90dc586d5 Mon Sep 17 00:00:00 2001
 From: Neal_Chen <neal_chen@wistron.com>
 Date: Thu, 18 Aug 2022 02:28:02 +0000
 Subject: [PATCH] Set MAC into eeprom
 
 ---
- transporthandler.cpp | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ transporthandler.cpp | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/transporthandler.cpp b/transporthandler.cpp
-index ba4e4b0f..c8c72e19 100644
+index ba4e4b0f..81b4c161 100644
 --- a/transporthandler.cpp
 +++ b/transporthandler.cpp
-@@ -10,6 +10,8 @@ using sdbusplus::xyz::openbmc_project::Network::server::EthernetInterface;
+@@ -10,6 +10,10 @@ using sdbusplus::xyz::openbmc_project::Network::server::EthernetInterface;
  using sdbusplus::xyz::openbmc_project::Network::server::IP;
  using sdbusplus::xyz::openbmc_project::Network::server::Neighbor;
  
++#ifndef BMC_PATH
 +#define BMC_PATH "/sys/bus/i2c/devices/8-0051/eeprom"
++#endif
 +
  namespace cipher
  {
  
-@@ -305,6 +307,18 @@ void setMACProperty(sdbusplus::bus_t& bus, const ChannelParams& params,
+@@ -305,6 +309,18 @@ void setMACProperty(sdbusplus::bus_t& bus, const ChannelParams& params,
                      macStr);
  }
  
@@ -39,7 +41,7 @@ index ba4e4b0f..c8c72e19 100644
  void deleteObjectIfExists(sdbusplus::bus_t& bus, const std::string& service,
                            const std::string& path)
  {
-@@ -811,6 +825,23 @@ RspType<message::Payload> getLanOem(uint8_t, uint8_t, uint8_t, uint8_t)
+@@ -811,6 +827,23 @@ RspType<message::Payload> getLanOem(uint8_t, uint8_t, uint8_t, uint8_t)
  {
      return response(ccParamNotSupported);
  }
@@ -63,7 +65,7 @@ index ba4e4b0f..c8c72e19 100644
  /**
   * @brief is MAC address valid.
   *
-@@ -971,6 +1002,14 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
+@@ -971,6 +1004,14 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
              {
                  return responseInvalidFieldRequest();
              }

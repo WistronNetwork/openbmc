@@ -37,7 +37,7 @@ if [[ "$FRU_INTF" = *"fan"* ]]; then
 fi
 
 if [[ $result == *"Unknown"* ]] || [[ $result == *"Invalid"* ]]; then
-    frugen --json --from=/etc/frugen/fru_$FRU_INTF.json $fru_file
+    frugen -I --json --from=/etc/frugen/fru_$FRU_INTF.json $fru_file
     ret=$?
 
     if [ "$ret" -ne 0 ]; then

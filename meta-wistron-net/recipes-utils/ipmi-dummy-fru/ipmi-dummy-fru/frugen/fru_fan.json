@@ -1,41 +1,22 @@
 {
-	"chassis" : {
-		"type": 2,
-		"pn" : "123456789",
-		"serial": "123456789",
-		"custom" : [
-			{ "data" : "Wistron" },
-            { "data" : "Wistron" },
-			{ "type" : "binary", "data": "1234567890" },
-            { "type" : "binary", "data": "4567890123" }
-		]
-	},
 	"board" : {
 		"mfg" : "Wistron",
-		"pname" : "Wistron Network",
-		"serial" : "123456789",
-		"pn" : "123456789",
-		"file" : "Wistron Network",
+		"pname" : "Fan Module Board",
+		"date" : "01/01/2022 01:01:00",
+		"serial" : "YYYYYYYY-444444444444-XXXXXXX",
+		"pn" : "XXXXXXX-555555555555-YYYYYYYY",
 		"custom" : [
-			{ "type" : "binary", "data" : "1234567890" },
-            { "type" : "binary", "data" : "4567891230" },
-			{ "type" : "auto",   "data" : "Wistron Network" },
-			{ "type" : "auto",   "data" : "Wistron" }
-		]
-	},
-	"product" : {
-		"lang": 1,
-		"mfg" : "Wistron",
-		"pn" : "123456789",
-		"pname" : "Wistron Network",
-		"serial" : "123456789",
-		"atag" : "Wistron Network",
-		"file" : "Wistron Network",
-		"custom" : [
-			{ "type" : "auto",   "data" : "Wistron" },
-			{ "type" : "auto",   "data" : "Wistron" },
-			{ "type" : "auto",   "data" : "Wistron" },
-			{ "type" : "binary", "data" : "1234567890" }
+			{ "data" : "Wistron Network Product" },
+			{ "data" : "Fan Tray" },
+			{ "data" : "Module Board" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" },
+			{ "data" : "Unknown Item" }
 		]
 	}
 }

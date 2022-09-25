@@ -1,0 +1,29 @@
+From 9ea19b99a210fbdaa581e30fe5ec88b74a6be667 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Sun, 25 Sep 2022 15:52:46 +0800
+Subject: [PATCH] Add XDPE132G5C and XDPE132G5D device type
+
+---
+ include/devices.hpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/devices.hpp b/include/devices.hpp
+index f7fc450e..b0370d77 100644
+--- a/include/devices.hpp
++++ b/include/devices.hpp
+@@ -206,6 +206,12 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"XDPE12284",
+           ExportTemplate("xdpe12284 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"XDPE132G5C",
++          ExportTemplate("xdpe132g5c $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"XDPE132G5D",
++          ExportTemplate("xdpe132g5d $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
+          {"LM95234",
+           ExportTemplate("lm95234 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+-- 
+2.25.1
+

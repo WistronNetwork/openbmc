@@ -4,6 +4,7 @@ SRCREV = "4a105cd64232ab66cef8461dac0302aa9021d9da"
 
 SRC_URI:append = " \
     file://0001-Set-MAC-into-eeprom.patch \
+    file://0002-Setup-sensor-id-type-to-8-bit-ASCII.patch \
     file://phosphor-ipmi-host.service \
     file://transporthandler_oem.cpp \
     "

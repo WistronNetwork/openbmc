@@ -1,0 +1,25 @@
+From e002bd0e942ff1e062944beb7fae854d1ecf4f55 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 27 Sep 2022 19:26:25 +0800
+Subject: [PATCH] Setup sensor id type to 8-bit ASCII
+
+---
+ sensorhandler.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sensorhandler.cpp b/sensorhandler.cpp
+index ffc1ee5..ff93dec 100644
+--- a/sensorhandler.cpp
++++ b/sensorhandler.cpp
+@@ -1077,7 +1077,7 @@ ipmi_ret_t populate_record_from_dbus(get_sdr::SensorDataFullRecordBody* body,
+         get_sdr::body::set_b_exp(info->exponentB, body);
+         get_sdr::body::set_r_exp(info->exponentR, body);
+
+-        get_sdr::body::set_id_type(0b00, body); // 00 = unicode
++        get_sdr::body::set_id_type(0b11, body); // 11 = 8-bit ASCII
+     }
+
+     /* ID string */
+-- 
+2.25.1
+

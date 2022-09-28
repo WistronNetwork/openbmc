@@ -1,0 +1,61 @@
+From d3a73597a56cc1c2ff22743f431012b0777ab744 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 27 Sep 2022 19:18:52 +0800
+Subject: [PATCH] Support more algorithm for more chipher suites
+
+Support list:
+C1, C2, C3, C15, C16, C17
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ auth_algo.hpp      | 3 ++-
+ crypt_algo.hpp     | 3 ++-
+ integrity_algo.hpp | 4 +++-
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/auth_algo.hpp b/auth_algo.hpp
+index 894a853..24e4ff3 100644
+--- a/auth_algo.hpp
++++ b/auth_algo.hpp
+@@ -107,7 +107,8 @@ class Interface
+      */
+     static bool isAlgorithmSupported(Algorithms algo)
+     {
+-        if (algo == Algorithms::RAKP_HMAC_SHA256)
++        if (algo == Algorithms::RAKP_HMAC_SHA1 ||
++            algo == Algorithms::RAKP_HMAC_SHA256)
+         {
+             return true;
+         }
+diff --git a/crypt_algo.hpp b/crypt_algo.hpp
+index f4d7363..bcb0cf9 100644
+--- a/crypt_algo.hpp
++++ b/crypt_algo.hpp
+@@ -89,7 +89,8 @@ class Interface
+      */
+     static bool isAlgorithmSupported(Algorithms algo)
+     {
+-        if (algo == Algorithms::AES_CBC_128)
++        if (algo == Algorithms::NONE ||
++            algo == Algorithms::AES_CBC_128)
+         {
+             return true;
+         }
+diff --git a/integrity_algo.hpp b/integrity_algo.hpp
+index cdeb617..172acca 100644
+--- a/integrity_algo.hpp
++++ b/integrity_algo.hpp
+@@ -93,7 +93,9 @@ class Interface
+      */
+     static bool isAlgorithmSupported(Algorithms algo)
+     {
+-        if (algo == Algorithms::HMAC_SHA256_128)
++        if (algo == Algorithms::NONE ||
++            algo == Algorithms::HMAC_SHA1_96 ||
++            algo == Algorithms::HMAC_SHA256_128)
+         {
+             return true;
+         }
+-- 
+2.25.1
+

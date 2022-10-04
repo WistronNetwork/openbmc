@@ -16,7 +16,7 @@ EXTRA_OECMAKE = "-DENABLE_TEST=0 -DYOCTO=1"
 
 LIBRARY_NAMES = "libwistronoemcmds.so"
 
-SRC_URI = "git://git@10.31.80.71/justine_team/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
+SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
 SRCREV = "eb7f9038a8724d0274f1ad8fe87b0db75066be7d"
 
 HOSTIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"

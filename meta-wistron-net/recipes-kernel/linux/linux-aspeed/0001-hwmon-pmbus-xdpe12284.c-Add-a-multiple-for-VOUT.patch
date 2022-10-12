@@ -1,0 +1,160 @@
+From 9f9365e107d3cd8745319a089201406ec208903c Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 11 Oct 2022 19:15:54 +0800
+Subject: [PATCH] hwmon: pmbus: xdpe12284.c: Add a multiple for VOUT
+
+For HW design, we need to multiply a value for VOUT.
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/hwmon/pmbus/xdpe12284.c | 106 ++++++++++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
+
+diff --git a/drivers/hwmon/pmbus/xdpe12284.c b/drivers/hwmon/pmbus/xdpe12284.c
+index b07da06a40c9..8bb4aa5e3b75 100644
+--- a/drivers/hwmon/pmbus/xdpe12284.c
++++ b/drivers/hwmon/pmbus/xdpe12284.c
+@@ -10,6 +10,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/hwmon-sysfs.h>
+ #include "pmbus.h"
+ 
+ #define XDPE122_PROT_VR12_5MV		0x01 /* VR12.0 mode, 5-mV DAC */
+@@ -18,6 +19,19 @@
+ #define XDPE122_AMD_625MV		0x10 /* AMD mode 6.25mV */
+ #define XDPE122_PAGE_NUM		2
+ 
++enum {
++	XDPE122_VOUT3,
++	XDPE122_VOUT4,
++};
++
++static const char * const labels[] = {
++	[XDPE122_VOUT3]	=	"vout3",
++	[XDPE122_VOUT4]	=	"vout4",
++};
++
++static u32 vout_loop_a_multiple = 0;
++static u32 vout_loop_b_multiple = 0;
++
+ static int xdpe122_read_word_data(struct i2c_client *client, int page,
+ 				  int phase, int reg)
+ {
+@@ -107,6 +121,83 @@ static int xdpe122_identify(struct i2c_client *client,
+ 	return 0;
+ }
+ 
++static ssize_t xdpe122_vout_value_show(struct device *dev,
++					struct device_attribute *devattr,
++					char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
++
++	s64 val;
++	int ret;
++
++	ret = pmbus_read_word_data(client, attr->index, 0xff, PMBUS_READ_VOUT);
++	if (ret < 0)
++		return ret;
++
++	val = (s64) ret;
++	switch (info->vrm_version[attr->index]) {
++		case vr11:
++			if (val >= 0x02 && val <= 0xb2)
++				val = DIV_ROUND_CLOSEST(160000 - (val - 2) * 625, 100);
++			break;
++		case vr12:
++			if (val >= 0x01)
++				val = 250 + (val - 1) * 5;
++			break;
++		case vr13:
++			if (val >= 0x01)
++				val = 500 + (val - 1) * 10;
++			break;
++		case imvp9:
++			if (val >= 0x01)
++				val = 200 + (val - 1) * 10;
++			break;
++		case amd625mv:
++			if (val >= 0x0 && val <= 0xd8)
++				val = DIV_ROUND_CLOSEST(155000 - val * 625, 100);
++			break;
++		default:
++			return -EINVAL;
++	}
++
++	if (attr->index == 0) // PAGE 0
++		return sprintf(buf, "%lld\n", val * (vout_loop_a_multiple / 1000));
++	else if (attr->index == 1) // PAGE 1
++		return sprintf(buf, "%lld\n", val * (vout_loop_b_multiple / 1000));
++	else
++		return -EINVAL;
++}
++
++static ssize_t label_show(struct device *dev,
++                          struct device_attribute *devattr, char *buf)
++{
++	return sprintf(buf, "%s\n", labels[to_sensor_dev_attr(devattr)->index]);
++}
++
++static SENSOR_DEVICE_ATTR_RO(in5_input, xdpe122_vout_value, 0);  //PAGE 0
++static SENSOR_DEVICE_ATTR_RO(in5_label, label, XDPE122_VOUT3);
++static SENSOR_DEVICE_ATTR_RO(in6_input, xdpe122_vout_value, 1);  //PAGE 1
++static SENSOR_DEVICE_ATTR_RO(in6_label, label, XDPE122_VOUT4);
++
++static struct attribute *xdpe122_value_attrs[] = {
++	&sensor_dev_attr_in5_input.dev_attr.attr,
++	&sensor_dev_attr_in5_label.dev_attr.attr,
++	&sensor_dev_attr_in6_input.dev_attr.attr,
++	&sensor_dev_attr_in6_label.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group xdpe122_value_group = {
++	.attrs = xdpe122_value_attrs,
++};
++
++static const struct attribute_group *xdpe122_attribute_groups[] = {
++	&xdpe122_value_group,
++	NULL,
++};
++
+ static struct pmbus_driver_info xdpe122_info = {
+ 	.pages = XDPE122_PAGE_NUM,
+ 	.format[PSC_VOLTAGE_IN] = linear,
+@@ -125,6 +216,7 @@ static struct pmbus_driver_info xdpe122_info = {
+ 		PMBUS_HAVE_POUT | PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT,
+ 	.identify = xdpe122_identify,
+ 	.read_word_data = xdpe122_read_word_data,
++	.groups = xdpe122_attribute_groups,
+ };
+ 
+ static int xdpe122_probe(struct i2c_client *client)
+@@ -136,6 +228,20 @@ static int xdpe122_probe(struct i2c_client *client)
+ 	if (!info)
+ 		return -ENOMEM;
+ 
++	if (of_property_read_u32(client->dev.of_node,
++				 "vout_loop_a_multiple", &vout_loop_a_multiple))
++		vout_loop_a_multiple = 1000; /* Default 1000 if not set via DT */
++
++	if (vout_loop_a_multiple == 0)
++		return -EINVAL;
++
++	if (of_property_read_u32(client->dev.of_node,
++				 "vout_loop_b_multiple", &vout_loop_b_multiple))
++		vout_loop_b_multiple = 1000; /* Default 1000 if not set via DT */
++
++	if (vout_loop_b_multiple == 0)
++		return -EINVAL;
++
+ 	return pmbus_do_probe(client, info);
+ }
+ 
+-- 
+2.25.1
+

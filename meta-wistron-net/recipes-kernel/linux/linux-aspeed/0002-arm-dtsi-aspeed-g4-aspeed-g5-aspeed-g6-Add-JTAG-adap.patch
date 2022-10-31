@@ -72,7 +72,7 @@ index 781bf46a84d6..087be4819aaf 100644
  
 +			jtag: jtag@1e6e4000 {
 +				compatible = "aspeed,ast2400-jtag";
-+				reg= <0x1e6e4000 0x20>;
++				reg= <0x1e6e4000 0x1c 0x1e6e2004 0x04>;
 +				interrupts = <43>;
 +				clocks = <&syscon ASPEED_CLK_APB>;
 +				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
@@ -93,7 +93,7 @@ index ea5c645f1d71..f80e0759d5ff 100644
  
 +			jtag: jtag@1e6e4000 {
 +				compatible = "aspeed,ast2500-jtag";
-+				reg= <0x1e6e4000 0x20>;
++				reg= <0x1e6e4000 0x1c 0x1e6e2004 0x04>;
 +				interrupts = <43>;
 +				clocks = <&syscon ASPEED_CLK_APB>;
 +				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
@@ -114,7 +114,7 @@ index 0a48f495a300..2c1e732d1c6e 100644
  
 +			jtag0: jtag@1e6e4000 {
 +				compatible = "aspeed,ast2600-jtag";
-+				reg= <0x1e6e4000 0x20>;
++				reg= <0x1e6e4000 0x40 0x1e6e2040 0x8 0x1e6e2418 0x4>;
 +				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
 +				clocks = <&syscon ASPEED_CLK_AHB>;
 +				resets = <&syscon ASPEED_RESET_JTAG_MASTER>;
@@ -123,7 +123,7 @@ index 0a48f495a300..2c1e732d1c6e 100644
 +
 +			jtag1: jtag@1e6e4100 {
 +				compatible = "aspeed,ast2600-jtag";
-+				reg= <0x1e6e4100 0x20>;
++				reg= <0x1e6e4100 0x40 0x1e6e2050 0x8 0x1e6e2418 0x4>;
 +				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
 +				clocks = <&syscon ASPEED_CLK_AHB>;
 +				resets = <&syscon ASPEED_RESET_JTAG_MASTER2>;

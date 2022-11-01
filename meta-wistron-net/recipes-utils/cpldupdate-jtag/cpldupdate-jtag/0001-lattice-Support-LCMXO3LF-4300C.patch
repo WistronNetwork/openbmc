@@ -1,0 +1,30 @@
+From c657845f131034140eadc62456bbe9902a51a210 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Mon, 31 Oct 2022 16:28:34 +0800
+Subject: [PATCH] lattice: Support LCMXO3LF-4300C
+
+---
+ lattice_cpld.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/lattice_cpld.c b/lattice_cpld.c
+index 4cffbf0ae..2bf4dd890 100755
+--- a/lattice_cpld.c
++++ b/lattice_cpld.c
+@@ -41,6 +41,13 @@ static cpld_device_t device_list[] = {
+         .page_bits = 128,
+         .num_of_cfg_pages = 5758,
+         .num_of_ufm_pages = 767,
++    },
++    {
++        .name = "LC LCMXO3LF-4300C",
++        .dev_id = 0x612bc043,
++        .page_bits = 128,
++        .num_of_cfg_pages = 5758,
++        .num_of_ufm_pages = 767,
+     }
+ };
+ 
+-- 
+2.25.1
+

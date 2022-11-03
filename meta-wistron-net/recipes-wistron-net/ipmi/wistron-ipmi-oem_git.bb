@@ -17,7 +17,7 @@ EXTRA_OECMAKE = "-DENABLE_TEST=0 -DYOCTO=1"
 LIBRARY_NAMES = "libwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "eb7f9038a8724d0274f1ad8fe87b0db75066be7d"
+SRCREV = "3d11617b50b777af5fd61090fe47023cacf8acbf"
 
 HOSTIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"
 NETIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"
@@ -28,9 +28,15 @@ FILES:${PN}:append = " ${libdir}/net-ipmid/lib*${SOLIBS}"
 FILES:${PN}-dev:append = " ${libdir}/ipmid-providers/lib*${SOLIBSDEV}"
 
 do_configure:prepend() {
-    fru_file="${S}/fru/${MACHINE}_fru.hpp"
+    fru_file="${S}/platform/include/fru/${MACHINE}_fru.hpp"
 
     if [ -f "$fru_file" ]; then
         cp -rfv ${fru_file} ${S}/include/fru.hpp
+    fi
+
+    platform_file="${S}/platform/include/oemcommands/${MACHINE}_platform.hpp"
+
+    if [ -f "$platform_file" ]; then
+        cp -rfv ${platform_file} ${S}/include/oem_platform.hpp
     fi
 }

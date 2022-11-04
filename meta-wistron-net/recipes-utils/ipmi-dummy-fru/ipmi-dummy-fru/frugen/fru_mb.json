@@ -1,6 +1,6 @@
 {
 	"chassis" : {
-		"type": 2,
+		"type": 1,
 		"pn" : "XXXX-2222222222-YYYY",
 		"serial": "YYYY-3333333333-XXXX"
 	},

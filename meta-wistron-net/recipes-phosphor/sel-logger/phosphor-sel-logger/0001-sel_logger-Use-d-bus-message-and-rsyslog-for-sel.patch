@@ -1,0 +1,85 @@
+From 330b6bb9d797ce2aadf123a7b9d062c816b7190b Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Fri, 4 Nov 2022 19:48:26 +0800
+Subject: [PATCH] sel_logger: Use d-bus message and rsyslog for sel
+
+This is a workaround for display sel message
+at IPMI and WEBUI
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ src/sel_logger.cpp | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/src/sel_logger.cpp b/src/sel_logger.cpp
+index 29cbd46..fd1bff1 100644
+--- a/src/sel_logger.cpp
++++ b/src/sel_logger.cpp
+@@ -67,7 +67,6 @@ struct DBusInternalError final : public sdbusplus::exception_t
+     }
+ };
+ 
+-#ifndef SEL_LOGGER_SEND_TO_LOGGING_SERVICE
+ static bool getSELLogFiles(std::vector<std::filesystem::path>& selLogFiles)
+ {
+     // Loop through the directory looking for ipmi_sel log files
+@@ -174,7 +173,6 @@ static unsigned int getNewRecordId(void)
+     }
+     return recordId;
+ }
+-#endif
+ 
+ static void toHexStr(const std::vector<uint8_t>& data, std::string& hexStr)
+ {
+@@ -208,8 +206,7 @@ static uint16_t selAddSystemRecord([[maybe_unused]] const std::string& message,
+         Created::RECORD_TYPE(selSystemType), Created::GENERATOR_ID(genId),
+         Created::SENSOR_DATA(selDataStr.c_str()), Created::EVENT_DIR(assert),
+         Created::SENSOR_PATH(path.c_str()));
+-    return static_cast<uint16_t>(entryID);
+-#else
++
+     unsigned int recordId = getNewRecordId();
+     sd_journal_send("MESSAGE=%s", message.c_str(), "PRIORITY=%i", selPriority,
+                     "MESSAGE_ID=%s", selMessageId, "IPMI_SEL_RECORD_ID=%d",
+@@ -218,7 +215,8 @@ static uint16_t selAddSystemRecord([[maybe_unused]] const std::string& message,
+                     "IPMI_SEL_SENSOR_PATH=%s", path.c_str(),
+                     "IPMI_SEL_EVENT_DIR=%x", assert, "IPMI_SEL_DATA=%s",
+                     selDataStr.c_str(), std::forward<T>(metadata)..., NULL);
+-    return recordId;
++
++    return static_cast<uint16_t>(entryID);
+ #endif
+ }
+ 
+@@ -240,14 +238,14 @@ static uint16_t selAddOemRecord([[maybe_unused]] const std::string& message,
+         Created::RECORD_TYPE(recordType), Created::GENERATOR_ID(0),
+         Created::SENSOR_DATA(selDataStr.c_str()), Created::EVENT_DIR(0),
+         Created::SENSOR_PATH(""));
+-    return static_cast<uint16_t>(entryID);
+-#else
++
+     unsigned int recordId = getNewRecordId();
+     sd_journal_send("MESSAGE=%s", message.c_str(), "PRIORITY=%i", selPriority,
+                     "MESSAGE_ID=%s", selMessageId, "IPMI_SEL_RECORD_ID=%d",
+                     recordId, "IPMI_SEL_RECORD_TYPE=%x", recordType,
+                     "IPMI_SEL_DATA=%s", selDataStr.c_str(), NULL);
+-    return recordId;
++
++    return static_cast<uint16_t>(entryID);
+ #endif
+ }
+ 
+@@ -281,10 +279,8 @@ int main(int, char*[])
+         });
+ 
+ #ifdef SEL_LOGGER_CLEARS_SEL
+-#ifndef SEL_LOGGER_SEND_TO_LOGGING_SERVICE
+     // Clear SEL entries
+     ifaceAddSel->register_method("Clear", []() { clearSelLogFiles(); });
+-#endif
+ #endif
+     ifaceAddSel->initialize();
+ 
+-- 
+2.25.1
+

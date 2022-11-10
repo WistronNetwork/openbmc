@@ -1,0 +1,152 @@
+From da996720d3fc21208628299204949f2f4d088f0e Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 10 Nov 2022 15:37:54 +0800
+Subject: [PATCH] hwmon-pmbus-isl68137.c-Add-a-multiple-for-VOUT
+
+---
+ drivers/hwmon/pmbus/isl68137.c | 96 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+
+diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
+index 1a8caff1ac5f..cba917676014 100644
+--- a/drivers/hwmon/pmbus/isl68137.c
++++ b/drivers/hwmon/pmbus/isl68137.c
+@@ -72,7 +72,23 @@ enum variants {
+ 	raa_dmpvr2_hv,
+ };
+ 
++enum {
++	ISL68239_VOUT1,
++	ISL68239_VOUT2,
++	ISL68239_VOUT3,
++};
++
++static const char * const labels[] = {
++	[ISL68239_VOUT1]	=	"vout4",
++	[ISL68239_VOUT2]	=	"vout5",
++	[ISL68239_VOUT3]	=	"vout6",
++};
++
++
+ static const struct i2c_device_id raa_dmpvr_id[];
++static u32 vout_loop_a_multiple = 0;
++static u32 vout_loop_b_multiple = 0;
++static u32 vout_loop_c_multiple = 0;
+ 
+ static ssize_t isl68137_avs_enable_show_page(struct i2c_client *client,
+ 					     int page,
+@@ -142,8 +158,68 @@ static ssize_t isl68137_avs_enable_store(struct device *dev,
+ 	return isl68137_avs_enable_store_page(client, attr->index, buf, count);
+ }
+ 
++static ssize_t isl68239_vout_value_show(struct device *dev,
++					struct device_attribute *devattr,
++					char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev->parent);
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
++
++	s64 val;
++	int ret;
++
++	if (of_property_read_u32(client->dev.of_node,
++				"vout_loop_a_multiple", &vout_loop_a_multiple))
++	vout_loop_a_multiple = 1000; /* Default 1000 if not set via DT */
++
++	if (vout_loop_a_multiple == 0)
++		return -EINVAL;
++
++	if (of_property_read_u32(client->dev.of_node,
++				 "vout_loop_b_multiple", &vout_loop_b_multiple))
++		vout_loop_b_multiple = 1000; /* Default 1000 if not set via DT */
++	
++	if (vout_loop_b_multiple == 0)
++		return -EINVAL;
++	
++	if (of_property_read_u32(client->dev.of_node,
++				 "vout_loop_c_multiple", &vout_loop_c_multiple))
++		vout_loop_c_multiple = 1000; /* Default 1000 if not set via DT */
++	
++	if (vout_loop_c_multiple == 0)
++		return -EINVAL;
++
++	ret = pmbus_read_word_data(client, attr->index, 0xff, PMBUS_READ_VOUT);
++	if (ret < 0)
++		return ret;
++	
++	val = (s64) ret;
++
++	if (attr->index == 0)
++		return sprintf(buf, "%lld\n", val * (vout_loop_a_multiple / 1000));
++	else if (attr->index == 1)
++		return sprintf(buf, "%lld\n", val * (vout_loop_b_multiple / 1000));
++	else if (attr->index == 2)
++		return sprintf(buf, "%lld\n", val * (vout_loop_c_multiple / 1000));
++	else
++		return -EINVAL;
++}
++
++static ssize_t label_show(struct device *dev,
++                          struct device_attribute *devattr, char *buf)
++{
++	return sprintf(buf, "%s\n", labels[to_sensor_dev_attr(devattr)->index]);
++}
++
+ static SENSOR_DEVICE_ATTR_RW(avs0_enable, isl68137_avs_enable, 0);
+ static SENSOR_DEVICE_ATTR_RW(avs1_enable, isl68137_avs_enable, 1);
++static SENSOR_DEVICE_ATTR_RO(in6_input, isl68239_vout_value, 0);  //PAGE 0
++static SENSOR_DEVICE_ATTR_RO(in6_label, label, ISL68239_VOUT1);
++static SENSOR_DEVICE_ATTR_RO(in7_input, isl68239_vout_value, 1);  //PAGE 1
++static SENSOR_DEVICE_ATTR_RO(in7_label, label, ISL68239_VOUT2);
++static SENSOR_DEVICE_ATTR_RO(in8_input, isl68239_vout_value, 2);  //PAGE 2
++static SENSOR_DEVICE_ATTR_RO(in8_label, label, ISL68239_VOUT3);
+ 
+ static struct attribute *enable_attrs[] = {
+ 	&sensor_dev_attr_avs0_enable.dev_attr.attr,
+@@ -151,15 +227,34 @@ static struct attribute *enable_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute *isl68239_value_attrs[] = {
++	&sensor_dev_attr_in6_input.dev_attr.attr,
++	&sensor_dev_attr_in6_label.dev_attr.attr,
++	&sensor_dev_attr_in7_input.dev_attr.attr,
++	&sensor_dev_attr_in7_label.dev_attr.attr,
++	&sensor_dev_attr_in8_input.dev_attr.attr,
++	&sensor_dev_attr_in8_label.dev_attr.attr,
++	NULL,
++};
++
+ static const struct attribute_group enable_group = {
+ 	.attrs = enable_attrs,
+ };
+ 
++static const struct attribute_group isl68239_value_group = {
++	.attrs = isl68239_value_attrs,
++};
++
+ static const struct attribute_group *isl68137_attribute_groups[] = {
+ 	&enable_group,
+ 	NULL,
+ };
+ 
++static const struct attribute_group *isl68239_attribute_groups[] = {
++	&isl68239_value_group,
++	NULL,
++};
++
+ static int raa_dmpvr2_read_word_data(struct i2c_client *client, int page,
+ 				     int phase, int reg)
+ {
+@@ -253,6 +348,7 @@ static int isl68137_probe(struct i2c_client *client)
+ 		break;
+ 	case raa_dmpvr2_3rail:
+ 		info->read_word_data = raa_dmpvr2_read_word_data;
++		info->groups = isl68239_attribute_groups;
+ 		break;
+ 	case raa_dmpvr2_hv:
+ 		info->pages = 1;
+-- 
+2.25.1
+

@@ -10,14 +10,15 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c libgpio-ctrl"
 
-inherit cmake pkgconfig obmc-phosphor-ipmiprovider-symlink
+inherit meson pkgconfig obmc-phosphor-ipmiprovider-symlink
 
-EXTRA_OECMAKE = "-DENABLE_TEST=0 -DYOCTO=1"
+PACKAGECONFIG ??= ""
+PACKAGECONFIG[platform-oem] = "-Dplatform-oem=enabled,-Dplatform-oem=disabled"
 
-LIBRARY_NAMES = "libwistronoemcmds.so"
+LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "10b242b9348875385db7a8815af2878453e59796"
+SRCREV = "5f68906f32dd9f94c4e676c970cb868264950799"
 
 HOSTIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"
 NETIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"
@@ -39,4 +40,16 @@ do_configure:prepend() {
     if [ -f "$platform_file" ]; then
         cp -rfv ${platform_file} ${S}/include/oem_platform.hpp
     fi
+
+    platform_oem_file="${S}/platform/src/${MACHINE}_oemcommands.cpp"
+
+    if [ -f "$platform_oem_file" ] &&
+       [[ "${PACKAGECONFIG}" == *platform-oem* ]]; then
+        cp -rfv ${platform_oem_file} ${S}/src/platform_oemcommands.cpp
+    fi
+}
+
+do_install:append() {
+    install -d ${D}${includedir}/wistron-ipmi-oem
+    install -m 0644 -D ${S}/include/*.hpp ${D}${includedir}/wistron-ipmi-oem
 }

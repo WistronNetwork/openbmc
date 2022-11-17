@@ -1,0 +1,47 @@
+From 203c8a58c732b47a4616bd3d9916ca1c40e6a7c8 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 14 Nov 2022 18:36:21 +0800
+Subject: [PATCH] hwmon: pmbus: Add support pmbus psu
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/hwmon/pmbus/Kconfig  | 10 ++++++++++
+ drivers/hwmon/pmbus/Makefile |  1 +
+ 2 files changed, 11 insertions(+)
+
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index d0a9fb710d7e..571b615c18e8 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -27,6 +27,16 @@ config SENSORS_PMBUS
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called pmbus.
+ 
++config SENSORS_PMBUS_PSU
++	tristate "Generic PMBus PSU devices"
++	default y
++	help
++	  If you say yes here you get hardware monitoring support for generic
++	  PMBus PSU devices.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called pmbus_psu.
++
+ config SENSORS_ADM1266
+ 	tristate "Analog Devices ADM1266 Sequencer"
+ 	select CRC8
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index c9967c0ceffa..3365e690ac37 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -5,6 +5,7 @@
+ 
+ obj-$(CONFIG_PMBUS)		+= pmbus_core.o
+ obj-$(CONFIG_SENSORS_PMBUS)	+= pmbus.o
++obj-$(CONFIG_SENSORS_PMBUS_PSU)	+= pmbus_psu.o
+ obj-$(CONFIG_SENSORS_ADM1266)	+= adm1266.o
+ obj-$(CONFIG_SENSORS_ADM1275)	+= adm1275.o
+ obj-$(CONFIG_SENSORS_BEL_PFE)	+= bel-pfe.o
+-- 
+2.25.1
+

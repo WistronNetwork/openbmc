@@ -13,6 +13,7 @@ SRC_URI:append = " \
     file://0005-Fix-build-error-when-ENABLE_FRU_AREA_RESIZE.patch \
     file://0006-Add-XDPE132G5C-and-XDPE132G5D-device-type.patch \
     file://0007-add-device-type-tmp432-and-isl68239.patch \
+    file://0008-Add-pmbus_psu-device-type.patch \
     file://fruid.hpp \
     "
 

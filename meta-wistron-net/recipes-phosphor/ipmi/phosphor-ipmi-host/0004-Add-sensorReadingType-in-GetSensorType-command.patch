@@ -1,0 +1,33 @@
+From ffc2781e93bf29b0f64c6f6f755e418dd4ffadc3 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 24 Nov 2022 17:53:00 +0800
+Subject: [PATCH] Add sensorReadingType in GetSensorType command
+
+---
+ sensorhandler.cpp | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/sensorhandler.cpp b/sensorhandler.cpp
+index ff93dec..293e24e 100644
+--- a/sensorhandler.cpp
++++ b/sensorhandler.cpp
+@@ -444,7 +444,15 @@ ipmi::RspType<uint8_t, // sensorType
+         return ipmi::responseSensorInvalid();
+     }
+ 
+-    constexpr uint8_t eventType = 0x6F;
++    const auto iter = ipmi::sensor::sensors.find(sensorNumber);
++    const uint8_t eventType = iter->second.sensorReadingType;
++
++    if (iter == ipmi::sensor::sensors.end())
++    {
++        // The sensor map does not contain the sensor requested
++        return ipmi::responseSensorInvalid();
++    }
++
+     return ipmi::responseSuccess(sensorType, eventType);
+ }
+ 
+-- 
+2.25.1
+

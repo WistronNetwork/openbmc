@@ -25,6 +25,70 @@ struct pmbus_psu_device_info {
 static int pmbus_commnand = -1;
 static int pmbus_data_length = -1;
 
+static ssize_t fan_command_1_value_show(struct device *dev,
+					struct device_attribute *devattr,
+					char *buf)
+{
+	struct i2c_client *client = to_i2c_client(dev->parent);
+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+	int ret;
+
+	ret = pmbus_read_word_data(client, attr->index, 0xff, PMBUS_FAN_COMMAND_1);
+
+	return  ret < 0 ? ret : sprintf(buf, "0x%04llx\n", ret);
+}
+
+static ssize_t fan_command_1_value_store(struct device *dev,
+					struct device_attribute *devattr,
+					const char *buf,
+					size_t count)
+{
+	struct i2c_client *client = to_i2c_client(dev->parent);
+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+	int val;
+	int ret;
+
+	if (sscanf(buf, "%i", &val <= 0)) {
+		return -EINVAL;
+	}
+
+	ret = pmbus_write_word_data(client, attr->index, 0xff, PMBUS_FAN_COMMAND_1);
+
+	return ret < 0 ? ret : count;
+}
+
+static ssize_t fan_command_2_value_show(struct device *dev,
+					struct device_attribute *devattr,
+					char *buf)
+{
+	struct i2c_client *client = to_i2c_client(dev->parent);
+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+	int ret;
+
+	ret = pmbus_read_word_data(client, attr->index, 0xff, PMBUS_FAN_COMMAND_2);
+
+	return ret < 0 ? ret : sprintf(buf, "%#x\n", ret);
+}
+
+static ssize_t fan_command_2_value_store(struct device *dev,
+					struct device_attribute *devattr,
+					const char *buf,
+					size_t count)
+{
+	struct i2c_client *client = to_i2c_client(dev->parent);
+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+	int val;
+	int ret;
+
+	if (sscanf(buf, "%i", &val <= 0)) {
+		return -EINVAL;
+	}
+
+	ret = pmbus_write_word_data(client, attr->index, 0xff, PMBUS_FAN_COMMAND_2);
+
+	return ret < 0 ? ret : count;
+}
+
 static ssize_t pmbus_psu_reg_length_value_show(struct device *dev,
 					struct device_attribute *devattr,
 					char *buf)
@@ -50,7 +114,7 @@ static ssize_t pmbus_psu_reg_length_value_store(struct device *dev,
 	return count;
 }
 
-static ssize_t pmbus_psu_block_read_value_show(struct device *dev,
+static ssize_t pmbus_psu_block_value_show(struct device *dev,
 					struct device_attribute *devattr,
 					char *buf)
 {
@@ -84,10 +148,14 @@ static ssize_t pmbus_psu_block_read_value_show(struct device *dev,
 	return sprintf(buf, "%s\n", data_buf);
 }
 
+static SENSOR_DEVICE_ATTR_RW(fan_command_1, fan_command_1_value, 0);
+static SENSOR_DEVICE_ATTR_RW(fan_command_2, fan_command_2_value, 0);
 static SENSOR_DEVICE_ATTR_RW(pmbus_psu_reg_length, pmbus_psu_reg_length_value, 0);
-static SENSOR_DEVICE_ATTR_RO(pmbus_psu_block_read, pmbus_psu_block_read_value, 0);
+static SENSOR_DEVICE_ATTR_RO(pmbus_psu_block_read, pmbus_psu_block_value, 0);
 
 static struct attribute *pmbus_psu_attrs[] = {
+	&sensor_dev_attr_fan_command_1.dev_attr.attr,
+	&sensor_dev_attr_fan_command_2.dev_attr.attr,
 	&sensor_dev_attr_pmbus_psu_reg_length.dev_attr.attr,
 	&sensor_dev_attr_pmbus_psu_block_read.dev_attr.attr,
 	NULL,

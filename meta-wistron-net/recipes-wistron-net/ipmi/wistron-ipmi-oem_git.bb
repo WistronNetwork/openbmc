@@ -19,10 +19,12 @@ PACKAGECONFIG[platform-oem] = "-Dplatform-oem=enabled,-Dplatform-oem=disabled"
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "7a333a8b97c61f188141325c6e83a33838a1b761"
+SRCREV = "42ea5bb6cf1379eb187473c4ce7703ab6a6472c4"
+
+sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 
 EXTRA_OEMESON = " \
-        -Dsensor-yaml-gen=${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config/ipmi-sensors.yaml \
+        -Dsensor-yaml-gen=${sensor_yaml_path}/ipmi-sensors.yaml \
         "
 
 HOSTIPMI_PROVIDER_LIBRARY += "${LIBRARY_NAMES}"
@@ -51,6 +53,13 @@ do_configure:prepend() {
     if [ -f "$platform_oem_file" ] &&
        [[ "${PACKAGECONFIG}" == *platform-oem* ]]; then
         cp -rfv ${platform_oem_file} ${S}/src/platform_oemcommands.cpp
+    fi
+
+    default_sensor_yaml_file="${S}/scripts/ipmi-sensors.yaml"
+
+    if [ ! -f "${sensor_yaml_path}/ipmi-sensors.yaml" ]; then
+        mkdir -p ${sensor_yaml_path}
+        cp -rfv ${default_sensor_yaml_file} ${sensor_yaml_path}
     fi
 }
 

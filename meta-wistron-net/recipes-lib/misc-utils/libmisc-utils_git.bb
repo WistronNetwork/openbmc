@@ -14,7 +14,9 @@ PV = "0.1+git${SRCPV}"
 S = "${WORKDIR}/files"
 
 SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"
-SRC_URI += "git://github.com/facebook/openbmc;branch=helium;protocol=https;subpath=common/recipes-lib/misc-utils/files/"
+SRC_URI += "git://github.com/facebook/openbmc;branch=helium;protocol=https;subpath=common/recipes-lib/misc-utils/files/ \
+            file://0001-misc-utils-Add-more-useful-function.patch \
+           "
 
 DEPENDS += "gtest"
 

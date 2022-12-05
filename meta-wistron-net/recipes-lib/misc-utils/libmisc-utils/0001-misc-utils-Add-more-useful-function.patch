@@ -1,0 +1,122 @@
+From 4e6e18fd0e427f6049e709bca5fe9118c8578796 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 5 Dec 2022 01:02:00 +0800
+Subject: [PATCH] misc-utils: Add more useful function
+
+1. str_remove()
+2. path_realpath()
+3. path_debugfs_hwmon()
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ misc-utils.h |  3 +++
+ path-utils.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ str-utils.c  | 12 ++++++++++++
+ 3 files changed, 60 insertions(+)
+
+diff --git a/misc-utils.h b/misc-utils.h
+index eb482bb6c..556625b2a 100644
+--- a/misc-utils.h
++++ b/misc-utils.h
+@@ -82,6 +82,7 @@ char* str_rstrip(char *input);
+ char* str_strip(char *input);
+ bool str_startswith(const char *str, const char *pattern);
+ bool str_endswith(const char *str, const char *pattern);
++char* str_remove(char *str, const char *str_sub);
+ 
+ /*
+  * Device IO utility functions.
+@@ -104,6 +105,8 @@ bool path_exists(const char *path);
+ bool path_isfile(const char *path);
+ bool path_isdir(const char *path);
+ bool path_islink(const char *path);
++int path_realpath(const char *path, char *path_real);
++int path_debugfs_hwmon(const char *path, char *hwmon_num);
+ 
+ /*
+  * Platform utility functions.
+diff --git a/path-utils.c b/path-utils.c
+index 1dbb385b9..5dc7f962b 100644
+--- a/path-utils.c
++++ b/path-utils.c
+@@ -23,8 +23,10 @@
+ #include <stdarg.h>
+ #include <errno.h>
+ #include <string.h>
++#include <dirent.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <linux/limits.h>
+ 
+ #include "misc-utils.h"
+ 
+@@ -180,3 +182,46 @@ bool path_islink(const char *path)
+ 
+ 	return S_ISLNK(sbuf.st_mode);
+ }
++
++int path_realpath(const char *path, char *path_real) {
++	DIR *dir;
++	struct dirent *entry;
++
++	if (strstr(path, "hwmon") == NULL) {
++		snprintf(path_real, PATH_MAX, "%s", path);
++		return 0;
++	}
++
++	if (!(dir = opendir(path)))
++		return -1;
++
++	while ((entry = readdir(dir)) != NULL) {
++		if (entry->d_type == DT_DIR && strstr(entry->d_name, "hwmon") != NULL) {
++			snprintf(path_real, PATH_MAX, "%s/%s", path, entry->d_name);
++			break;
++		}
++	}
++
++	closedir(dir);
++
++	if (entry == NULL)
++		return -1;
++
++	return 0;
++}
++
++int path_debugfs_hwmon(const char *path, char *hwmon_num) {
++	char real_path[PATH_MAX] = {0};
++	char *split_entries[16];
++	int size;
++
++	if (path_realpath(path, real_path))
++		return -1;
++
++	size = ARRAY_SIZE(split_entries);
++	path_split(real_path, split_entries, &size);
++
++	hwmon_num = str_remove(split_entries[7], "hwmon");
++
++	return 0;
++}
+diff --git a/str-utils.c b/str-utils.c
+index 58940197e..17588d4a5 100644
+--- a/str-utils.c
++++ b/str-utils.c
+@@ -108,3 +108,15 @@ bool str_endswith(const char *str, const char *pattern)
+ 
+ 	return strcmp(&str[slen - plen], pattern) == 0;
+ }
++
++char* str_remove(char *str, const char *str_sub) {
++	size_t len = strlen(str_sub);
++	char *p = str;
++
++	if (len > 0) {
++		while ((p = strstr(p, str_sub)) != NULL)
++			memmove(p, p + len, strlen(p + len) + 1);
++	}
++
++	return str;
++}
+-- 
+2.25.1
+

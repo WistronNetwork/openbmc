@@ -1,0 +1,24 @@
+From 3ae30eba906be4d0ffb066880b9a3776727bbe05 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 8 Dec 2022 17:05:58 +0800
+Subject: [PATCH] sel crashes after executing clearSEL command
+
+---
+ storagehandler.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/storagehandler.cpp b/storagehandler.cpp
+index 5b12c2e..cef38e8 100644
+--- a/storagehandler.cpp
++++ b/storagehandler.cpp
+@@ -522,6 +522,7 @@ ipmi::RspType<uint8_t // erase status
+                             ipmi::sel::logIntf, ipmi::sel::logDeleteAllMethod);
+     try
+     {
++        selCacheMap.clear();
+         bus.call_noreply(method);
+     }
+     catch (const sdbusplus::exception_t& e)
+-- 
+2.25.1
+

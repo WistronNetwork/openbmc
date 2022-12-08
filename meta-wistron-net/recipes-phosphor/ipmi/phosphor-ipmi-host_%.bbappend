@@ -7,6 +7,7 @@ SRC_URI:append = " \
     file://0002-Setup-sensor-id-type-to-8-bit-ASCII.patch \
     file://0003-comment-out-initSELCache-in-register-function.patch \
     file://0004-Add-sensorReadingType-in-GetSensorType-command.patch \
+    file://0005-sel-crashes-after-executing-clearSEL-command.patch \
     file://phosphor-ipmi-host.service \
     file://transporthandler_oem.cpp \
     "

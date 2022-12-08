@@ -33,7 +33,6 @@ RDEPENDS:${PN}-fans = ""
 SUMMARY:${PN}-flash = "Wistron Network Flash"
 RDEPENDS:${PN}-flash = " \
         phosphor-software-manager \
-        obmc-control-bmc \
         "
 
 SUMMARY:${PN}-system = "Wistron Network System"

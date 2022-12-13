@@ -6,4 +6,4 @@ SRC_URI:append = " \
     file://0001-sel_logger-Use-d-bus-message-and-rsyslog-for-sel.patch \
     "
 
-PACKAGECONFIG:append = " log-threshold log-pulse send-to-logger log-alarm clears-sel"
+PACKAGECONFIG:append = " log-threshold log-pulse send-to-logger log-alarm"

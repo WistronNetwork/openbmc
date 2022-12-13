@@ -8,7 +8,7 @@ PV = "0.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c libgpio-ctrl"
+DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c libgpio-ctrl libpsu"
 DEPENDS += "${PYTHON_PN}-pyyaml-native ${PYTHON_PN}-mako-native"
 
 inherit meson pkgconfig obmc-phosphor-ipmiprovider-symlink phosphor-ipmi-host
@@ -19,7 +19,7 @@ PACKAGECONFIG[platform-oem] = "-Dplatform-oem=enabled,-Dplatform-oem=disabled"
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "42ea5bb6cf1379eb187473c4ce7703ab6a6472c4"
+SRCREV = "77ca21f7fb4baa5bcfa17a7c0330b11d0bf1421d"
 
 sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 
@@ -48,7 +48,19 @@ do_configure:prepend() {
         cp -rfv ${platform_file} ${S}/include/oem_platform.hpp
     fi
 
-    platform_oem_file="${S}/platform/src/${MACHINE}_oemcommands.cpp"
+    platform_psu_h_file="${S}/platform/include/psu/${MACHINE}_psu-info.hpp"
+
+    if [ -f "$platform_psu_h_file" ]; then
+        cp -rfv ${platform_psu_h_file} ${S}/include/psu-info.hpp
+    fi
+
+    platform_psu_c_file="${S}/platform/src/psu/${MACHINE}_psu-info.cpp"
+
+    if [ -f "$platform_psu_c_file" ]; then
+        cp -rfv ${platform_psu_c_file} ${S}/src/psu-info.cpp
+    fi
+
+    platform_oem_file="${S}/platform/src/oemcommands/${MACHINE}_oemcommands.cpp"
 
     if [ -f "$platform_oem_file" ] &&
        [[ "${PACKAGECONFIG}" == *platform-oem* ]]; then

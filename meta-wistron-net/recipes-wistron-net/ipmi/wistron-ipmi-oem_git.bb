@@ -19,7 +19,7 @@ PACKAGECONFIG[platform-oem] = "-Dplatform-oem=enabled,-Dplatform-oem=disabled"
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "a3523ce10da9baf2c5db38f6155b866c05a3562f"
+SRCREV = "848583b9f80ac4b7bccb3e71a47f44a76d30b5d2"
 
 sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 
@@ -70,6 +70,12 @@ do_configure:prepend() {
 
     if [ -f "$platform_fan_c_file" ]; then
         cp -rfv ${platform_fan_c_file} ${S}/src/fan-info.cpp
+    fi
+
+    platform_firmware_c_file="${S}/platform/src/firmware/${MACHINE}_firmware-info.cpp"
+
+    if [ -f "$platform_firmware_c_file" ]; then
+        cp -rfv ${platform_firmware_c_file} ${S}/src/firmware-info.cpp
     fi
 
     platform_oem_file="${S}/platform/src/oemcommands/${MACHINE}_oemcommands.cpp"

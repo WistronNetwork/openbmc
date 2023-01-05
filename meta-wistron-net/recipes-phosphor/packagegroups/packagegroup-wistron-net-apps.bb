@@ -28,7 +28,9 @@ RDEPENDS:${PN}-chassis = " \
        "
 
 SUMMARY:${PN}-fans = "Wistron Network Fans"
-RDEPENDS:${PN}-fans = ""
+RDEPENDS:${PN}-fans = " \
+        phosphor-pid-control \
+        "
 
 SUMMARY:${PN}-flash = "Wistron Network Flash"
 RDEPENDS:${PN}-flash = " \

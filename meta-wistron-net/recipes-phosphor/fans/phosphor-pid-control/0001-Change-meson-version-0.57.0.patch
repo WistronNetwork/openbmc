@@ -1,0 +1,26 @@
+From fac90a08ca59a6a563a05283d58c422d7c285e54 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 26 Dec 2022 15:48:05 +0800
+Subject: [PATCH] Change meson version >=0.57.0
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 8debf27..0cfffb4 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,7 +1,7 @@
+ project(
+     'phosphor-pid-control', 'cpp',
+     version : '1.0.0',
+-    meson_version: '>=0.63.0',
++    meson_version: '>=0.57.0',
+     default_options: [
+         'warning_level=3',
+         'werror=true',
+-- 
+2.25.1
+

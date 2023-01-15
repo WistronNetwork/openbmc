@@ -48,6 +48,7 @@ RDEPENDS:${PN}-system = " \
         phosphor-ipmi-ipmb \
         phosphor-post-code-manager \
         phosphor-host-postd \
+        sensor-monitor \
         tzdata-core \
         wistron-ipmi-oem \
         "

@@ -40,7 +40,7 @@ get_fan_speed() {
             rpm=$(head -n1 $rpm_reg 2> /dev/null)
             pwm_reg="$FANCPLD_SYSFS_DIR"/pwm"$i"
             pwm=$(head -n1 $pwm_reg 2> /dev/null)
-            printf "Fan %s RPM: %s, PWM: %s %%\n" "$i" "$rpm" "$((pwm+1))"
+            printf "Fan %s RPM: %s, PWM: %s %%\n" "$i" "$rpm" "$((pwm))"
         done
 
         return 0
@@ -73,9 +73,9 @@ set_fan_speed() {
             unit_end=$2
         fi
 
-        step=$(($1 - 1))
+        step=$(($1))
         if [ $step -le 0 ]; then
-            step=0
+            step=1
         fi
 
         for ((i=unit_start; i<=unit_end; i++)); do

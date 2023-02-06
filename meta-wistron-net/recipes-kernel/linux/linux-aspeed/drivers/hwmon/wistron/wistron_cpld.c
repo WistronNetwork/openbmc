@@ -17,15 +17,18 @@ ATTRIBUTE_GROUPS(system_cpld2);
 ATTRIBUTE_GROUPS(fan_cpld);
 ATTRIBUTE_GROUPS(fpga);
 
-struct cpld_gpio_info *cpldinfo;
-
 static int cpld_gpio_get(struct gpio_chip *gc, unsigned int offset)
 {
-  struct i2c_client *client  = gpiochip_get_data(gc);
+  cpld_data *data = gpiochip_get_data(gc);
   int ret;
 
-  ret = (i2c_smbus_read_byte_data(client, cpldinfo[offset].reg) &
-         BIT(cpldinfo[offset].shift)) >> cpldinfo[offset].shift;
+  ret = (i2c_smbus_read_byte_data(data->client, data->gpio_info[offset].reg) &
+         BIT(data->gpio_info[offset].shift)) >> data->gpio_info[offset].shift;
+
+  dev_dbg(&data->client->dev,
+          "GPIO Offset: %d Register: %d Direction: %d Shift: %d\n",
+          offset, data->gpio_info[offset].reg, data->gpio_info[offset].direction,
+          data->gpio_info[offset].shift);
 
   return ret;
 }
@@ -33,18 +36,19 @@ static int cpld_gpio_get(struct gpio_chip *gc, unsigned int offset)
 static void cpld_gpio_set(struct gpio_chip *gc, unsigned int offset,
            int value)
 {
-  struct i2c_client *client = gpiochip_get_data(gc);
+  cpld_data *data = gpiochip_get_data(gc);
   int ret;
 
-  ret = i2c_smbus_read_byte_data(client, cpldinfo[offset].reg);
+  ret = i2c_smbus_read_byte_data(data->client, data->gpio_info[offset].reg);
 
-  ret = value ? BIT(cpldinfo[offset].shift) | ret
-              : ~(BIT(cpldinfo[offset].shift)) & ret;
+  ret = value ? BIT(data->gpio_info[offset].shift) | ret
+              : ~(BIT(data->gpio_info[offset].shift)) & ret;
 
   /* Page set not required */
-  ret = i2c_smbus_write_byte_data(client, cpldinfo[offset].reg, ret);
+  ret = i2c_smbus_write_byte_data(data->client,
+                                  data->gpio_info[offset].reg, ret);
   if (ret < 0) {
-    dev_dbg(&client->dev, "Failed to write GPIO %d config: %d\n",
+    dev_dbg(&data->client->dev, "Failed to write GPIO %d config: %d\n",
       offset, ret);
     return;
   }
@@ -73,39 +77,40 @@ static int cpld_gpio_direction_output(struct gpio_chip *gc,
 static int cpld_gpio_get_direction(struct gpio_chip *gc,
               unsigned int offset)
 {
-  return cpldinfo[offset].direction;
+  cpld_data *data = gpiochip_get_data(gc);
+
+  return data->gpio_info[offset].direction;
 }
 
-static void cpld_probe_gpio(struct i2c_client *client,
-             const int type,
-             cpld_data *data)
+static void cpld_probe_gpio(cpld_data *data)
 {
+  const char *name = dev_name(&data->client->dev);
   int rc;
 
-  switch (type) {
+  switch (data->cpld_type) {
     case cpu_cpld:
       data->gpio.ngpio = MAX_CPU_CPLD_GPIO;
-      cpldinfo = cpu_cpld_gpios;
+      data->gpio_info = cpu_cpld_gpios;
       break;
     case system_cpld0:
       data->gpio.ngpio = MAX_SYS_CPLD0_GPIO;
-      cpldinfo = system_cpld0_gpios;
+      data->gpio_info = system_cpld0_gpios;
       break;
     case system_cpld1:
       data->gpio.ngpio = MAX_SYS_CPLD1_GPIO;
-      cpldinfo = system_cpld1_gpios;
+      data->gpio_info = system_cpld1_gpios;
       break;
     case system_cpld2:
       data->gpio.ngpio = MAX_SYS_CPLD2_GPIO;
-      cpldinfo = system_cpld2_gpios;
+      data->gpio_info = system_cpld2_gpios;
       break;
     case fan_cpld:
       data->gpio.ngpio = MAX_FAN_CPLD_GPIO;
-      cpldinfo = fan_cpld_gpios;
+      data->gpio_info = fan_cpld_gpios;
       break;
     case fpga:
       data->gpio.ngpio = MAX_FPGA_GPIO;
-      cpldinfo = fpga_gpios;
+      data->gpio_info = fpga_gpios;
       break;
     default:
       return; /* GPIO support is optional. */
@@ -119,7 +124,7 @@ static void cpld_probe_gpio(struct i2c_client *client,
    * This support should be added when possible given the mux
    * behavior of these IO devices.
    */
-  data->gpio.label = client->name;
+  data->gpio.label = name;
   data->gpio.get_direction = cpld_gpio_get_direction;
   data->gpio.direction_input = cpld_gpio_direction_input;
   data->gpio.direction_output = cpld_gpio_direction_output;
@@ -127,11 +132,11 @@ static void cpld_probe_gpio(struct i2c_client *client,
   data->gpio.set = cpld_gpio_set;
   data->gpio.can_sleep = true;
   data->gpio.base = -1;
-  data->gpio.parent = &client->dev;
+  data->gpio.parent = &data->client->dev;
 
-  rc = devm_gpiochip_add_data(&client->dev, &data->gpio, client);
+  rc = devm_gpiochip_add_data(&data->client->dev, &data->gpio, data);
   if (rc)
-    dev_warn(&client->dev, "Could not add gpiochip: %d\n", rc);
+    dev_warn(&data->client->dev, "Could not add gpiochip: %d\n", rc);
 }
 
 static int wistron_cpld_probe(struct i2c_client *client,
@@ -189,7 +194,7 @@ static int wistron_cpld_probe(struct i2c_client *client,
     goto error_exit;
   }
 
-  cpld_probe_gpio(client, data->cpld_type, data);
+  cpld_probe_gpio(data);
 
   dev_info(dev, "Device '%s'\n", client->name);
   return 0;

@@ -23,11 +23,19 @@
 #include <linux/gpio/driver.h>
 #include <linux/gpio.h>
 
+struct cpld_gpio_info
+{
+  int reg;
+  int shift;
+  int direction;
+};
+
 typedef struct cpld_data_ {
   struct device *hwmon_dev;
   struct i2c_client *client;
   struct mutex update_lock;
   struct gpio_chip gpio;
+  struct cpld_gpio_info *gpio_info;
   int cpld_type;
 } cpld_data;
 
@@ -36,13 +44,6 @@ struct cpld_device_attribute {
   int reg;
   int bit_offset;
   int n_bits;    /* number of bits */
-};
-
-struct cpld_gpio_info
-{
-  int reg;
-  int shift;
-  int direction;
 };
 
 #define to_cpld_dev_attr(_dev_attr) \

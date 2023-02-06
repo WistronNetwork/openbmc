@@ -43,6 +43,8 @@ RDEPENDS:${PN}-system = " \
         webui-vue \
         entity-manager \
         dbus-sensors \
+        phosphor-gpio-monitor \
+        phosphor-gpio-monitor-monitor \
         phosphor-sel-logger \
         phosphor-ipmi-kcs \
         phosphor-ipmi-ipmb \

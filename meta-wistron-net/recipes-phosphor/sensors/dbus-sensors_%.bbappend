@@ -8,4 +8,5 @@ SRC_URI:append = " \
     file://0003-PSUSensor-Add-device-type-xdpe132g5c-and-xdpe132g5d.patch \
     file://0004-add-device-type-tmp432-and-isl68239.patch \
     file://0005-PSUSensor-Add-device-type-pmbus_psu.patch \
+    file://0006-add-gpio-type-to-handle-cpu-power-status.patch \
     "

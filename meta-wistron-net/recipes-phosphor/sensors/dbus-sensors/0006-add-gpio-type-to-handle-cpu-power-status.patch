@@ -1,0 +1,194 @@
+From 3ce6d83206ed748a4eb25700e1f9945284ca7b33 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Wed, 15 Feb 2023 18:03:33 +0800
+Subject: [PATCH] add-gpio-type-to-handle-cpu-power-status
+
+---
+ include/IpmbSensor.hpp |  9 ++++++--
+ include/sensor.hpp     |  1 +
+ src/IpmbSensor.cpp     | 49 ++++++++++++++++++++++++++++++++++++------
+ 3 files changed, 50 insertions(+), 9 deletions(-)
+
+diff --git a/include/IpmbSensor.hpp b/include/IpmbSensor.hpp
+index b006652..a8a8c46 100644
+--- a/include/IpmbSensor.hpp
++++ b/include/IpmbSensor.hpp
+@@ -17,7 +17,8 @@ enum class IpmbType
+     PXE1410CVR,
+     IR38363VR,
+     ADM1278HSC,
+-    mpsVR
++    mpsVR,
++    gpio
+ };
+ 
+ enum class IpmbSubType
+@@ -36,7 +37,8 @@ enum class ReadingFormat
+     byte3,
+     elevenBit,
+     elevenBitShift,
+-    linearElevenBit
++    linearElevenBit,
++    gpio
+ };
+ 
+ namespace ipmi
+@@ -46,6 +48,9 @@ namespace sensor
+ constexpr uint8_t netFn = 0x04;
+ constexpr uint8_t getSensorReading = 0x2d;
+ 
++constexpr uint8_t gpionetFn = 0x38;
++constexpr uint8_t getGpioReading = 0x03;
++
+ static bool isValid(const std::vector<uint8_t>& data)
+ {
+     constexpr auto readingUnavailableBit = 5;
+diff --git a/include/sensor.hpp b/include/sensor.hpp
+index 404b261..b92bf29 100644
+--- a/include/sensor.hpp
++++ b/include/sensor.hpp
+@@ -73,6 +73,7 @@ struct Sensor
+     double minValue;
+     std::vector<thresholds::Threshold> thresholds;
+     std::shared_ptr<sdbusplus::asio::dbus_interface> sensorInterface;
++    std::shared_ptr<sdbusplus::asio::dbus_interface> powerInterface;
+     std::shared_ptr<sdbusplus::asio::dbus_interface> association;
+     std::shared_ptr<sdbusplus::asio::dbus_interface> availableInterface;
+     std::shared_ptr<sdbusplus::asio::dbus_interface> operationalInterface;
+diff --git a/src/IpmbSensor.cpp b/src/IpmbSensor.cpp
+index a8cd25a..a7120ee 100644
+--- a/src/IpmbSensor.cpp
++++ b/src/IpmbSensor.cpp
+@@ -43,6 +43,7 @@ static constexpr double ipmbMaxReading = 0xFF;
+ static constexpr double ipmbMinReading = 0;
+ 
+ static constexpr uint8_t meAddress = 1;
++static constexpr uint8_t ipmbAddress = 0;
+ static constexpr uint8_t lun = 0;
+ static constexpr uint8_t hostSMbusIndexDefault = 0x03;
+ static constexpr float pollRateDefault = 1; // in seconds
+@@ -72,7 +73,12 @@ IpmbSensor::IpmbSensor(std::shared_ptr<sdbusplus::asio::connection>& conn,
+     waitTimer(io)
+ {
+     std::string dbusPath = sensorPathPrefix + sensorTypeName + "/" + name;
+-
++    if (sensorTypeName == "gpio") {
++        powerInterface = objectServer.add_interface(dbusPath,
++                         "xyz.openbmc_project.Chassis.Control.Power");
++        powerInterface->register_property("PGood", true);
++        powerInterface->initialize();
++    }
+     sensorInterface = objectServer.add_interface(
+         dbusPath, "xyz.openbmc_project.Sensor.Value");
+ 
+@@ -83,6 +89,7 @@ IpmbSensor::IpmbSensor(std::shared_ptr<sdbusplus::asio::connection>& conn,
+             objectServer.add_interface(dbusPath, interface);
+     }
+     association = objectServer.add_interface(dbusPath, association::interface);
++
+ }
+ 
+ IpmbSensor::~IpmbSensor()
+@@ -94,6 +101,7 @@ IpmbSensor::~IpmbSensor()
+     }
+     objectServer.remove_interface(sensorInterface);
+     objectServer.remove_interface(association);
++    objectServer.remove_interface(powerInterface);
+ }
+ 
+ std::string IpmbSensor::getSubTypeUnits(void)
+@@ -233,6 +241,16 @@ void IpmbSensor::loadDefaults()
+                     0x02,          0x00, 0x00, 0x00};
+         readingFormat = ReadingFormat::byte3;
+     }
++    else if (type == IpmbType::gpio)
++    {
++        /* refer to EC spec: Get all GPIO status
++           netFn: 0x38, Lun: 0, cmd: 0x3 */
++        commandAddress = ipmbAddress;
++        netfn = ipmi::sensor::gpionetFn;
++        command = ipmi::sensor::getGpioReading;
++        commandData = {0x99, 0x2b, 0x00};
++        readingFormat = ReadingFormat::gpio;
++    }
+     else
+     {
+         throw std::runtime_error("Invalid sensor type");
+@@ -330,6 +348,25 @@ bool IpmbSensor::processReading(const std::vector<uint8_t>& data, double& resp)
+             resp = value;
+             return true;
+         }
++        case (ReadingFormat::gpio):
++        {
++            if (data.size() < 7)
++            {
++                if (!errCount)
++                {
++                    std::cerr << "Invalid data length returned for " << name
++                              << "\n";
++                }
++                return false;
++            }
++            /* Byte 0:2 – Wistron Corporation ID – 002B99h
++               Byte 3:6 – Get all GPIO status 
++               We need to read PF_IS_HI_EC_COREPWROK which is at byte[6] bit 5 */
++            uint8_t value = ((data[6] >> 5) & 0x1);
++            powerInterface->set_property("PGood", value ? true : false);
++            resp = value;
++            return true;
++        }
+         default:
+             throw std::runtime_error("Invalid reading type");
+     }
+@@ -375,16 +412,13 @@ void IpmbSensor::read(void)
+                 read();
+                 return;
+             }
+-
+             double value = 0;
+-
+             if (!processReading(data, value))
+             {
+                 incrementError();
+                 read();
+                 return;
+             }
+-
+             // rawValue only used in debug logging
+             // up to 5th byte in data are used to derive value
+             size_t end = std::min(sizeof(uint64_t), data.size());
+@@ -428,6 +462,10 @@ bool IpmbSensor::sensorClassType(const std::string& sensorClass)
+     {
+         type = IpmbType::meSensor;
+     }
++    else if (sensorClass == "gpio")
++    {
++        type = IpmbType::gpio;
++    }
+     else
+     {
+         std::cerr << "Invalid class " << sensorClass << "\n";
+@@ -475,12 +513,10 @@ void IpmbSensor::parseConfigValues(const SensorBaseConfigMap& entry)
+     }
+ 
+     auto findPowerState = entry.find("PowerState");
+-
+     if (findPowerState != entry.end())
+     {
+         std::string powerState =
+             std::visit(VariantToStringVisitor(), findPowerState->second);
+-
+         setReadState(powerState, readState);
+     }
+ }
+@@ -555,7 +591,6 @@ void createSensors(
+                     sensorTypeName =
+                         std::visit(VariantToStringVisitor(), findType->second);
+                 }
+-
+                 auto& sensor = sensors[name];
+                 sensor = std::make_unique<IpmbSensor>(
+                     dbusConnection, io, name, pathPair.first, objectServer,
+-- 
+2.25.1
+

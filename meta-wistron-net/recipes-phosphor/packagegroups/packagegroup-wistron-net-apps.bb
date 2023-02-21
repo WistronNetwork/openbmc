@@ -40,9 +40,9 @@ RDEPENDS:${PN}-flash = " \
 SUMMARY:${PN}-system = "Wistron Network System"
 RDEPENDS:${PN}-system = " \
         bmcweb \
-        webui-vue \
-        entity-manager \
         dbus-sensors \
+        entity-manager \
+        fan-hotswap \
         phosphor-gpio-monitor \
         phosphor-gpio-monitor-monitor \
         phosphor-sel-logger \
@@ -52,5 +52,6 @@ RDEPENDS:${PN}-system = " \
         phosphor-host-postd \
         sensor-monitor \
         tzdata-core \
+        webui-vue \
         wistron-ipmi-oem \
         "

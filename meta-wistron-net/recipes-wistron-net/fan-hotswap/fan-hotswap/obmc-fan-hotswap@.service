@@ -1,0 +1,6 @@
+[Unit]
+Description=FAN tray hotswap operation
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/phosphor-gpio-monitor/fan-hotswap %i

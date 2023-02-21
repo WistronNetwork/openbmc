@@ -10,7 +10,6 @@ FAN_PACKAGES += " \
         ${PN}-sensor-monitor \
 "
 
-PACKAGECONFIG ?= "presence control monitor sensor-monitor"
 # The control, monitor, and presence apps can either be JSON or YAML driven.
 PACKAGECONFIG[json] = "-Djson-config=enabled, -Djson-config=disabled"
 # --------------------------------------

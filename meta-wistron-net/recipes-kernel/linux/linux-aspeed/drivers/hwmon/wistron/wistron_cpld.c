@@ -26,9 +26,9 @@ static int cpld_gpio_get(struct gpio_chip *gc, unsigned int offset)
          BIT(data->gpio_info[offset].shift)) >> data->gpio_info[offset].shift;
 
   dev_dbg(&data->client->dev,
-          "GPIO Offset: %d Register: %d Direction: %d Shift: %d\n",
+          "GPIO Offset: %d Register: %d Direction: %d Shift: %d, value: %d\n",
           offset, data->gpio_info[offset].reg, data->gpio_info[offset].direction,
-          data->gpio_info[offset].shift);
+          data->gpio_info[offset].shift, ret);
 
   return ret;
 }

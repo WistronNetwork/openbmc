@@ -1,7 +1,5 @@
 [Unit]
 Description=Phosphor GPIO %i monitor
-Wants=phosphor-pid-control.service
-Before=phosphor-pid-control.service
 ConditionPathExists=/etc/default/obmc/gpio/%i.conf
 
 [Service]

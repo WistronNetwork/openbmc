@@ -1,0 +1,25 @@
+From 2f724cba53115471e0efd9b14807c2c2c9324a25 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Wed, 15 Feb 2023 15:08:59 +0800
+Subject: [PATCH] modify power control restart time
+
+---
+ .../xyz.openbmc_project.Chassis.Control.Power@.service          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/service_files/xyz.openbmc_project.Chassis.Control.Power@.service b/service_files/xyz.openbmc_project.Chassis.Control.Power@.service
+index 4d676c2..5e06f3d 100644
+--- a/service_files/xyz.openbmc_project.Chassis.Control.Power@.service
++++ b/service_files/xyz.openbmc_project.Chassis.Control.Power@.service
+@@ -4,7 +4,7 @@ ConditionPathExists=/usr/share/x86-power-control/power-config-host%i.json
+ 
+ [Service]
+ Restart=always
+-RestartSec=3
++RestartSec=10
+ ExecStart=/usr/bin/power-control %i
+ Type=dbus
+ BusName=xyz.openbmc_project.State.Host%i
+-- 
+2.25.1
+

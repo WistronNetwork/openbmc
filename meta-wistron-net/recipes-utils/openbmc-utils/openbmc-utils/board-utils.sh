@@ -96,10 +96,10 @@ get_i2c_mux_master() {
         return 2
     fi
 
-    gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s FM_MB_I2C_MUX_SEL export 2> /dev/null
+    gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s "$I2C_MUX" export 2> /dev/null
     ret=$?
-    mux=$(gpiocli -s FM_MB_I2C_MUX_SEL get-value | cut -d "=" -f 2 2> /dev/null)
-    gpiocli -s FM_MB_I2C_MUX_SEL unexport 2> /dev/null
+    mux=$(gpiocli -s "$I2C_MUX" get-value | cut -d "=" -f 2 2> /dev/null)
+    gpiocli -s "$I2C_MUX" unexport 2> /dev/null
 
     if [ -z "$mux" ]; then
         printf "Unknown\n"
@@ -176,17 +176,14 @@ get_mux_master() {
 }
 
 set_i2c_mux_master() {
-    if [ -z "$I2C_MUX" ]; then
+    if [ -z "$I2C_MUX" ] || [ -z "$SENSOR_SERVICE" ]; then
         printf "Not supported\n"
         return 2
     fi
 
-    sensor_service=("xyz.openbmc_project.fansensor.service"
-                    "xyz.openbmc_project.hwmontempsensor.service"
-                    "xyz.openbmc_project.psusensor.service")
     gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s FM_MB_I2C_MUX_SEL export 2> /dev/null
     if [ "$1" = "cpu" ]; then
-        for service in "${sensor_service[@]}";
+        for service in "${SENSOR_SERVICE[@]}";
         do
             systemctl stop "$service"
         done
@@ -197,7 +194,7 @@ set_i2c_mux_master() {
         gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_BMC" 2> /dev/null
         ret=$?
         sleep 0.5
-        for service in "${sensor_service[@]}";
+        for service in "${SENSOR_SERVICE[@]}";
         do
             systemctl start "$service"
         done

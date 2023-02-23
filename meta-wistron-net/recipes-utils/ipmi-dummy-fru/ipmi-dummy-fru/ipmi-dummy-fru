@@ -23,6 +23,8 @@ Addr=$(printf %x $((FRU_ADDR)))
 fru_eeprom_path="/sys/bus/i2c/devices/$FRU_BUS-00$Addr/eeprom"
 fru_file="/tmp/fru_$FRU_INTF.bin"
 
+[ ! -f "$fru_eeprom_path" ] && exit 255
+
 if [ "$FRU_INTF" = "bmc" ]; then
     dd if="$fru_eeprom_path" of="$fru_file" skip=32 bs=1 count=128
     fru_parse_file=$fru_file

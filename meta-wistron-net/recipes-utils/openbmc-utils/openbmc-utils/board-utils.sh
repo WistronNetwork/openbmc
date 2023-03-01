@@ -96,10 +96,15 @@ get_i2c_mux_master() {
         return 2
     fi
 
-    gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s "$I2C_MUX" export 2> /dev/null
-    ret=$?
-    mux=$(gpiocli -s "$I2C_MUX" get-value | cut -d "=" -f 2 2> /dev/null)
-    gpiocli -s "$I2C_MUX" unexport 2> /dev/null
+    if [ -f "$I2C_MUX_SEL_PATH" ]; then
+        mux=$(head -n 1 $I2C_MUX_SEL_PATH 2> /dev/null)
+        ret=$?
+    else
+        gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s "$I2C_MUX" export 2> /dev/null
+        ret=$?
+        mux=$(gpiocli -s "$I2C_MUX" get-value | cut -d "=" -f 2 2> /dev/null)
+        gpiocli -s "$I2C_MUX" unexport 2> /dev/null
+    fi
 
     if [ -z "$mux" ]; then
         printf "Unknown\n"
@@ -181,17 +186,30 @@ set_i2c_mux_master() {
         return 2
     fi
 
-    gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s FM_MB_I2C_MUX_SEL export 2> /dev/null
+
+
+    if [ ! -f "$I2C_MUX_SEL_PATH" ]; then
+        gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s FM_MB_I2C_MUX_SEL export 2> /dev/null
+    fi
+
     if [ "$1" = "cpu" ]; then
         for service in "${SENSOR_SERVICE[@]}";
         do
             systemctl stop "$service"
         done
         sleep 0.5
-        gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_CPU" 2> /dev/null
+        if [ -f "$I2C_MUX_SEL_PATH" ]; then
+            echo "$I2C_MUX_CPU" > "$I2C_MUX_SEL_PATH"
+        else
+            gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_CPU" 2> /dev/null
+        fi
         ret=$?
     elif [ "$1" = "bmc" ]; then
-        gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_BMC" 2> /dev/null
+        if [ -f "$I2C_MUX_SEL_PATH" ]; then
+            echo "$I2C_MUX_BMC" > "$I2C_MUX_SEL_PATH"
+        else
+            gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_BMC" 2> /dev/null
+        fi
         ret=$?
         sleep 0.5
         for service in "${SENSOR_SERVICE[@]}";
@@ -201,7 +219,10 @@ set_i2c_mux_master() {
     else
         return 1
     fi
-    gpiocli -s FM_MB_I2C_MUX_SEL unexport 2> /dev/null
+
+    if [ ! -f "$I2C_MUX_SEL_PATH" ]; then
+        gpiocli -s FM_MB_I2C_MUX_SEL unexport 2> /dev/null
+    fi
 
     return $ret
 }

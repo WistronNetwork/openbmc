@@ -193,11 +193,9 @@ set_i2c_mux_master() {
     fi
 
     if [ "$1" = "cpu" ]; then
-        for service in "${SENSOR_SERVICE[@]}";
-        do
-            systemctl stop "$service"
-        done
+        systemctl stop "${SENSOR_SERVICE[@]}"
         sleep 0.5
+
         if [ -f "$I2C_MUX_SEL_PATH" ]; then
             echo "$I2C_MUX_CPU" > "$I2C_MUX_SEL_PATH"
         else
@@ -211,11 +209,9 @@ set_i2c_mux_master() {
             gpiocli -s FM_MB_I2C_MUX_SEL set-init-value "$I2C_MUX_BMC" 2> /dev/null
         fi
         ret=$?
+
         sleep 0.5
-        for service in "${SENSOR_SERVICE[@]}";
-        do
-            systemctl start "$service"
-        done
+        systemctl start "${SENSOR_SERVICE[@]}" &
     else
         return 1
     fi

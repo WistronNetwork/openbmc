@@ -203,15 +203,6 @@ error_exit:
   return err;
 }
 
-static int wistron_cpld_remove(struct i2c_client *client)
-{
-  cpld_data *data = i2c_get_clientdata(client);
-
-  hwmon_device_unregister(data->hwmon_dev);
-
-  return 0;
-}
-
 static const struct i2c_device_id wistron_cpld_id[] = {
   { "cpu_cpld", cpu_cpld },
   { "system_cpld0", system_cpld0 },
@@ -241,7 +232,6 @@ static struct i2c_driver wistron_cpld_driver = {
     .of_match_table = wistron_cpld_of_match,
   },
   .probe          = wistron_cpld_probe,
-  .remove         = wistron_cpld_remove,
   .id_table       = wistron_cpld_id,
 };
 module_i2c_driver(wistron_cpld_driver);

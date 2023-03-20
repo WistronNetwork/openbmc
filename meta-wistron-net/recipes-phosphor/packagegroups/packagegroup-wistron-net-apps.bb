@@ -40,6 +40,7 @@ RDEPENDS:${PN}-flash = " \
 SUMMARY:${PN}-system = "Wistron Network System"
 RDEPENDS:${PN}-system = " \
         bmcweb \
+        boot-ready \
         dbus-sensors \
         entity-manager \
         fan-hotswap \

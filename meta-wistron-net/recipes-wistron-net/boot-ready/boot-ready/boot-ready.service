@@ -1,0 +1,12 @@
+[Unit]
+Description=BMC Boot Up Ready
+After=serial-getty@ttyS4.service
+
+[Service]
+ExecStart=/usr/local/bin/boot-ready
+SyslogIdentifier=boot-ready
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=getty.target

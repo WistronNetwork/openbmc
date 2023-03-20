@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+source /usr/local/bin/openbmc-utils.sh
+
+# Disable dual boot watchdog
+disable_watchdog.sh
+
+if declare -F platform_boot_ready &> /dev/null; then
+    platform_boot_ready
+fi

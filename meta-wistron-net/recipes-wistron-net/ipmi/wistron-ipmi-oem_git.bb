@@ -14,12 +14,12 @@ DEPENDS += "${PYTHON_PN}-pyyaml-native ${PYTHON_PN}-mako-native"
 inherit meson pkgconfig obmc-phosphor-ipmiprovider-symlink phosphor-ipmi-host
 
 PACKAGECONFIG ??= ""
-PACKAGECONFIG[platform-oem] = "-Dplatform-oem=enabled,-Dplatform-oem=disabled"
+PACKAGECONFIG[oem-platform] = "-Doem-platform=enabled,-Doem-platform=disabled"
 
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "32187ea8da4514554b223e875452dd3f1dd77429"
+SRCREV = "3a48484c6e850cc44faadc5a170102fa3f1b4728"
 
 sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 
@@ -42,10 +42,17 @@ do_configure:prepend() {
         cp -rfv ${fru_file} ${S}/include/fru.hpp
     fi
 
-    platform_file="${S}/platform/include/oemcommands/${MACHINE}_platform.hpp"
+    oem_platform_h_file="${S}/platform/include/oem_lib/${MACHINE}_platform.hpp"
 
-    if [ -f "$platform_file" ]; then
-        cp -rfv ${platform_file} ${S}/include/oem_platform.hpp
+    if [ -f "$oem_platform_h_file" ]; then
+        cp -rfv ${oem_platform_h_file} ${S}/include/oem_platform.hpp
+    fi
+
+    oem_platform_c_file="${S}/platform/src/oem_lib/${MACHINE}_platform.cpp"
+
+    if [ -f "$oem_platform_c_file" ] &&
+       [[ "${PACKAGECONFIG}" == *oem-platform* ]]; then
+        cp -rfv ${oem_platform_c_file} ${S}/src/oem_platform.cpp
     fi
 
     platform_psu_h_file="${S}/platform/include/psu/${MACHINE}_psu-info.hpp"
@@ -88,13 +95,6 @@ do_configure:prepend() {
 
     if [ -f "$platform_led_c_file" ]; then
         cp -rfv ${platform_led_c_file} ${S}/src/led-info.cpp
-    fi
-
-    platform_oem_file="${S}/platform/src/oemcommands/${MACHINE}_oemcommands.cpp"
-
-    if [ -f "$platform_oem_file" ] &&
-       [[ "${PACKAGECONFIG}" == *platform-oem* ]]; then
-        cp -rfv ${platform_oem_file} ${S}/src/platform_oemcommands.cpp
     fi
 
     default_sensor_yaml_file="${S}/scripts/ipmi-sensors.yaml"

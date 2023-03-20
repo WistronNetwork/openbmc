@@ -29,6 +29,7 @@ OPENBMC_UTILS_FILES = " \
     boot_info.sh \
     board-utils.sh \
     mux-util \
+    disable_watchdog.sh \
     "
 
 do_configure() {
@@ -37,6 +38,7 @@ do_configure() {
     cp -rfv ${WORKDIR}/fan-util ${S}
     cp -rfv ${WORKDIR}/mux-util ${S}
     cp -rfv ${WORKDIR}/i2c-utils.sh ${S}
+    cp -rfv ${S}/${SOC_FAMILY}/disable_watchdog.sh ${S}
 
     if [ -f "${WORKDIR}/platform-board-utils.sh" ]; then
         cp -rfv ${WORKDIR}/platform-board-utils.sh ${S}

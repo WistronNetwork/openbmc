@@ -1,0 +1,183 @@
+From 123af66e85d06ffff9f352c6d552fca9b996eb27 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 30 Mar 2023 14:51:05 +0800
+Subject: [PATCH] arm: aspeed: Add eSPI support
+
+Porting eSPI driver from https://github.com/AspeedTech-BMC/linux
+https://github.com/AspeedTech-BMC/linux/commit/9cd9a5fe1132aeb937fedd6da7ef606fa72a1216
+https://github.com/AspeedTech-BMC/linux/commit/615d9d640fd25efa894deaa76b2ff815db1533f1
+
+This patch series add the driver support for
+the eSPI controller of Aspeed 5/6th generation SoCs.
+
+This controller is a slave device communicating with
+a master over Enhanced Serial Peripheral Interface (eSPI).
+
+It supports all of the 4 eSPI channels,
+namely peripheral, virtual wire, out-of-band, and flash,
+and operates at max frequency of 66MHz.
+
+v5:
+  - unconditionally set VW GPIO to software mode as suggested by Jeremy
+  - add missing DTS node for Aspeed G5 SoCs
+
+v4:
+  - fix dt-bindgins error with patternProperties
+  - fix data type warning for ARM64 compilation
+  - replace header based implementation with .c files
+  - add more description for the ioctl interface
+
+v3:
+  - remove the redundant patch "clk: aspeed: Add eSPI reset bit"
+  - fix missing header inclusion reported by test bot
+  - fix dt-bindings error reported by yamllint
+
+v2:
+  - remove irqchip implementation
+  - merge per-channel drivers into single one to avoid the racing issue
+    among eSPI handshake process and driver probing.
+
+Chia-Wei Wang (4):
+  dt-bindings: aspeed: Add eSPI controller
+  MAINTAINER: Add ASPEED eSPI driver entry
+  soc: aspeed: Add eSPI driver
+  ARM: dts: aspeed: Add eSPI node
+
+  .../devicetree/bindings/soc/aspeed/espi.yaml
+  arch/arm/boot/dts/aspeed-g5.dtsi
+  arch/arm/boot/dts/aspeed-g6.dtsi
+  drivers/soc/aspeed/Kconfig
+  drivers/soc/aspeed/Makefile
+  drivers/soc/aspeed/aspeed-espi-ctrl.c
+  drivers/soc/aspeed/aspeed-espi-ctrl.h
+  drivers/soc/aspeed/aspeed-espi-flash.c
+  drivers/soc/aspeed/aspeed-espi-flash.h
+  drivers/soc/aspeed/aspeed-espi-ioc.h
+  drivers/soc/aspeed/aspeed-espi-mmbi.c
+  drivers/soc/aspeed/aspeed-espi-oob.c
+  drivers/soc/aspeed/aspeed-espi-oob.h
+  drivers/soc/aspeed/aspeed-espi-perif.c
+  drivers/soc/aspeed/aspeed-espi-perif.h
+  drivers/soc/aspeed/aspeed-espi-vw.c
+  drivers/soc/aspeed/aspeed-espi-vw.h
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ arch/arm/boot/dts/aspeed-g5.dtsi | 17 +++++++++++++++++
+ arch/arm/boot/dts/aspeed-g6.dtsi | 26 ++++++++++++++++++++++++++
+ drivers/soc/aspeed/Kconfig       | 17 +++++++++++++++++
+ drivers/soc/aspeed/Makefile      |  8 +++++++-
+ 4 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 8ebe1dddf436..5b98ba8c4e76 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -303,6 +303,23 @@ adc: adc@1e6e9000 {
+ 				status = "disabled";
+ 			};
+ 
++			espi: espi@1e6ee000 {
++				compatible = "aspeed,ast2500-espi", "simple-mfd", "syscon";
++				reg = <0x1e6ee000 0x1000>;
++
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x1e6ee000 0x1000>;
++
++				espi_ctrl: espi-ctrl@0 {
++					compatible = "aspeed,ast2500-espi-ctrl";
++					reg = <0x0 0x800>;
++					interrupts = <23>;
++					clocks = <&syscon ASPEED_CLK_GATE_ESPICLK>;
++					status = "disabled";
++				};
++			};
++
+ 			video: video@1e700000 {
+ 				compatible = "aspeed,ast2500-video-engine";
+ 				reg = <0x1e700000 0x1000>;
+diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
+index 36163ededab0..b138d2947028 100644
+--- a/arch/arm/boot/dts/aspeed-g6.dtsi
++++ b/arch/arm/boot/dts/aspeed-g6.dtsi
+@@ -434,6 +434,32 @@ adc1: adc@1e6e9100 {
+ 				status = "disabled";
+ 			};
+ 
++			espi: espi@1e6ee000 {
++				compatible = "aspeed,ast2600-espi", "simple-mfd", "syscon";
++				reg = <0x1e6ee000 0x1000>;
++
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x1e6ee000 0x1000>;
++
++				espi_ctrl: espi-ctrl@0 {
++					compatible = "aspeed,ast2600-espi-ctrl";
++					reg = <0x0 0x800>;
++					interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&syscon ASPEED_CLK_GATE_ESPICLK>;
++					aspeed,scu = <&syscon>;
++					aspeed,espi-mmbi = <&espi_mmbi>;
++					status = "disabled";
++				};
++
++				espi_mmbi: espi-mmbi@800 {
++					compatible = "aspeed,ast2600-espi-mmbi";
++					reg = <0x800 0x50>;
++					interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++					status = "disabled";
++				};
++			};
++
+ 			sbc: secure-boot-controller@1e6f2000 {
+ 				compatible = "aspeed,ast2600-sbc";
+ 				reg = <0x1e6f2000 0x1000>;
+diff --git a/drivers/soc/aspeed/Kconfig b/drivers/soc/aspeed/Kconfig
+index aaf4596ae4f9..aef682ba0958 100644
+--- a/drivers/soc/aspeed/Kconfig
++++ b/drivers/soc/aspeed/Kconfig
+@@ -62,6 +62,23 @@ config ASPEED_XDMA
+ 	  SoCs. The XDMA engine can perform PCIe DMA operations between the BMC
+ 	  and a host processor.
+ 
++config ASPEED_ESPI
++	bool "ASPEED eSPI slave driver"
++	select REGMAP
++	select MFD_SYSCON
++	default n
++	help
++	  Enable driver support for the Aspeed eSPI engine. The eSPI engine
++	  plays as a slave device in BMC to communicate with the Host over
++	  the eSPI interface. The four eSPI channels, namely peripheral,
++	  virtual wire, out-of-band, and flash are supported.
++
++config ASPEED_ESPI_MMBI
++	tristate "Aspeed eSPI MMBI Driver"
++	depends on ASPEED_ESPI
++	help
++	  Control Aspeed eSPI MMBI driver
++
+ config ASPEED_SBC
+ 	bool "ASPEED Secure Boot Controller driver"
+ 	default MACH_ASPEED_G6
+diff --git a/drivers/soc/aspeed/Makefile b/drivers/soc/aspeed/Makefile
+index 9e275fd1d54d..e9fde5f39409 100644
+--- a/drivers/soc/aspeed/Makefile
++++ b/drivers/soc/aspeed/Makefile
+@@ -5,4 +5,10 @@ obj-$(CONFIG_ASPEED_UART_ROUTING)	+= aspeed-uart-routing.o
+ obj-$(CONFIG_ASPEED_P2A_CTRL)		+= aspeed-p2a-ctrl.o
+ obj-$(CONFIG_ASPEED_SOCINFO)		+= aspeed-socinfo.o
+ obj-$(CONFIG_ASPEED_SBC)		+= aspeed-sbc.o
+-obj-$(CONFIG_ASPEED_XDMA)	+= aspeed-xdma.o
++obj-$(CONFIG_ASPEED_XDMA)		+= aspeed-xdma.o
++obj-$(CONFIG_ASPEED_ESPI)		+= aspeed-espi-ctrl.o \
++					   aspeed-espi-perif.o \
++					   aspeed-espi-vw.o \
++					   aspeed-espi-oob.o \
++					   aspeed-espi-flash.o
++obj-$(CONFIG_ASPEED_ESPI_MMBI)		+= aspeed-espi-mmbi.o
+-- 
+2.25.1
+

@@ -22,6 +22,7 @@ SRC_URI += "\
 	file://0001-hwmon-pmbus-xdpe12284.c-Add-a-multiple-for-VOUT.patch \
 	file://0001-hwmon-pmbus-isl68137.c-Add-a-multiple-for-VOUT.patch \
 	file://0001-hwmon-pmbus-Add-support-pmbus-psu.patch \
+	file://0001-arm-aspeed-Add-eSPI-support.patch \
 	"
 
 do_kernel_prepare() {

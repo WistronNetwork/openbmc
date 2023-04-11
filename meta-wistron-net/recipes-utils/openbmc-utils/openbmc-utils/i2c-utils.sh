@@ -122,6 +122,8 @@ i2c_driver_map() {
             echo "pca954x";;
         "pfe1100" | "pfe3000")
             echo "bel-pfe";;
+        "powr1220")
+            echo "powr1220";;
         "fan_cpld" | "system_cpld0" | "system_cpld1" | "system_cpld2" | "fpga")
             echo "wistron_cpld";;
         "sfphwmon")

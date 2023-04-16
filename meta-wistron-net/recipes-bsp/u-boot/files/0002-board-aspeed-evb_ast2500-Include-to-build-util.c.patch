@@ -1,0 +1,20 @@
+From 97a209dec26e6e5e6f63b16729ab4094e1f0d478 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 10 Apr 2023 15:53:48 +0800
+Subject: [PATCH 2/3] board: aspeed: evb_ast2500: Include to build util.c
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ board/aspeed/evb_ast2500/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/board/aspeed/evb_ast2500/Makefile b/board/aspeed/evb_ast2500/Makefile
+index 4564098299..2fcbfd6485 100644
+--- a/board/aspeed/evb_ast2500/Makefile
++++ b/board/aspeed/evb_ast2500/Makefile
+@@ -1 +1,2 @@
+ obj-y += evb_ast2500.o
++obj-y += util.o
+-- 
+2.25.1
+

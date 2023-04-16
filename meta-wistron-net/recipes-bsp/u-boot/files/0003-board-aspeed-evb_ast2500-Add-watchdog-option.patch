@@ -1,0 +1,55 @@
+From 699bf0343b89b6d21cba8730773053de8a3bb5c5 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Fri, 14 Apr 2023 19:41:48 +0800
+Subject: [PATCH] board: aspeed: evb_ast2500: Add watchdog option
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ board/aspeed/evb_ast2500/Kconfig | 33 ++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/board/aspeed/evb_ast2500/Kconfig b/board/aspeed/evb_ast2500/Kconfig
+index 6299c8c5b3..b6907f1ec8 100644
+--- a/board/aspeed/evb_ast2500/Kconfig
++++ b/board/aspeed/evb_ast2500/Kconfig
+@@ -10,4 +10,37 @@ config SYS_CONFIG_NAME
+ 	string "board configuration name"
+ 	default "evb_ast2500"
+ 
++config ASPEED_ENABLE_WATCHDOG
++	bool "Setup WDT1"
++	default n
++	help
++	  Enable for WDT1
++
++config ASPEED_ENABLE_DUAL_BOOT_WATCHDOG
++	bool "Enable dual boot feature"
++	default n
++	help
++	  Enable this will use dual boot dedicated watchdog to protect booting up
++	  on AST26xx platform it is FMCWDT2
++	  on AST24xx and AST25xx platform we select wdt2
++	  so please make sure configuring wdt2 with boot2nd in dts
++	  &wdt2 {
++	        status = "okay";
++	        boot2nd = <1>;
++	  };
++
++config ASPEED_WATCHDOG_TIMEOUT
++	int "Watchdog timeout setting in seconds"
++	default 22
++	help
++	  This will setup watchdog timeout if dual boot watchdog enable
++
++config PRECLICOMMAND
++	string "Setup pre-CLI command for watchdog"
++	default "echo stop fmcwdt2; mw 1e620064 0; " if ASPEED_ENABLE_DUAL_BOOT_WATCHDOG && ASPEED_AST2600
++	default "echo stop wdt2; mw 1e78502c 0; " if ASPEED_ENABLE_DUAL_BOOT_WATCHDOG
++	default "echo stop wdt1; mw 1e78500c 0; "
++	help
++	  Setup pre-CLI command for watchdog
++
+ endif
+-- 
+2.25.1
+

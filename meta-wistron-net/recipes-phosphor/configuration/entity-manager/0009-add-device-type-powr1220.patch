@@ -11,9 +11,9 @@ diff --git a/include/devices.hpp b/include/devices.hpp
 index b01267c..d5b43f4 100644
 --- a/include/devices.hpp
 +++ b/include/devices.hpp
-@@ -200,6 +200,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
-          {"pmbus",
-           ExportTemplate("pmbus $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+@@ -206,6 +206,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"pmbus_psu",
+           ExportTemplate("pmbus_psu $Address", "/sys/bus/i2c/devices/i2c-$Bus",
                           "new_device", "delete_device", true)},
 +         {"POWR1220",
 +          ExportTemplate("powr1220 $Address", "/sys/bus/i2c/devices/i2c-$Bus",

@@ -8,6 +8,7 @@ PV = "${LINUX_VERSION}+git${SRCPV}"
 
 SRC_URI += "\
 	file://common.cfg \
+	file://arch \
 	file://Documentation \
 	file://drivers \
 	file://include \
@@ -30,6 +31,7 @@ SRC_URI += "\
 	"
 
 do_kernel_prepare() {
+  cp -rf ${WORKDIR}/arch ${STAGING_KERNEL_DIR}
   cp -rf ${WORKDIR}/Documentation ${STAGING_KERNEL_DIR}
   cp -rf ${WORKDIR}/drivers ${STAGING_KERNEL_DIR}
   cp -rf ${WORKDIR}/include ${STAGING_KERNEL_DIR}

@@ -1,0 +1,35 @@
+From 7dfa32abf383432604da6238ec5701fae2afcc01 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 27 Apr 2023 18:35:13 +0800
+Subject: [PATCH] mtd: spi: spi-nor-ids: Correct Gigadevice flag
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/mtd/spi/spi-nor-ids.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/spi/spi-nor-ids.c b/drivers/mtd/spi/spi-nor-ids.c
+index 53e352d865..3f01e02f9b 100644
+--- a/drivers/mtd/spi/spi-nor-ids.c
++++ b/drivers/mtd/spi/spi-nor-ids.c
+@@ -123,13 +123,13 @@ const struct flash_info spi_nor_ids[] = {
+ 	},
+ 	{
+ 		INFO("gd55b01ge", 0xc8471b, 0, 64 * 1024, 2048,
+-			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+-			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++			SECT_4K | SPI_NOR_4B_OPCODES | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK)
+ 	},
+ 	{
+ 		INFO("gd55b02ge", 0xc8471c, 0, 64 * 1024, 4096,
+-			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+-			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++			SECT_4K | SPI_NOR_4B_OPCODES | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK)
+ 	},
+ #endif
+ #ifdef CONFIG_SPI_FLASH_ISSI		/* ISSI */
+-- 
+2.25.1
+

@@ -1,0 +1,56 @@
+From b8fbab39e611ee4ce00f85f775ee848dda5e2a17 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 20 Apr 2023 15:14:10 +0800
+Subject: [PATCH] drivers: misc: eeprom: Add optoe eeprom driver
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/misc/eeprom/Kconfig  | 24 ++++++++++++++++++++++++
+ drivers/misc/eeprom/Makefile |  1 +
+ 2 files changed, 25 insertions(+)
+
+diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+index f0a7531f354c..0db3d2b6e3f2 100644
+--- a/drivers/misc/eeprom/Kconfig
++++ b/drivers/misc/eeprom/Kconfig
+@@ -130,4 +130,28 @@ config EEPROM_EE1004
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called ee1004.
+ 
++config EEPROM_OPTOE
++	tristate "read/write access to SFP*, QSFP* and CMIS EEPROMs"
++	depends on I2C && SYSFS
++	select NVMEM
++	select NVMEM_SYSFS
++	select REGMAP_I2C
++	help
++	  If you say yes here you get support for read and write access to
++	  the EEPROM of SFP, QSFP and CMIS type optical and copper
++	  transceivers.  This includes all devices which conform to SFF-8436
++	  and SFF-8636 (QSFP, QSFP+, QSFP28, etc), SFF-8472 (SFP, SFP+, SFP28,
++	  SFP-DWDM, etc) and Common Management Interface Spec (CMIS, including
++	  QSFP-DD, OSFP, later QSFP*, etc).
++
++	  These devices are usually found in network switches.
++
++	  This driver only manages read/write access to the EEPROM.  Access
++	  to the I/O pins (reset, LPMODE, etc) is still platform specific.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called optoe.
++
++	  If unsure, say N.
++
+ endmenu
+diff --git a/drivers/misc/eeprom/Makefile b/drivers/misc/eeprom/Makefile
+index a9b4b6579b75..e22ef2c05896 100644
+--- a/drivers/misc/eeprom/Makefile
++++ b/drivers/misc/eeprom/Makefile
+@@ -8,3 +8,4 @@ obj-$(CONFIG_EEPROM_93XX46)	+= eeprom_93xx46.o
+ obj-$(CONFIG_EEPROM_DIGSY_MTC_CFG) += digsy_mtc_eeprom.o
+ obj-$(CONFIG_EEPROM_IDT_89HPESX) += idt_89hpesx.o
+ obj-$(CONFIG_EEPROM_EE1004)	+= ee1004.o
++obj-$(CONFIG_EEPROM_OPTOE)	+= optoe.o
+-- 
+2.25.1
+

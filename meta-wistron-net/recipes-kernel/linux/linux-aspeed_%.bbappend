@@ -25,6 +25,7 @@ SRC_URI += "\
 	file://0001-arm-aspeed-Add-eSPI-support.patch \
 	file://0001-spi-add-user-mode-aspeed-spi-driver.patch \
 	file://0001-aspeed-linux-5.15-add-shutdown-method-for-ast2500-sp.patch \
+	file://0001-misc-eeprom-Add-optoe-eeprom-driver.patch \
 	"
 
 do_kernel_prepare() {

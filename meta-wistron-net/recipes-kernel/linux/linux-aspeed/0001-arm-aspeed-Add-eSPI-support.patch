@@ -63,7 +63,7 @@ Chia-Wei Wang (4):
 
 Signed-off-by: Neal_Chen <neal_chen@wistron.com>
 ---
- arch/arm/boot/dts/aspeed-g5.dtsi | 17 +++++++++++++++++
+ arch/arm/boot/dts/aspeed-g5.dtsi | 18 +++++++++++++++++
  arch/arm/boot/dts/aspeed-g6.dtsi | 26 ++++++++++++++++++++++++++
  drivers/soc/aspeed/Kconfig       | 17 +++++++++++++++++
  drivers/soc/aspeed/Makefile      |  8 +++++++-
@@ -73,7 +73,7 @@ diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
 index 8ebe1dddf436..5b98ba8c4e76 100644
 --- a/arch/arm/boot/dts/aspeed-g5.dtsi
 +++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -303,6 +303,23 @@ adc: adc@1e6e9000 {
+@@ -303,6 +303,24 @@ adc: adc@1e6e9000 {
  				status = "disabled";
  			};
  
@@ -87,9 +87,10 @@ index 8ebe1dddf436..5b98ba8c4e76 100644
 +
 +				espi_ctrl: espi-ctrl@0 {
 +					compatible = "aspeed,ast2500-espi-ctrl";
-+					reg = <0x0 0x800>;
++					reg = <0x0 0x1000>;
 +					interrupts = <23>;
 +					clocks = <&syscon ASPEED_CLK_GATE_ESPICLK>;
++					aspeed,scu = <&syscon>;
 +					status = "disabled";
 +				};
 +			};

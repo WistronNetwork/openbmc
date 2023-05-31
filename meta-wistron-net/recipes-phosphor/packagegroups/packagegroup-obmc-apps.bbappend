@@ -22,3 +22,13 @@ RDEPENDS:${PN}-extras:append += " bmc-mac-setup \
                                   tcpdump \
                                   wdtcli \
                                 "
+
+RDEPENDS:${PN}-sensors:remove = " ${VIRTUAL-RUNTIME_obmc-sensors-hwmon} \
+                                "
+
+RDEPENDS:${PN}-inventory:remove = " ${VIRTUAL-RUNTIME_obmc-fan-presence} \
+                                  "
+
+RDEPENDS:${PN}-fan-control:remove = " ${VIRTUAL-RUNTIME_obmc-fan-control} \
+                                      phosphor-fan-monitor \
+                                    "

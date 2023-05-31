@@ -5,4 +5,8 @@ EXTRA_OEMESON:append = " \
      -Dredfish-bmc-journal=enabled \
      -Dredfish-dump-log=enabled \
      -Dredfish-cpu-log=enabled \
+     -Dkvm=disabled \
+     -Dvm-websocket=disabled \
+     -Dredfish-host-logger=disabled \
+     -Dhost-serial-socket=disabled \
      "

@@ -6,6 +6,7 @@
  *
  * Copyright (C) 2014 Cumulus networks Inc.
  * Copyright (C) 2017 Finisar Corp.
+ * Copyright 2022-present Wistron. All Rights Reserved.
  */
 
 /*
@@ -113,6 +114,8 @@
 
 #include <linux/delay.h>
 #include <linux/i2c.h>
+#include <linux/hwmon.h>
+#include <linux/hwmon-sysfs.h>
 #include <linux/init.h>
 #include <linux/jiffies.h>
 #include <linux/kernel.h>
@@ -176,6 +179,7 @@ struct optoe_data {
 	struct mutex lock;
 	struct attribute_group attr_group;
 	struct nvmem_device *nvmem;
+	struct device *hwmon_dev;
 
 	unsigned int write_max;
 
@@ -622,7 +626,10 @@ static int optoe_remove(struct i2c_client *client)
 	struct optoe_data *optoe;
 
 	optoe = i2c_get_clientdata(client);
-	sysfs_remove_group(&client->dev.kobj, &optoe->attr_group);
+
+	if (optoe->hwmon_dev)
+		hwmon_device_unregister(optoe->hwmon_dev);
+
 #ifndef LATEST_KERNEL
 	nvmem_unregister(optoe->nvmem);
 	/*
@@ -716,8 +723,7 @@ static int optoe_make_nvmem(struct optoe_data *optoe)
 static ssize_t dev_class_show(struct device *dev,
 			struct device_attribute *dattr, char *buf)
 {
-	struct i2c_client *client = to_i2c_client(dev);
-	struct optoe_data *optoe = i2c_get_clientdata(client);
+	struct optoe_data *optoe = dev_get_drvdata(dev);
 	ssize_t count;
 
 	mutex_lock(&optoe->lock);
@@ -731,8 +737,8 @@ static ssize_t dev_class_store(struct device *dev,
 			struct device_attribute *attr,
 			const char *buf, size_t count)
 {
-	struct i2c_client *client = to_i2c_client(dev);
-	struct optoe_data *optoe = i2c_get_clientdata(client);
+	struct optoe_data *optoe = dev_get_drvdata(dev);
+	struct i2c_client *client = optoe->optoe_client.client;
 	int dev_class;
 	struct regmap *regmap;
 	ssize_t err;
@@ -796,8 +802,7 @@ static ssize_t dev_class_store(struct device *dev,
 static ssize_t port_name_show(struct device *dev,
 			struct device_attribute *dattr, char *buf)
 {
-	struct i2c_client *client = to_i2c_client(dev);
-	struct optoe_data *optoe = i2c_get_clientdata(client);
+	struct optoe_data *optoe = dev_get_drvdata(dev);
 	ssize_t count;
 
 	mutex_lock(&optoe->lock);
@@ -811,8 +816,7 @@ static ssize_t port_name_store(struct device *dev,
 			struct device_attribute *attr,
 			const char *buf, size_t count)
 {
-	struct i2c_client *client = to_i2c_client(dev);
-	struct optoe_data *optoe = i2c_get_clientdata(client);
+	struct optoe_data *optoe = dev_get_drvdata(dev);
 	char port_name[MAX_PORT_NAME_LEN];
 
 	/* no checking, this value is not used except by port_name_show */
@@ -828,20 +832,65 @@ static ssize_t port_name_store(struct device *dev,
 	return count;
 }
 
-static DEVICE_ATTR_RW(port_name);
+static ssize_t temperature_value_show(struct device *dev,
+			struct device_attribute *attr, char *buf)
+{
+	struct optoe_data *optoe = dev_get_drvdata(dev);
+	struct i2c_client *client = optoe->optoe_client.client;
+	ssize_t value;
+	u8 temperature_reg;
+
+	if (optoe->dev_class == CMIS_ADDR)
+		temperature_reg = 14;
+	else
+		return -EAFNOSUPPORT;
+
+	mutex_lock(&optoe->lock);
+	value = i2c_smbus_read_word_swapped(client, temperature_reg);
+	mutex_unlock(&optoe->lock);
+
+	if (value & 0x8000) {
+		value = (value ^ 0xffff) + 1;
+		value = -value;
+	}
+
+	return sprintf(buf, "%d\n", (value * 1000) / 256);
+}
+
+static ssize_t voltage_value_show(struct device *dev,
+			struct device_attribute *attr, char *buf)
+{
+	struct optoe_data *optoe = dev_get_drvdata(dev);
+	struct i2c_client *client = optoe->optoe_client.client;
+	ssize_t value;
+	u8 voltage_reg;
+
+	if (optoe->dev_class == CMIS_ADDR)
+		voltage_reg = 16;
+	else
+		return -EAFNOSUPPORT;
+
+	mutex_lock(&optoe->lock);
+	value = i2c_smbus_read_word_swapped(client, voltage_reg);
+	mutex_unlock(&optoe->lock);
+
+	/* voltage = (raw data x 100 uV) x 1000 = raw data / 10 */
+	return sprintf(buf, "%d\n", value / 10);
+}
 
 static DEVICE_ATTR_RW(dev_class);
-
+static DEVICE_ATTR_RW(port_name);
+static SENSOR_DEVICE_ATTR_RO(temp1_input, temperature_value, 0);
+static SENSOR_DEVICE_ATTR_RO(in0_input, voltage_value, 0);
 
 static struct attribute *optoe_attrs[] = {
 	&dev_attr_port_name.attr,
 	&dev_attr_dev_class.attr,
+	&sensor_dev_attr_temp1_input.dev_attr.attr,
+	&sensor_dev_attr_in0_input.dev_attr.attr,
 	NULL,
 };
-
-static struct attribute_group optoe_attr_group = {
-	.attrs = optoe_attrs,
-};
+ATTRIBUTE_GROUPS(optoe);
 
 #ifdef LATEST_KERNEL
 static int optoe_probe(struct i2c_client *client)
@@ -862,7 +911,7 @@ static int optoe_probe(struct i2c_client *client,
 		goto exit;
 	}
 
-	optoe = kzalloc(sizeof(struct optoe_data), GFP_KERNEL);
+	optoe = devm_kzalloc(&client->dev, sizeof(struct optoe_data), GFP_KERNEL);
 	if (!optoe) {
 		err = -ENOMEM;
 		goto exit;
@@ -944,11 +993,11 @@ static int optoe_probe(struct i2c_client *client,
 		optoe->optoe_dummy.regmap = regmap;
 	}
 
-	optoe->attr_group = optoe_attr_group;
-
-	err = sysfs_create_group(&client->dev.kobj, &optoe->attr_group);
-	if (err) {
-		dev_err(dev, "failed to create sysfs attribute group.\n");
+	optoe->hwmon_dev = hwmon_device_register_with_groups(&client->dev,
+								client->name, optoe, optoe_groups);
+	if (IS_ERR(optoe->hwmon_dev)) {
+		err = PTR_ERR(optoe->hwmon_dev);
+		optoe->hwmon_dev = NULL;
 		goto err_struct;
 	}
 
@@ -966,7 +1015,7 @@ err_struct:
 	if (optoe->optoe_dummy.client)
 		i2c_unregister_device(optoe->optoe_dummy.client);
 #endif
-	kfree(optoe);
+	devm_kfree(&client->dev, optoe);
 exit:
 	dev_dbg(dev, "probe error %d\n", err);
 

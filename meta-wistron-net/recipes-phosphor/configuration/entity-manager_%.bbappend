@@ -15,6 +15,7 @@ SRC_URI:append = " \
     file://0007-add-device-type-tmp432-and-isl68239.patch \
     file://0008-Add-pmbus_psu-device-type.patch \
     file://0009-add-device-type-powr1220.patch \
+    file://0010-Add-OPTOE-device-type.patch \
     file://fruid.hpp \
     "
 

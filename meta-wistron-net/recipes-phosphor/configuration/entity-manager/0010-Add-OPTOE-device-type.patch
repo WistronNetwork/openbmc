@@ -1,0 +1,33 @@
+From 126c717ed218c34e8e871495efe8e9824f18bddb Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 25 May 2023 17:43:47 +0800
+Subject: [PATCH] Add OPTOE device type
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ include/devices.hpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/include/devices.hpp b/include/devices.hpp
+index 82986557..6b618d39 100644
+--- a/include/devices.hpp
++++ b/include/devices.hpp
+@@ -200,6 +200,15 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"SIC450",
+           ExportTemplate("sic450 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"OPTOE1",
++          ExportTemplate("optoe1 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", false)},
++         {"OPTOE2",
++          ExportTemplate("optoe2 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", false)},
++         {"OPTOE3",
++          ExportTemplate("optoe3 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", false)},
+          {"pmbus",
+           ExportTemplate("pmbus $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+-- 
+2.25.1
+

@@ -11,6 +11,4 @@ SYSTEMD_SERVICE:${PN}:append = " \
     ${PN}@fan4.service \
     ${PN}@fan5.service \
     ${PN}@fan6.service \
-    ${PN}@psu1.service \
-    ${PN}@psu2.service \
     "

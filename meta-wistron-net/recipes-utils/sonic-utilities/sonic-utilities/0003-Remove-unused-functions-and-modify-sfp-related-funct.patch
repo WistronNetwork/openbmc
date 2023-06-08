@@ -1,0 +1,911 @@
+From 52aa6e3a182c0240c170beaa9b34cff272339da1 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 8 Jun 2023 13:35:06 +0800
+Subject: [PATCH 3/3] Remove unused functions and modify sfp related functions
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ sfputil/main.py | 499 +++++++++++++-----------------------------------
+ 1 file changed, 138 insertions(+), 361 deletions(-)
+
+diff --git a/sfputil/main.py b/sfputil/main.py
+index 726ed2fe..23b84674 100644
+--- a/sfputil/main.py
++++ b/sfputil/main.py
+@@ -7,19 +7,14 @@
+ 
+ import os
+ import sys
+-import natsort
+ import ast
+ import time
+ import datetime
+ 
+-import subprocess
+ import click
+ import sonic_platform
+-import sonic_platform_base.sonic_sfp.sfputilhelper
+-from sonic_platform_base.sfp_base import SfpBase
+-from swsscommon.swsscommon import SonicV2Connector
+ from natsort import natsorted
+-from sonic_py_common import device_info, logger, multi_asic
++from sonic_platform_base.sonic_py_common import logger
+ from utilities_common.sfp_helper import covert_application_advertisement_to_output_string
+ from utilities_common.sfp_helper import QSFP_DATA_MAP
+ from tabulate import tabulate
+@@ -28,15 +23,11 @@ VERSION = '3.0'
+ 
+ SYSLOG_IDENTIFIER = "sfputil"
+ 
+-PLATFORM_JSON = 'platform.json'
+-PORT_CONFIG_INI = 'port_config.ini'
+-
+ EXIT_FAIL = -1
+ EXIT_SUCCESS = 0
+ ERROR_PERMISSIONS = 1
+ ERROR_CHASSIS_LOAD = 2
+ ERROR_SFPUTILHELPER_LOAD = 3
+-ERROR_PORT_CONFIG_LOAD = 4
+ ERROR_NOT_IMPLEMENTED = 5
+ ERROR_INVALID_PORT = 6
+ SMBUS_BLOCK_WRITE_SIZE = 32
+@@ -256,19 +247,14 @@ QSFP_DD_DOM_VALUE_UNIT_MAP = {
+     'voltage': 'Volts'
+ }
+ 
+-RJ45_PORT_TYPE = 'RJ45'
+-
+ # Global platform-specific Chassis class instance
+ platform_chassis = None
+ 
+-# Global platform-specific sfputil class instance
+-platform_sfputil = None
+-
+ # Global logger instance
+ log = logger.Logger(SYSLOG_IDENTIFIER)
+ 
+ def is_sfp_present(port_name):
+-    physical_port = logical_port_to_physical_port_index(port_name)
++    physical_port = int(port_name)
+     sfp = platform_chassis.get_sfp(physical_port)
+ 
+     try:
+@@ -276,20 +262,10 @@ def is_sfp_present(port_name):
+     except NotImplementedError:
+         click.echo("sfp get_presence() NOT implemented!", err=True)
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     return bool(presence)
+-
+-
+-def is_port_type_rj45(port_name):
+-    physical_port = logical_port_to_physical_port_index(port_name)
+-
+-    try:
+-        port_types = platform_chassis.get_port_or_cage_type(physical_port)
+-        return SfpBase.SFP_PORT_TYPE_BIT_RJ45 == port_types
+-    except NotImplementedError:
+-        pass
+-
+-    return False
+ # ========================== Methods for formatting output ==========================
+ 
+ # Convert dict values to cli output string
+@@ -484,21 +460,16 @@ def get_physical_port_name(logical_port, physical_port, ganged):
+ 
+ 
+ def logical_port_name_to_physical_port_list(port_name):
+-    if port_name.startswith("Ethernet"):
+-        if platform_sfputil.is_logical_port(port_name):
+-            return platform_sfputil.get_logical_to_physical(port_name)
+-        else:
+-            click.echo("Error: Invalid port '{}'".format(port_name))
+-            return None
+-    else:
+-        return [int(port_name)]
+-
+-def logical_port_to_physical_port_index(port_name):
+-    if not platform_sfputil.is_logical_port(port_name):
+-        click.echo("Error: invalid port '{}'\n".format(port_name))
++    try:
++        port_list = []
++        port_list = [int(port_name)]
++    except Exception as e:
+         print_all_valid_port_values()
+         sys.exit(ERROR_INVALID_PORT)
+ 
++    return port_list
++
++def logical_port_to_physical_port_index(port_name):
+     physical_port = logical_port_name_to_physical_port_list(port_name)[0]
+     if physical_port is None:
+         click.echo("Error: No physical port found for logical port '{}'".format(port_name))
+@@ -508,7 +479,9 @@ def logical_port_to_physical_port_index(port_name):
+ 
+ 
+ def print_all_valid_port_values():
+-    click.echo("Valid values for port: {}\n".format(str(platform_sfputil.logical)))
++    port_list = []
++    port_list.extend(range(1, platform_chassis.get_num_sfps() + 1))
++    click.echo("Valid values for port: {}\n".format(str(port_list)))
+ 
+ 
+ # ==================== Methods for initialization ====================
+@@ -530,41 +503,6 @@ def load_platform_chassis():
+     return True
+ 
+ 
+-# Instantiate SfpUtilHelper class
+-def load_sfputilhelper():
+-    global platform_sfputil
+-
+-    # we have to make use of sfputil for some features
+-    # even though when new platform api is used for all vendors.
+-    # in this sense, we treat it as a part of new platform api.
+-    # we have already moved sfputil to sonic_platform_base
+-    # which is the root of new platform api.
+-    platform_sfputil = sonic_platform_base.sonic_sfp.sfputilhelper.SfpUtilHelper()
+-
+-    if not platform_sfputil:
+-        return False
+-
+-    return True
+-
+-
+-def load_port_config():
+-    try:
+-        if multi_asic.is_multi_asic():
+-            # For multi ASIC platforms we pass DIR of port_config_file_path and the number of asics
+-            (platform_path, hwsku_path) = device_info.get_paths_to_platform_and_hwsku_dirs()
+-
+-            # Load platform module from source
+-            platform_sfputil.read_all_porttab_mappings(hwsku_path, multi_asic.get_num_asics())
+-        else:
+-            # For single ASIC platforms we pass port_config_file_path and the asic_inst as 0
+-            port_config_file_path = device_info.get_path_to_port_config_file()
+-            platform_sfputil.read_porttab_mappings(port_config_file_path, 0)
+-    except Exception as e:
+-        log.log_error("Error reading port info ({})".format(str(e)), True)
+-        return False
+-
+-    return True
+-
+ # ==================== CLI commands and groups ====================
+ 
+ 
+@@ -581,14 +519,6 @@ def cli():
+     if not load_platform_chassis():
+         sys.exit(ERROR_CHASSIS_LOAD)
+ 
+-    # Load SfpUtilHelper class
+-    if not load_sfputilhelper():
+-        sys.exit(ERROR_SFPUTILHELPER_LOAD)
+-
+-    # Load port info
+-    if not load_port_config():
+-        sys.exit(ERROR_PORT_CONFIG_LOAD)
+-
+ 
+ # 'show' subgroup
+ @cli.group()
+@@ -609,13 +539,8 @@ def eeprom(port, dump_dom, namespace):
+ 
+     # Create a list containing the logical port names of all ports we're interested in
+     if port is None:
+-        logical_port_list = platform_sfputil.logical
++        logical_port_list.extend(range(1, platform_chassis.get_num_sfps() + 1))
+     else:
+-        if platform_sfputil.is_logical_port(port) == 0:
+-            click.echo("Error: invalid port '{}'\n".format(port))
+-            print_all_valid_port_values()
+-            sys.exit(ERROR_INVALID_PORT)
+-
+         logical_port_list = [port]
+ 
+     for logical_port_name in logical_port_list:
+@@ -633,16 +558,13 @@ def eeprom(port, dump_dom, namespace):
+         for physical_port in physical_port_list:
+             port_name = get_physical_port_name(logical_port_name, i, ganged)
+ 
+-            if is_port_type_rj45(port_name):
+-                output += "{}: SFP EEPROM is not applicable for RJ45 port\n".format(port_name)
+-                output += '\n'
+-                continue
+-
+             try:
+                 presence = platform_chassis.get_sfp(physical_port).get_presence()
+             except NotImplementedError:
+                 click.echo("Sfp.get_presence() is currently not implemented for this platform")
+                 sys.exit(ERROR_NOT_IMPLEMENTED)
++            except AttributeError:
++                sys.exit(ERROR_INVALID_PORT)
+ 
+             if not presence:
+                 output += "{}: SFP EEPROM not detected\n".format(port_name)
+@@ -654,6 +576,8 @@ def eeprom(port, dump_dom, namespace):
+                 except NotImplementedError:
+                     click.echo("Sfp.get_transceiver_info() is currently not implemented for this platform")
+                     sys.exit(ERROR_NOT_IMPLEMENTED)
++                except AttributeError:
++                    sys.exit(ERROR_INVALID_PORT)
+ 
+                 output += convert_sfp_info_to_output_string(xcvr_info)
+ 
+@@ -663,6 +587,8 @@ def eeprom(port, dump_dom, namespace):
+                     except NotImplementedError:
+                         click.echo("Sfp.get_transceiver_bulk_status() is currently not implemented for this platform")
+                         sys.exit(ERROR_NOT_IMPLEMENTED)
++                    except AttributeError:
++                        sys.exit(ERROR_INVALID_PORT)
+ 
+                     try:
+                         xcvr_dom_threshold_info = platform_chassis.get_sfp(physical_port).get_transceiver_threshold_info()
+@@ -671,6 +597,8 @@ def eeprom(port, dump_dom, namespace):
+                     except NotImplementedError:
+                         click.echo("Sfp.get_transceiver_threshold_info() is currently not implemented for this platform")
+                         sys.exit(ERROR_NOT_IMPLEMENTED)
++                    except AttributeError:
++                        sys.exit(ERROR_INVALID_PORT)
+ 
+                     output += convert_dom_to_output_string(xcvr_info['type'], xcvr_dom_info)
+ 
+@@ -678,6 +606,7 @@ def eeprom(port, dump_dom, namespace):
+ 
+     click.echo(output)
+ 
++
+ # 'eeprom-hexdump' subcommand
+ @show.command()
+ @click.option('-p', '--port', metavar='<port_name>', required=True, help="Display SFP EEPROM hexdump for port <port_name>")
+@@ -686,26 +615,18 @@ def eeprom_hexdump(port, page):
+     """Display EEPROM hexdump of SFP transceiver(s) for a given port name and page number"""
+     output = ""
+ 
+-    if platform_sfputil.is_logical_port(port) == 0:
+-        click.echo("Error: invalid port {}".format(port))
+-        print_all_valid_port_values()
+-        sys.exit(ERROR_INVALID_PORT)
+-
+     if page is None:
+         page = '0'
+ 
+-    logical_port_name = port
+-    physical_port = logical_port_to_physical_port_index(logical_port_name)
+-
+-    if is_port_type_rj45(logical_port_name):
+-        click.echo("{}: SFP EEPROM Hexdump is not applicable for RJ45 port".format(port))
+-        sys.exit(ERROR_INVALID_PORT)
++    physical_port = int(port)
+ 
+     try:
+         presence = platform_chassis.get_sfp(physical_port).get_presence()
+     except NotImplementedError:
+         click.echo("Sfp.get_presence() is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     if not presence:
+         click.echo("SFP EEPROM not detected")
+@@ -719,6 +640,8 @@ def eeprom_hexdump(port, page):
+         except NotImplementedError:
+             click.echo("Sfp.read_eeprom() is currently not implemented for this platform")
+             sys.exit(ERROR_NOT_IMPLEMENTED)
++        except AttributeError:
++            sys.exit(ERROR_INVALID_PORT)
+ 
+         if id[0] == 0x3:
+             output = eeprom_hexdump_sff8472(port, physical_port, page)
+@@ -762,6 +685,8 @@ def eeprom_hexdump_sff8472(port, physical_port, page):
+     except ValueError:
+         click.echo("Please enter a numeric page number")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     return output
+ 
+@@ -790,6 +715,8 @@ def eeprom_hexdump_sff8636(port, physical_port, page):
+     except ValueError:
+         click.echo("Please enter a numeric page number")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     return output
+ 
+@@ -832,16 +759,11 @@ def presence(port):
+ 
+     # Create a list containing the logical port names of all ports we're interested in
+     if port is None:
+-        logical_port_list = platform_sfputil.logical
++        logical_port_list.extend(range(1, platform_chassis.get_num_sfps() + 1))
+     else:
+-        if platform_sfputil.is_logical_port(port) == 0:
+-            click.echo("Error: invalid port '{}'\n".format(port))
+-            print_all_valid_port_values()
+-            sys.exit(ERROR_INVALID_PORT)
+-
+         logical_port_list = [port]
+ 
+-    logical_port_list = natsort.natsorted(logical_port_list)
++    logical_port_list = natsorted(logical_port_list)
+     for logical_port_name in logical_port_list:
+         ganged = False
+         i = 1
+@@ -862,6 +784,8 @@ def presence(port):
+             except NotImplementedError:
+                 click.echo("This functionality is currently not implemented for this platform")
+                 sys.exit(ERROR_NOT_IMPLEMENTED)
++            except AttributeError:
++                sys.exit(ERROR_INVALID_PORT)
+ 
+             status_string = "Present" if presence else "Not present"
+             output_table.append([port_name, status_string])
+@@ -871,142 +795,6 @@ def presence(port):
+     click.echo(tabulate(output_table, table_header, tablefmt="simple"))
+ 
+ 
+-# 'error-status' subcommand
+-def fetch_error_status_from_platform_api(port):
+-    """Fetch the error status from platform API and return the output as a string
+-    Args:
+-        port: the port whose error status will be fetched.
+-              None represents for all ports.
+-    Returns:
+-        A string consisting of the error status of each port.
+-    """
+-    if port is None:
+-        logical_port_list = natsort.natsorted(platform_sfputil.logical)
+-        # Create a list containing the logical port names of all ports we're interested in
+-        generate_sfp_list_code = \
+-            "sfp_list = chassis.get_all_sfps()\n"
+-    else:
+-        physical_port_list = logical_port_name_to_physical_port_list(port)
+-        logical_port_list = [port]
+-        # Create a list containing the logical port names of all ports we're interested in
+-        generate_sfp_list_code = \
+-            "sfp_list = [chassis.get_sfp(x) for x in {}]\n".format(physical_port_list)
+-
+-    # Code to initialize chassis object
+-    init_chassis_code = \
+-        "import sonic_platform.platform\n" \
+-        "platform = sonic_platform.platform.Platform()\n" \
+-        "chassis = platform.get_chassis()\n"
+-
+-    # Code to fetch the error status
+-    get_error_status_code = \
+-        "try:\n"\
+-        "    errors=['{}:{}'.format(sfp.index, sfp.get_error_description()) for sfp in sfp_list]\n" \
+-        "except NotImplementedError as e:\n"\
+-        "    errors=['{}:{}'.format(sfp.index, 'OK (Not implemented)') for sfp in sfp_list]\n" \
+-        "print(errors)\n"
+-
+-    get_error_status_command = ["docker", "exec", "pmon", "python3", "-c", "{}{}{}".format(
+-        init_chassis_code, generate_sfp_list_code, get_error_status_code)]
+-    # Fetch error status from pmon docker
+-    try:
+-        output = subprocess.check_output(get_error_status_command, universal_newlines=True)
+-    except subprocess.CalledProcessError as e:
+-        click.Abort("Error! Unable to fetch error status for SPF modules. Error code = {}, error messages: {}".format(e.returncode, e.output))
+-        return None
+-
+-    output_list = output.split('\n')
+-    for output_str in output_list:
+-        # The output of all SFP error status are a list consisting of element with convention of '<sfp no>:<error status>'
+-        # Besides, there can be some logs captured during the platform API executing
+-        # So, first of all, we need to skip all the logs until find the output list of SFP error status
+-        if output_str[0] == '[' and output_str[-1] == ']':
+-            output_list = ast.literal_eval(output_str)
+-            break
+-
+-    output_dict = {}
+-    for output in output_list:
+-        sfp_index, error_status = output.split(':')
+-        output_dict[int(sfp_index)] = error_status
+-
+-    output = []
+-    for logical_port_name in logical_port_list:
+-        physical_port_list = logical_port_name_to_physical_port_list(logical_port_name)
+-        port_name = get_physical_port_name(logical_port_name, 1, False)
+-
+-        if is_port_type_rj45(logical_port_name):
+-            output.append([port_name, "N/A"])
+-        else:
+-            output.append([port_name, output_dict.get(physical_port_list[0])])
+-
+-    return output
+-
+-def fetch_error_status_from_state_db(port, state_db):
+-    """Fetch the error status from STATE_DB and return them in a list.
+-    Args:
+-        port: the port whose error status will be fetched.
+-              None represents for all ports.
+-    Returns:
+-        A list consisting of tuples (port, description) and sorted by port.
+-    """
+-    status = {}
+-    if port:
+-        status[port] = state_db.get_all(state_db.STATE_DB, 'TRANSCEIVER_STATUS|{}'.format(port))
+-    else:
+-        ports = state_db.keys(state_db.STATE_DB, 'TRANSCEIVER_STATUS|*')
+-        for key in ports:
+-            status[key.split('|')[1]] = state_db.get_all(state_db.STATE_DB, key)
+-
+-    sorted_ports = natsort.natsorted(status)
+-    output = []
+-    for port in sorted_ports:
+-        if is_port_type_rj45(port):
+-            description = "N/A"
+-        else:
+-            statestring = status[port].get('status')
+-            description = status[port].get('error')
+-            if statestring == '1':
+-                description = 'OK'
+-            elif statestring == '0':
+-                description = 'Unplugged'
+-            elif description == 'N/A':
+-                log.log_error("Inconsistent state found for port {}: state is {} but error description is N/A".format(port, statestring))
+-                description = 'Unknown state: {}'.format(statestring)
+-
+-        output.append([port, description])
+-
+-    return output
+-
+-@show.command()
+-@click.option('-p', '--port', metavar='<port_name>', help="Display SFP error status for port <port_name> only")
+-@click.option('-hw', '--fetch-from-hardware', 'fetch_from_hardware', is_flag=True, default=False, help="Fetch the error status from hardware directly")
+-def error_status(port, fetch_from_hardware):
+-    """Display error status of SFP transceiver(s)"""
+-    output_table = []
+-    table_header = ["Port", "Error Status"]
+-
+-    # Create a list containing the logical port names of all ports we're interested in
+-    if port and platform_sfputil.is_logical_port(port) == 0:
+-        click.echo("Error: invalid port '{}'\n".format(port))
+-        click.echo("Valid values for port: {}\n".format(str(platform_sfputil.logical)))
+-        sys.exit(ERROR_INVALID_PORT)
+-
+-    if fetch_from_hardware:
+-        output_table = fetch_error_status_from_platform_api(port)
+-    else:
+-        namespaces = multi_asic.get_front_end_namespaces()
+-        for namespace in namespaces:
+-            state_db = SonicV2Connector(use_unix_socket_path=False, namespace=namespace)
+-            if state_db is not None:
+-                state_db.connect(state_db.STATE_DB)
+-                output_table.extend(fetch_error_status_from_state_db(port, state_db))
+-            else:
+-                click.echo("Failed to connect to STATE_DB")
+-                return
+-
+-    click.echo(tabulate(output_table, table_header, tablefmt='simple'))
+-
+-
+ # 'lpmode' subcommand
+ @show.command()
+ @click.option('-p', '--port', metavar='<port_name>', help="Display SFP low-power mode status for port <port_name> only")
+@@ -1018,13 +806,8 @@ def lpmode(port):
+ 
+     # Create a list containing the logical port names of all ports we're interested in
+     if port is None:
+-        logical_port_list = platform_sfputil.logical
++        logical_port_list.extend(range(1, platform_chassis.get_num_sfps() + 1))
+     else:
+-        if platform_sfputil.is_logical_port(port) == 0:
+-            click.echo("Error: invalid port '{}'\n".format(port))
+-            print_all_valid_port_values()
+-            sys.exit(ERROR_INVALID_PORT)
+-
+         logical_port_list = [port]
+ 
+     for logical_port_name in logical_port_list:
+@@ -1036,27 +819,26 @@ def lpmode(port):
+             click.echo("Error: No physical ports found for logical port '{}'".format(logical_port_name))
+             return
+ 
+-        if is_port_type_rj45(logical_port_name):
+-            output_table.append([logical_port_name, "N/A"])
+-        else:
+-            if len(physical_port_list) > 1:
+-                ganged = True
++        if len(physical_port_list) > 1:
++            ganged = True
+ 
+-            for physical_port in physical_port_list:
+-                port_name = get_physical_port_name(logical_port_name, i, ganged)
++        for physical_port in physical_port_list:
++            port_name = get_physical_port_name(logical_port_name, i, ganged)
+ 
+-                try:
+-                    lpmode = platform_chassis.get_sfp(physical_port).get_lpmode()
+-                except NotImplementedError:
+-                    click.echo("This functionality is currently not implemented for this platform")
+-                    sys.exit(ERROR_NOT_IMPLEMENTED)
++            try:
++                lpmode = platform_chassis.get_sfp(physical_port).get_lpmode()
++            except NotImplementedError:
++                click.echo("This functionality is currently not implemented for this platform")
++                sys.exit(ERROR_NOT_IMPLEMENTED)
++            except AttributeError:
++                sys.exit(ERROR_INVALID_PORT)
+ 
+-                if lpmode:
+-                    output_table.append([port_name, "On"])
+-                else:
+-                    output_table.append([port_name, "Off"])
++            if lpmode:
++                output_table.append([port_name, "On"])
++            else:
++                output_table.append([port_name, "Off"])
+ 
+-                i += 1
++            i += 1
+ 
+     click.echo(tabulate(output_table, table_header, tablefmt='simple'))
+ 
+@@ -1069,28 +851,28 @@ def show_firmware_version(physical_port):
+     except NotImplementedError:
+         click.echo("This functionality is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+ # 'fwversion' subcommand
+ @show.command()
+-@click.argument('port_name', metavar='<port_name>', required=True)
+-def fwversion(port_name):
++@click.option('-p', '--port', metavar='<port_name>', required=True, help="Show firmware version of the transceiver")
++def fwversion(port):
+     """Show firmware version of the transceiver"""
+ 
+-    physical_port = logical_port_to_physical_port_index(port_name)
++    physical_port = logical_port_to_physical_port_index(port)
+     sfp = platform_chassis.get_sfp(physical_port)
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("Show firmware version is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+     try:
+         presence = sfp.get_presence()
+     except NotImplementedError:
+         click.echo("sfp get_presence() NOT implemented!")
+         sys.exit(EXIT_FAIL)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     if not presence:
+-        click.echo("{}: SFP EEPROM not detected\n".format(port_name))
++        click.echo("{}: SFP EEPROM not detected\n".format(port))
+         sys.exit(EXIT_FAIL)
+ 
+     show_firmware_version(physical_port)
+@@ -1108,20 +890,11 @@ def set_lpmode(logical_port, enable):
+     ganged = False
+     i = 1
+ 
+-    if platform_sfputil.is_logical_port(logical_port) == 0:
+-        click.echo("Error: invalid port '{}'\n".format(logical_port))
+-        print_all_valid_port_values()
+-        sys.exit(ERROR_INVALID_PORT)
+-
+     physical_port_list = logical_port_name_to_physical_port_list(logical_port)
+     if physical_port_list is None:
+         click.echo("Error: No physical ports found for logical port '{}'".format(logical_port))
+         return
+ 
+-    if is_port_type_rj45(logical_port):
+-        click.echo("{} low-power mode is not applicable for RJ45 port {}.".format("Enabling" if enable else "Disabling", logical_port))
+-        sys.exit(EXIT_FAIL)
+-
+     if len(physical_port_list) > 1:
+         ganged = True
+ 
+@@ -1135,6 +908,8 @@ def set_lpmode(logical_port, enable):
+         except NotImplementedError:
+             click.echo("This functionality is currently not implemented for this platform")
+             sys.exit(ERROR_NOT_IMPLEMENTED)
++        except AttributeError:
++            sys.exit(ERROR_INVALID_PORT)
+ 
+         if result:
+             click.echo("OK")
+@@ -1146,53 +921,46 @@ def set_lpmode(logical_port, enable):
+ 
+ # 'off' subcommand
+ @lpmode.command()
+-@click.argument('port_name', metavar='<port_name>')
+-def off(port_name):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
++def off(port):
+     """Disable low-power mode for SFP transceiver"""
+-    set_lpmode(port_name, False)
++    set_lpmode(port, False)
+ 
+ 
+ # 'on' subcommand
+ @lpmode.command()
+-@click.argument('port_name', metavar='<port_name>')
+-def on(port_name):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
++def on(port):
+     """Enable low-power mode for SFP transceiver"""
+-    set_lpmode(port_name, True)
++    set_lpmode(port, True)
+ 
+ 
+ # 'reset' subcommand
+ @cli.command()
+-@click.argument('port_name', metavar='<port_name>')
+-def reset(port_name):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
++def reset(port):
+     """Reset SFP transceiver"""
+     ganged = False
+     i = 1
+ 
+-    if platform_sfputil.is_logical_port(port_name) == 0:
+-        click.echo("Error: invalid port '{}'\n".format(port_name))
+-        print_all_valid_port_values()
+-        sys.exit(ERROR_INVALID_PORT)
+-
+-    physical_port_list = logical_port_name_to_physical_port_list(port_name)
++    physical_port_list = logical_port_name_to_physical_port_list(port)
+     if physical_port_list is None:
+-        click.echo("Error: No physical ports found for logical port '{}'".format(port_name))
++        click.echo("Error: No physical ports found for logical port '{}'".format(port))
+         return
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("Reset is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+     if len(physical_port_list) > 1:
+         ganged = True
+ 
+     for physical_port in physical_port_list:
+-        click.echo("Resetting port {} ... ".format(get_physical_port_name(port_name, i, ganged)), nl=False)
++        click.echo("Resetting port {} ... ".format(get_physical_port_name(port, i, ganged)), nl=False)
+ 
+         try:
+             result = platform_chassis.get_sfp(physical_port).reset()
+         except NotImplementedError:
+             click.echo("This functionality is currently not implemented for this platform")
+             sys.exit(ERROR_NOT_IMPLEMENTED)
++        except AttributeError:
++            sys.exit(ERROR_INVALID_PORT)
+ 
+         if result:
+             click.echo("OK")
+@@ -1223,6 +991,8 @@ def run_firmware(port_name, mode):
+     except NotImplementedError:
+         click.echo("This functionality is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     if mode == 0:
+         click.echo("Running firmware: Non-hitless Reset to Inactive Image")
+@@ -1259,6 +1029,8 @@ def is_fw_switch_done(port_name):
+     except NotImplementedError:
+         click.echo("This functionality is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     try:
+         MAX_WAIT = 60 # 60s timeout.
+@@ -1307,6 +1079,8 @@ def commit_firmware(port_name):
+     except NotImplementedError:
+         click.echo("This functionality is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     try:
+         status = api.cdb_commit_firmware()
+@@ -1333,6 +1107,8 @@ def download_firmware(port_name, filepath):
+     except NotImplementedError:
+         click.echo("This functionality is NOT applicable to this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     try:
+         fwinfo = api.get_module_fw_mgmt_feature()
+@@ -1387,24 +1163,20 @@ def download_firmware(port_name, filepath):
+ 
+ # 'run' subcommand
+ @firmware.command()
+-@click.argument('port_name', required=True, default=None)
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
+ @click.option('--mode', default="1", type=click.Choice(["0", "1", "2", "3"]), show_default=True,
+                                                          help="0 = Non-hitless Reset to Inactive Image\n \
+                                                                1 = Hitless Reset to Inactive Image (Default)\n \
+                                                                2 = Attempt non-hitless Reset to Running Image\n \
+                                                                3 = Attempt Hitless Reset to Running Image\n")
+-def run(port_name, mode):
++def run(port, mode):
+     """Run the firmware with default mode=1"""
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("This functionality is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+-    if not is_sfp_present(port_name):
+-        click.echo("{}: SFP EEPROM not detected\n".format(port_name))
++    if not is_sfp_present(port):
++        click.echo("{}: SFP EEPROM not detected\n".format(port))
+         sys.exit(EXIT_FAIL)
+ 
+-    status = run_firmware(port_name, int(mode))
++    status = run_firmware(port, int(mode))
+     if status != 1:
+         click.echo('Failed to run firmware in mode={}! CDB status: {}'.format(mode, status))
+         sys.exit(EXIT_FAIL)
+@@ -1413,19 +1185,15 @@ def run(port_name, mode):
+ 
+ # 'commit' subcommand
+ @firmware.command()
+-@click.argument('port_name', required=True, default=None)
+-def commit(port_name):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None, help="Commit the running firmware")
++def commit(port):
+     """Commit the running firmware"""
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("This functionality is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+-    if not is_sfp_present(port_name):
+-        click.echo("{}: SFP EEPROM not detected\n".format(port_name))
++    if not is_sfp_present(port):
++        click.echo("{}: SFP EEPROM not detected\n".format(port))
+         sys.exit(EXIT_FAIL)
+ 
+-    status = commit_firmware(port_name)
++    status = commit_firmware(port)
+     if status != 1:
+         click.echo('Failed to commit firmware! CDB status: {}'.format(status))
+         sys.exit(EXIT_FAIL)
+@@ -1434,42 +1202,57 @@ def commit(port_name):
+ 
+ # 'upgrade' subcommand
+ @firmware.command()
+-@click.argument('port_name', required=True, default=None)
+-@click.argument('filepath', required=True, default=None)
+-def upgrade(port_name, filepath):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
++@click.option('--filepath', metavar='<filepath>', required=True, default=None)
++@click.option('--commit', default="0", type=click.Choice(["0", "1"]), show_default=True,
++                                                         help="0 = No Commit Before Upgrade Process (Default)\n \
++                                                               1 = Commit Before Upgrade Process\n")
++@click.option('--mode', default="1", type=click.Choice(["0", "1", "2", "3"]), show_default=True,
++                                                         help="0 = Non-hitless Reset to Inactive Image\n \
++                                                               1 = Hitless Reset to Inactive Image (Default)\n \
++                                                               2 = Attempt non-hitless Reset to Running Image\n \
++                                                               3 = Attempt Hitless Reset to Running Image\n")
++def upgrade(port, filepath, commit, mode):
+     """Upgrade firmware on the transceiver"""
+ 
+-    physical_port = logical_port_to_physical_port_index(port_name)
++    physical_port = logical_port_to_physical_port_index(port)
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("This functionality is not applicable for RJ45 port {}.".format(port_name))
++    if not is_sfp_present(port):
++        click.echo("{}: SFP EEPROM not detected\n".format(port))
+         sys.exit(EXIT_FAIL)
+ 
+-    if not is_sfp_present(port_name):
+-        click.echo("{}: SFP EEPROM not detected\n".format(port_name))
+-        sys.exit(EXIT_FAIL)
++    if int(commit) == 1:
++        status = commit_firmware(port)
++        if status != 1:
++            click.echo('Failed to commit firmware! CDB status: {}'.format(status))
++            sys.exit(EXIT_FAIL)
++
++        click.echo("Firmware commit successful")
+ 
+     show_firmware_version(physical_port)
+ 
+-    status = download_firmware(port_name, filepath)
++    status = download_firmware(port, filepath)
+     if status == 1:
+         click.echo("Firmware download complete success")
+     else:
+         click.echo("Firmware download complete failed! CDB status = {}".format(status))
+         sys.exit(EXIT_FAIL)
+ 
+-    status = run_firmware(port_name, 1)
++    status = run_firmware(port, int(mode))
+     if status != 1:
+-        click.echo('Failed to run firmware in mode=1 ! CDB status: {}'.format(status))
++        click.echo('Failed to run firmware in mode={} ! CDB status: {}'.format(mode, status))
+         sys.exit(EXIT_FAIL)
+ 
+-    click.echo("Firmware run in mode 1 successful")
++    click.echo("Firmware run in mode {} successful".format(mode))
++
++    if int(mode) != 0 or int(mode) != 1:
++        sys.exit(EXIT_SUCCESS)
+ 
+-    if is_fw_switch_done(port_name) != 1:
++    if is_fw_switch_done(port) != 1:
+         click.echo('Failed to switch firmware images!')
+         sys.exit(EXIT_FAIL)
+ 
+-    status = commit_firmware(port_name)
++    status = commit_firmware(port)
+     if status != 1:
+         click.echo('Failed to commit firmware! CDB status: {}'.format(status))
+         sys.exit(EXIT_FAIL)
+@@ -1478,21 +1261,17 @@ def upgrade(port_name, filepath):
+ 
+ # 'download' subcommand
+ @firmware.command()
+-@click.argument('port_name', required=True, default=None)
+-@click.argument('filepath', required=True, default=None)
+-def download(port_name, filepath):
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
++@click.option('--filepath', metavar='<filepath>', required=True, default=None)
++def download(port, filepath):
+     """Download firmware on the transceiver"""
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("This functionality is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+-    if not is_sfp_present(port_name):
+-       click.echo("{}: SFP EEPROM not detected\n".format(port_name))
++    if not is_sfp_present(port):
++       click.echo("{}: SFP EEPROM not detected\n".format(port))
+        sys.exit(EXIT_FAIL)
+ 
+     start = time.time()
+-    status = download_firmware(port_name, filepath)
++    status = download_firmware(port, filepath)
+     if status == 1:
+         click.echo("Firmware download complete success")
+     else:
+@@ -1504,19 +1283,15 @@ def download(port_name, filepath):
+ 
+ # 'unlock' subcommand
+ @firmware.command()
+-@click.argument('port_name', required=True, default=None)
++@click.option('-p', '--port', metavar='<port_name>', required=True, default=None)
+ @click.option('--password', type=click.INT, help="Password in integer\n")
+-def unlock(port_name, password):
++def unlock(port, password):
+     """Unlock the firmware download feature via CDB host password"""
+-    physical_port = logical_port_to_physical_port_index(port_name)
++    physical_port = logical_port_to_physical_port_index(port)
+     sfp = platform_chassis.get_sfp(physical_port)
+ 
+-    if is_port_type_rj45(port_name):
+-        click.echo("This functionality is not applicable for RJ45 port {}.".format(port_name))
+-        sys.exit(EXIT_FAIL)
+-
+-    if not is_sfp_present(port_name):
+-       click.echo("{}: SFP EEPROM not detected\n".format(port_name))
++    if not is_sfp_present(port):
++       click.echo("{}: SFP EEPROM not detected\n".format(port))
+        sys.exit(EXIT_FAIL)
+ 
+     try:
+@@ -1524,6 +1299,8 @@ def unlock(port_name, password):
+     except NotImplementedError:
+         click.echo("This functionality is currently not implemented for this platform")
+         sys.exit(ERROR_NOT_IMPLEMENTED)
++    except AttributeError:
++        sys.exit(ERROR_INVALID_PORT)
+ 
+     if password is None:
+         password = CDB_DEFAULT_HOST_PASSWORD
+-- 
+2.25.1
+

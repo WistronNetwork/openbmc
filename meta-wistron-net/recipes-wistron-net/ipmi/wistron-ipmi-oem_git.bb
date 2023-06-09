@@ -8,7 +8,8 @@ PV = "0.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "boost phosphor-ipmi-host phosphor-logging systemd libgpiod libobmc-i2c libgpio-ctrl libpsu"
+DEPENDS = "boost systemd phosphor-ipmi-host phosphor-logging"
+DEPENDS += "libgpiod libobmc-i2c libgpio-ctrl libpsu libxcvr"
 DEPENDS += "${PYTHON_PN}-pyyaml-native ${PYTHON_PN}-mako-native"
 
 inherit meson pkgconfig obmc-phosphor-ipmiprovider-symlink phosphor-ipmi-host
@@ -19,7 +20,7 @@ PACKAGECONFIG[oem-platform] = "-Doem-platform=enabled,-Doem-platform=disabled"
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "3a48484c6e850cc44faadc5a170102fa3f1b4728"
+SRCREV = "7eff2757a7a897d8d8a02e72439a9e27fb7914a0"
 
 sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 
@@ -95,6 +96,18 @@ do_configure:prepend() {
 
     if [ -f "$platform_led_c_file" ]; then
         cp -rfv ${platform_led_c_file} ${S}/src/led-info.cpp
+    fi
+
+    platform_xcvr_h_file="${S}/platform/include/xcvr/${MACHINE}_xcvr-info.hpp"
+
+    if [ -f "$platform_xcvr_h_file" ]; then
+        cp -rfv ${platform_xcvr_h_file} ${S}/include/xcvr-info.hpp
+    fi
+
+    platform_xcvr_c_file="${S}/platform/src/xcvr/${MACHINE}_xcvr-info.cpp"
+
+    if [ -f "$platform_xcvr_c_file" ]; then
+        cp -rfv ${platform_xcvr_c_file} ${S}/src/xcvr-info.cpp
     fi
 
     default_sensor_yaml_file="${S}/scripts/ipmi-sensors.yaml"

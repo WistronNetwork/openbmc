@@ -15,9 +15,11 @@ def pg_python3_typing(d):
 
 RDEPENDS:${PN} += " \
   python3-compression \
+  python3-compile \
   python3-core \
   python3-crypt \
   python3-ctypes \
+  python3-click \
   python3-datetime \
   python3-fcntl \
   python3-io \
@@ -33,4 +35,5 @@ RDEPENDS:${PN} += " \
   python3-unittest \
   ${@pg_python3_typing(d)} \
   python3-smbus2 \
+  python3-hexdump \
 "

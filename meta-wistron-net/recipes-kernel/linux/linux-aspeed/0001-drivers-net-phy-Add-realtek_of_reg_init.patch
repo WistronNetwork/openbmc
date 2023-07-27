@@ -1,0 +1,100 @@
+From 90cb69bb535d8f371f224aee7222f6c831e06e22 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 13 Jun 2023 18:50:07 +0800
+Subject: [PATCH] drivers: net: phy: Add realtek_of_reg_init()
+
+Add realtek_of_reg_init() to handle phy initialization
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/net/phy/realtek.c | 60 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index 11be60333fa8..602ed14f590f 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -322,6 +322,58 @@ static int rtl8211_config_aneg(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++/*
++ * Set and/or override some configuration registers based on the
++ * realtek,reg-init property stored in the of_node for the phydev.
++ *
++ * realtek,reg-init = <reg-page reg mask value>,...;
++ *
++ * There may be one or more sets of <reg-page reg mask value>:
++ *
++ * reg-page: which register bank to use.
++ * reg: the register.
++ * mask: if non-zero, ANDed with existing register value.
++ * value: ORed with the masked value and written to the regiser.
++ */
++static int realtek_of_reg_init(struct phy_device *phydev)
++{
++	const __be32 *paddr;
++	int len, i, ret = 0;
++
++	if (!phydev->mdio.dev.of_node)
++		return 0;
++
++	paddr = of_get_property(phydev->mdio.dev.of_node, "realtek,reg-init", &len);
++	if (!paddr || len < (4 * sizeof(*paddr)))
++		return 0;
++
++	len /= sizeof(*paddr);
++	for (i = 0; i < len - 3; i += 4) {
++		u16 page = be32_to_cpup(paddr + i);
++		u16 reg = be32_to_cpup(paddr + i + 1);
++		u16 mask = be32_to_cpup(paddr + i + 2);
++		u16 val_bits = be32_to_cpup(paddr + i + 3);
++		int val;
++
++		val = 0;
++		if (mask) {
++			val = phy_read_paged(phydev, page, reg);
++			if (val < 0) {
++				ret = val;
++				goto err;
++			}
++			val &= mask;
++		}
++		val |= val_bits;
++
++		ret = phy_write_paged(phydev, page, reg, val);
++		if (ret < 0)
++			goto err;
++	}
++err:
++	return ret;
++}
++
+ static int rtl8211c_config_init(struct phy_device *phydev)
+ {
+ 	/* RTL8211C has an issue when operating in Gigabit slave mode */
+@@ -408,6 +460,13 @@ static int rtl8211f_config_init(struct phy_device *phydev)
+ 		return ret;
+ 	}
+ 
++	ret = realtek_of_reg_init(phydev);
++	if (ret < 0) {
++		dev_err(dev, "clkout configuration failed: %pe\n",
++			ERR_PTR(ret));
++		return ret;
++	}
++
+ 	return genphy_soft_reset(phydev);
+ }
+ 
+@@ -1030,6 +1089,7 @@ module_phy_driver(realtek_drvs);
+ 
+ static const struct mdio_device_id __maybe_unused realtek_tbl[] = {
+ 	{ PHY_ID_MATCH_VENDOR(0x001cc800) },
++	{ PHY_ID_MATCH_VENDOR(0x001cc916) },
+ 	{ }
+ };
+ 
+-- 
+2.25.1
+

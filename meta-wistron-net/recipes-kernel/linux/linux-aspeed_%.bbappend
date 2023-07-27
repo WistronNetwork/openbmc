@@ -28,6 +28,7 @@ SRC_URI += "\
 	file://0001-aspeed-linux-5.15-add-shutdown-method-for-ast2500-sp.patch \
 	file://0001-misc-eeprom-Add-optoe-eeprom-driver.patch \
 	file://0001-mtd-spi-nor-gigadevice-Add-gd55b01ge-support.patch \
+	file://0001-drivers-net-phy-Add-realtek_of_reg_init.patch \
 	"
 
 do_kernel_prepare() {

@@ -57,25 +57,25 @@
         {
             "Address": "0x48",
             "Bus": 16,
-            "Name": "MB_TMP1",
+            "Name": "MB_U9_TMP1",
             "Type": "TMP75"
         },
         {
             "Address": "0x49",
             "Bus": 16,
-            "Name": "MB_TMP2",
+            "Name": "MB_U11_TMP2",
             "Type": "TMP75"
         },
         {
             "Address": "0x4a",
             "Bus": 16,
-            "Name": "MB_TMP3",
+            "Name": "MB_U13_TMP3",
             "Type": "TMP75"
         },
         {
             "Address": "0x4b",
             "Bus": 16,
-            "Name": "MB_TMP4",
+            "Name": "MB_U10_TMP4",
             "Type": "TMP75"
         },
         {
@@ -155,15 +155,399 @@
             "Type": "TPS53688"
         },
         {
+            "Address": "0x50",
+            "Bus": 32,
+            "Name": "XCVR1",
+            "in0_Name": "XCVR1_VIN",
+            "temp1_Name": "XCVR1_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 33,
+            "Name": "XCVR2",
+            "in0_Name": "XCVR2_VIN",
+            "temp1_Name": "XCVR2_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 34,
+            "Name": "XCVR3",
+            "in0_Name": "XCVR3_VIN",
+            "temp1_Name": "XCVR3_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 35,
+            "Name": "XCVR4",
+            "in0_Name": "XCVR4_VIN",
+            "temp1_Name": "XCVR4_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 36,
+            "Name": "XCVR5",
+            "in0_Name": "XCVR5_VIN",
+            "temp1_Name": "XCVR5_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 37,
+            "Name": "XCVR6",
+            "in0_Name": "XCVR6_VIN",
+            "temp1_Name": "XCVR6_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 38,
+            "Name": "XCVR7",
+            "in0_Name": "XCVR7_VIN",
+            "temp1_Name": "XCVR7_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 39,
+            "Name": "XCVR8",
+            "in0_Name": "XCVR8_VIN",
+            "temp1_Name": "XCVR8_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 40,
+            "Name": "XCVR9",
+            "in0_Name": "XCVR9_VIN",
+            "temp1_Name": "XCVR9_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 41,
+            "Name": "XCVR10",
+            "in0_Name": "XCVR10_VIN",
+            "temp1_Name": "XCVR10_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 42,
+            "Name": "XCVR11",
+            "in0_Name": "XCVR11_VIN",
+            "temp1_Name": "XCVR11_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 43,
+            "Name": "XCVR12",
+            "in0_Name": "XCVR12_VIN",
+            "temp1_Name": "XCVR12_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 44,
+            "Name": "XCVR13",
+            "in0_Name": "XCVR13_VIN",
+            "temp1_Name": "XCVR13_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 45,
+            "Name": "XCVR14",
+            "in0_Name": "XCVR14_VIN",
+            "temp1_Name": "XCVR14_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 46,
+            "Name": "XCVR15",
+            "in0_Name": "XCVR15_VIN",
+            "temp1_Name": "XCVR15_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 47,
+            "Name": "XCVR16",
+            "in0_Name": "XCVR16_VIN",
+            "temp1_Name": "XCVR16_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 48,
+            "Name": "XCVR17",
+            "in0_Name": "XCVR17_VIN",
+            "temp1_Name": "XCVR17_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 49,
+            "Name": "XCVR18",
+            "in0_Name": "XCVR18_VIN",
+            "temp1_Name": "XCVR18_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 50,
+            "Name": "XCVR19",
+            "in0_Name": "XCVR19_VIN",
+            "temp1_Name": "XCVR19_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 51,
+            "Name": "XCVR20",
+            "in0_Name": "XCVR20_VIN",
+            "temp1_Name": "XCVR20_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 52,
+            "Name": "XCVR21",
+            "in0_Name": "XCVR21_VIN",
+            "temp1_Name": "XCVR21_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 53,
+            "Name": "XCVR22",
+            "in0_Name": "XCVR22_VIN",
+            "temp1_Name": "XCVR22_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 54,
+            "Name": "XCVR23",
+            "in0_Name": "XCVR23_VIN",
+            "temp1_Name": "XCVR23_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 55,
+            "Name": "XCVR24",
+            "in0_Name": "XCVR24_VIN",
+            "temp1_Name": "XCVR24_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 56,
+            "Name": "XCVR25",
+            "in0_Name": "XCVR25_VIN",
+            "temp1_Name": "XCVR25_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 57,
+            "Name": "XCVR26",
+            "in0_Name": "XCVR26_VIN",
+            "temp1_Name": "XCVR26_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 58,
+            "Name": "XCVR27",
+            "in0_Name": "XCVR27_VIN",
+            "temp1_Name": "XCVR27_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 59,
+            "Name": "XCVR28",
+            "in0_Name": "XCVR28_VIN",
+            "temp1_Name": "XCVR28_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 60,
+            "Name": "XCVR29",
+            "in0_Name": "XCVR29_VIN",
+            "temp1_Name": "XCVR29_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 61,
+            "Name": "XCVR30",
+            "in0_Name": "XCVR30_VIN",
+            "temp1_Name": "XCVR30_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 62,
+            "Name": "XCVR31",
+            "in0_Name": "XCVR31_VIN",
+            "temp1_Name": "XCVR31_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
+            "Address": "0x50",
+            "Bus": 63,
+            "Name": "XCVR32",
+            "in0_Name": "XCVR32_VIN",
+            "temp1_Name": "XCVR32_TMP",
+            "Labels": [
+                "in0",
+                "temp1"
+            ],
+            "Type": "OPTOE3"
+        },
+        {
             "Address": "0x4e",
             "Bus": 26,
-            "Name": "FAN_TMP1",
+            "Name": "FAN_U7_TMP1",
             "Type": "TMP75"
         },
         {
             "Address": "0x4f",
             "Bus": 26,
-            "Name": "FAN_TMP2",
+            "Name": "FAN_U8_TMP2",
             "Type": "TMP75"
         }
     ],

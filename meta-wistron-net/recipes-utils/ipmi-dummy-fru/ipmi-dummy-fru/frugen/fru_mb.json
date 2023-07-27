@@ -1,25 +1,22 @@
 {
 	"chassis" : {
-		"type": 1,
-		"pn" : "XXXX-2222222222-YYYY",
-		"serial": "YYYY-3333333333-XXXX"
+		"type": 23,
+		"pn" : "XXXX-YYYY            ",
+		"serial": "YYYY-XXXX         "
 	},
 	"board" : {
 		"mfg" : "Wistron",
-		"pname" : "Switch Main Board",
+		"pname" : "Switch Main Board                   ",
 		"date" : "01/01/2022 01:01:00",
-		"serial" : "XXXX-222222222222-YYYY",
-		"pn" : "YYYY-333333333333-XXXX",
-		"custom" : [
-			{ "data" : "Wistron Network Product" }
-		]
+		"serial" : "XXXX-YYYY             ",
+		"pn" : "YYYY-XXXX             "
 	},
 	"product" : {
 		"lang": 1,
 		"mfg" : "Wistron",
-		"pname" : "Switch Main Board",
-		"pn" : "XXXX-222222222222-YYYY",
-		"serial" : "YYYY-333333333333-XXXX",
+		"pname" : "OOOOOOO            ",
+		"pn" : "XXXX-YYYY             ",
+		"serial" : "YYYY-XXXX             ",
 		"atag" : "Network"
 	}
 }

@@ -1,22 +1,12 @@
 {
-	"board" : {
-		"mfg" : "Wistron",
-		"pname" : "Fan Module Board",
-		"date" : "01/01/2022 01:01:00",
-		"serial" : "YYYYYYYY-444444444444-XXXXXXX",
-		"pn" : "XXXXXXX-555555555555-YYYYYYYY",
+	"product" : {
+		"lang": 1,
+		"mfg" : "Wistron                                                ",
+		"pname" : "FAN-XXXXX-AAAAAA-BB                           ",
+		"pn" : "XXXXCCCDDDDZZZ                                   ",
+		"serial" : "WWWSSSSSMMXX                                 ",
 		"custom" : [
-			{ "data" : "Wistron Network Product" },
-			{ "data" : "Fan Tray" },
-			{ "data" : "Module Board" },
-			{ "data" : "Unused Item1" },
-			{ "data" : "Unused Item2" },
-			{ "data" : "Unused Item3" },
-			{ "data" : "Unused Item4" },
-			{ "data" : "Unused Item5" },
-			{ "data" : "Unused Item6" },
-			{ "data" : "Unused Item7" },
-			{ "data" : "Unused Item8" }
+				{ "data" : "AFO                                  " }
 		]
 	}
 }

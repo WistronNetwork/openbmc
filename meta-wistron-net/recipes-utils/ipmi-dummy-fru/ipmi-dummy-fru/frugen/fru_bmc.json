@@ -1,20 +1,9 @@
 {
 	"board" : {
-		"mfg" : "Wistron",
-		"pname" : "BMC Module Board",
+		"mfg" : "Wistron                                                    ",
+		"pname" : "BMC Module Board                                         ",
 		"date" : "01/01/2022 01:01:00",
-		"serial" : "YYYYYYYY-000000000000-XXXXXXX",
-		"pn" : "XXXXXXX-111111111111-YYYYYYYY",
-		"custom" : [
-			{ "data" : "Wistron Network Product" },
-			{ "data" : "Baseboard Management Controller" },
-			{ "data" : "Module Board" },
-			{ "data" : "Unused Item1" },
-			{ "data" : "Unused Item2" },
-			{ "data" : "Unused Item3" },
-			{ "data" : "Unused Item4" },
-			{ "data" : "Unused Item5" },
-			{ "data" : "Unused Item6" }
-		]
+		"pn" : "XXXXXXX-111111111111                                        ",
+		"serial" : "000000000000-XXXXXXX                                    "
 	}
 }

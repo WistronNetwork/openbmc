@@ -25,7 +25,13 @@ do_install() {
     install -d ${frugendir}
     install -m 755 ipmi-dummy-fru ${localbindir}/ipmi-dummy-fru
 
-    for jsonfile in frugen/*.json
+    if [ -d "${MACHINE}_frugen" ]; then
+        frugen_path="${MACHINE}_frugen"
+    else
+        frugen_path="frugen"
+    fi
+
+    for jsonfile in $frugen_path/*.json
     do
         if [ -f "$jsonfile" ]; then
             install -m 644 $jsonfile ${frugendir}

@@ -142,30 +142,30 @@
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_TMP1
+    path: /xyz/openbmc_project/sensors/temperature/MB_U9_TMP1
 
 47:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_TMP2
+    path: /xyz/openbmc_project/sensors/temperature/MB_U11_TMP2
 
 48:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_TMP3
+    path: /xyz/openbmc_project/sensors/temperature/MB_U13_TMP3
 
 49:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_TMP4
+    path: /xyz/openbmc_project/sensors/temperature/MB_U10_TMP4
 
 70:
     <<: *VOLTAGE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/voltage/PSU1_VIN_AC
     multiplierM: 121
     rExp: -2
@@ -173,7 +173,7 @@
 71:
     <<: *VOLTAGE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/voltage/PSU1_VOUT_DC
     multiplierM: 55
     rExp: -3
@@ -181,7 +181,7 @@
 72: 
     <<: *POWER_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/power/PSU1_PIN_AC
     multiplierM: 59
     rExp: -1
@@ -189,7 +189,7 @@
 73:
     <<: *POWER_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/power/PSU1_POUT_DC
     multiplierM: 59
     rExp: -1
@@ -197,7 +197,7 @@
 74: &CURRENT_DEFAULT
     sensorType: 0x03
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/current/PSU1_IIN_AC
     sensorReadingType: 0x01
     unit: xyz.openbmc_project.Sensor.Value.Unit.Amperes
@@ -218,7 +218,7 @@
 
 75:
     <<: *CURRENT_DEFAULT
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/current/PSU1_IOUT_DC
     multiplierM: 1
     rExp: 0
@@ -226,25 +226,25 @@
 76:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/temperature/PSU1_TMP
 
 77:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/temperature/PSU1_TMP2
 
 78:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/temperature/PSU1_TMP3
 
 79: &FAN_DEFAULT
     sensorType: 0x04
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 1
     path: /xyz/openbmc_project/sensors/fan_tach/PSU1_FAN_TACH1
     sensorReadingType: 0x01
     unit: xyz.openbmc_project.Sensor.Value.Unit.RPMS
@@ -266,7 +266,7 @@
 80:
     <<: *VOLTAGE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/voltage/PSU2_VIN_AC
     multiplierM: 121
     rExp: -2
@@ -274,7 +274,7 @@
 81:
     <<: *VOLTAGE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/voltage/PSU2_VOUT_DC
     multiplierM: 55
     rExp: -3
@@ -282,7 +282,7 @@
 82:
     <<: *POWER_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/power/PSU2_PIN_AC
     multiplierM: 59
     rExp: -1
@@ -290,19 +290,19 @@
 83:
     <<: *POWER_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/power/PSU2_POUT_DC
     multiplierM: 59
     rExp: -1
 
 84:
     <<: *CURRENT_DEFAULT
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/current/PSU2_IIN_AC
 
 85:
     <<: *CURRENT_DEFAULT
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/current/PSU2_IOUT_DC
     multiplierM: 1
     rExp: 0
@@ -310,22 +310,522 @@
 86:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/temperature/PSU2_TMP
 
 87:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/temperature/PSU2_TMP2
 
 88:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/temperature/PSU2_TMP3
 
 89:
     <<: *FAN_DEFAULT
-    entityInstance: 0x62
+    entityInstance: 2
     path: /xyz/openbmc_project/sensors/fan_tach/PSU2_FAN_TACH1
+
+91:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1e
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/temperature/FAN_U7_TMP1
+
+92:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1e
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/temperature/FAN_U8_TMP2
+
+93:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN1_FRONT_TACH
+
+94:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN1_REAR_TACH
+
+95:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 2
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN2_FRONT_TACH
+
+96:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 2
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN2_REAR_TACH
+
+97:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 3
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN3_FRONT_TACH
+
+98:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 3
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN3_REAR_TACH
+
+99:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 4
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN4_FRONT_TACH
+
+100:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 4
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN4_REAR_TACH
+
+101:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 5
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN5_FRONT_TACH
+
+102:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 5
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN5_REAR_TACH
+
+103:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 6
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN6_FRONT_TACH
+
+104:
+    <<: *FAN_DEFAULT
+    entityID: 0x1d
+    entityInstance: 6
+    path: /xyz/openbmc_project/sensors/fan_tach/FAN6_REAR_TACH
+
+111:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/voltage/XCVR1_VIN
+    multiplierM: 17
+
+112:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/temperature/XCVR1_TMP
+
+113:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 2
+    path: /xyz/openbmc_project/sensors/voltage/XCVR2_VIN
+    multiplierM: 17
+
+114:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 2
+    path: /xyz/openbmc_project/sensors/temperature/XCVR2_TMP
+
+115:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 3
+    path: /xyz/openbmc_project/sensors/voltage/XCVR3_VIN
+    multiplierM: 17
+
+116:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 3
+    path: /xyz/openbmc_project/sensors/temperature/XCVR3_TMP
+
+117:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 4
+    path: /xyz/openbmc_project/sensors/voltage/XCVR4_VIN
+    multiplierM: 17
+
+118:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 4
+    path: /xyz/openbmc_project/sensors/temperature/XCVR4_TMP
+
+119:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 5
+    path: /xyz/openbmc_project/sensors/voltage/XCVR5_VIN
+    multiplierM: 17
+
+120:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 5
+    path: /xyz/openbmc_project/sensors/temperature/XCVR5_TMP
+
+121:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 6
+    path: /xyz/openbmc_project/sensors/voltage/XCVR6_VIN
+    multiplierM: 17
+
+122:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 6
+    path: /xyz/openbmc_project/sensors/temperature/XCVR6_TMP
+
+123:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 7
+    path: /xyz/openbmc_project/sensors/voltage/XCVR7_VIN
+    multiplierM: 17
+
+124:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 7
+    path: /xyz/openbmc_project/sensors/temperature/XCVR7_TMP
+
+125:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 8
+    path: /xyz/openbmc_project/sensors/voltage/XCVR8_VIN
+    multiplierM: 17
+
+126:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 8
+    path: /xyz/openbmc_project/sensors/temperature/XCVR8_TMP
+
+127:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 9
+    path: /xyz/openbmc_project/sensors/voltage/XCVR9_VIN
+    multiplierM: 17
+
+128:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 9
+    path: /xyz/openbmc_project/sensors/temperature/XCVR9_TMP
+
+129:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 10
+    path: /xyz/openbmc_project/sensors/voltage/XCVR10_VIN
+    multiplierM: 17
+
+130:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 10
+    path: /xyz/openbmc_project/sensors/temperature/XCVR10_TMP
+
+131:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 11
+    path: /xyz/openbmc_project/sensors/voltage/XCVR11_VIN
+    multiplierM: 17
+
+132:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 11
+    path: /xyz/openbmc_project/sensors/temperature/XCVR11_TMP
+
+133:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 12
+    path: /xyz/openbmc_project/sensors/voltage/XCVR12_VIN
+    multiplierM: 17
+
+134:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 12
+    path: /xyz/openbmc_project/sensors/temperature/XCVR12_TMP
+
+135:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 13
+    path: /xyz/openbmc_project/sensors/voltage/XCVR13_VIN
+    multiplierM: 17
+
+136:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 13
+    path: /xyz/openbmc_project/sensors/temperature/XCVR13_TMP
+
+137:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 14
+    path: /xyz/openbmc_project/sensors/voltage/XCVR14_VIN
+    multiplierM: 17
+
+138:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 14
+    path: /xyz/openbmc_project/sensors/temperature/XCVR14_TMP
+
+139:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 15
+    path: /xyz/openbmc_project/sensors/voltage/XCVR15_VIN
+    multiplierM: 17
+
+140:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 15
+    path: /xyz/openbmc_project/sensors/temperature/XCVR15_TMP
+
+141:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 16
+    path: /xyz/openbmc_project/sensors/voltage/XCVR16_VIN
+    multiplierM: 17
+
+142:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 16
+    path: /xyz/openbmc_project/sensors/temperature/XCVR16_TMP
+
+143:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 17
+    path: /xyz/openbmc_project/sensors/voltage/XCVR17_VIN
+    multiplierM: 17
+
+144:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 17
+    path: /xyz/openbmc_project/sensors/temperature/XCVR17_TMP
+
+145:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 18
+    path: /xyz/openbmc_project/sensors/voltage/XCVR18_VIN
+    multiplierM: 17
+
+146:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 18
+    path: /xyz/openbmc_project/sensors/temperature/XCVR18_TMP
+
+147:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 19
+    path: /xyz/openbmc_project/sensors/voltage/XCVR19_VIN
+    multiplierM: 17
+
+148:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 19
+    path: /xyz/openbmc_project/sensors/temperature/XCVR19_TMP
+
+149:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 20
+    path: /xyz/openbmc_project/sensors/voltage/XCVR20_VIN
+    multiplierM: 17
+
+150:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 20
+    path: /xyz/openbmc_project/sensors/temperature/XCVR20_TMP
+
+151:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 21
+    path: /xyz/openbmc_project/sensors/voltage/XCVR21_VIN
+    multiplierM: 17
+
+152:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 21
+    path: /xyz/openbmc_project/sensors/temperature/XCVR21_TMP
+
+153:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 22
+    path: /xyz/openbmc_project/sensors/voltage/XCVR22_VIN
+    multiplierM: 17
+
+154:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 22
+    path: /xyz/openbmc_project/sensors/temperature/XCVR22_TMP
+
+155:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 23
+    path: /xyz/openbmc_project/sensors/voltage/XCVR23_VIN
+    multiplierM: 17
+
+156:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 23
+    path: /xyz/openbmc_project/sensors/temperature/XCVR23_TMP
+
+157:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 24
+    path: /xyz/openbmc_project/sensors/voltage/XCVR24_VIN
+    multiplierM: 17
+
+158:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 24
+    path: /xyz/openbmc_project/sensors/temperature/XCVR24_TMP
+
+159:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 25
+    path: /xyz/openbmc_project/sensors/voltage/XCVR25_VIN
+    multiplierM: 17
+
+160:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 25
+    path: /xyz/openbmc_project/sensors/temperature/XCVR25_TMP
+
+161:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 26
+    path: /xyz/openbmc_project/sensors/voltage/XCVR26_VIN
+    multiplierM: 17
+
+162:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 26
+    path: /xyz/openbmc_project/sensors/temperature/XCVR26_TMP
+
+163:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 27
+    path: /xyz/openbmc_project/sensors/voltage/XCVR27_VIN
+    multiplierM: 17
+
+164:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 27
+    path: /xyz/openbmc_project/sensors/temperature/XCVR27_TMP
+
+165:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 28
+    path: /xyz/openbmc_project/sensors/voltage/XCVR28_VIN
+    multiplierM: 17
+
+166:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 28
+    path: /xyz/openbmc_project/sensors/temperature/XCVR28_TMP
+
+167:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 29
+    path: /xyz/openbmc_project/sensors/voltage/XCVR29_VIN
+    multiplierM: 17
+
+168:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 29
+    path: /xyz/openbmc_project/sensors/temperature/XCVR29_TMP
+
+169:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 30
+    path: /xyz/openbmc_project/sensors/voltage/XCVR30_VIN
+    multiplierM: 17
+
+170:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 30
+    path: /xyz/openbmc_project/sensors/temperature/XCVR30_TMP
+
+171:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 31
+    path: /xyz/openbmc_project/sensors/voltage/XCVR31_VIN
+    multiplierM: 17
+
+172:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 31
+    path: /xyz/openbmc_project/sensors/temperature/XCVR31_TMP
+
+173:
+    <<: *VOLTAGE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 32
+    path: /xyz/openbmc_project/sensors/voltage/XCVR32_VIN
+    multiplierM: 17
+
+174:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x1f
+    entityInstance: 32
+    path: /xyz/openbmc_project/sensors/temperature/XCVR32_TMP

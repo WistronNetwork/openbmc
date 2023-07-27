@@ -87,7 +87,7 @@
 		m25p,fast-read;
 		label = "bmc";
 		spi-max-frequency = <50000000>;
-#include "openbmc-flash-layout-64.dtsi"
+#include "openbmc-flash-layout-128.dtsi"
 	};
 
 	flash@1 {
@@ -95,7 +95,7 @@
 		m25p,fast-read;
 		label = "alt-bmc";
 		spi-max-frequency = <50000000>;
-#include "openbmc-flash-layout-64-alt.dtsi"
+#include "openbmc-flash-layout-128-alt.dtsi"
 	};
 };
 
@@ -107,6 +107,21 @@
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_rgmii1_default &pinctrl_mdio1_default>;
+	phy-mode = "rgmii";
+	phy-handle = <&phy>;
+
+	mdio {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		phy: ethernet-phy@1 {
+			/* RTL8211F */
+			compatible = "ethernet-phy-id001c.c916";
+			reg = <1>;
+
+			realtek,reg-init = <0xd04 0x10 0x0 0x17b>;
+		};
+	};
 };
 
 &i2c0 {

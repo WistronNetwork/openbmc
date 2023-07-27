@@ -186,8 +186,6 @@ set_i2c_mux_master() {
         return 2
     fi
 
-
-
     if [ ! -f "$I2C_MUX_SEL_PATH" ]; then
         gpiocli -c 1e780000.gpio -n "$I2C_MUX" -s FM_MB_I2C_MUX_SEL export 2> /dev/null
     fi
@@ -276,4 +274,56 @@ set_mux_master() {
     fi
 
     return $ret
+}
+
+bmc_model() {
+    # Get BMC CPU information and SOC ID
+    CPU_INFO=$(cat /proc/cpuinfo)
+    if [[ $CPU_INFO = *ARMv7* ]]; then
+        ID1=$(devmem 0x1e6e2004)
+        ID2=$(devmem 0x1e6e2014)
+        if [ $((ID1)) -eq $((0x05000303)) ] &&
+           [ $((ID2)) -eq $((0x05000303)) ]; then
+            echo "AST2600-A0"
+        elif [ $((ID1)) -eq $((0x05010303)) ] &&
+             [ $((ID2)) -eq $((0x05010303)) ]; then
+            echo "AST2600-A1"
+        elif [ $((ID1)) -eq $((0x05010303)) ] &&
+             [ $((ID2)) -eq $((0x05020303)) ]; then
+            echo "AST2600-A2"
+        elif [ $((ID1)) -eq $((0x05030303)) ] &&
+             [ $((ID2)) -eq $((0x05030303)) ]; then
+            echo "AST2600-A3"
+        elif [ $((ID1)) -eq $((0x05010203)) ] &&
+             [ $((ID2)) -eq $((0x05010203)) ]; then
+            echo "AST2620-A1"
+        elif [ $((ID1)) -eq $((0x05010203)) ] &&
+             [ $((ID2)) -eq $((0x05020203)) ]; then
+            echo "AST2620-A2"
+        elif [ $((ID1)) -eq $((0x05030203)) ] &&
+             [ $((ID2)) -eq $((0x05030203)) ]; then
+            echo "AST2620-A3"
+        else
+            echo "UNKNOWN"
+        fi
+    elif [[ $CPU_INFO = *ARMv6* ]]; then
+        ID=$(devmem 0x1e6e207c)
+        if [ $((ID)) -eq $((0x04000303)) ]; then
+            echo "AST2500-A0"
+        elif [ $((ID)) -eq $((0x04010303)) ]; then
+            echo "AST2500-A1"
+        elif [ $((ID)) -eq $((0x04030303)) ]; then
+            echo "AST2500-A2"
+        elif [ $((ID)) -eq $((0x04000203)) ]; then
+            echo "AST2520-A1"
+        elif [ $((ID)) -eq $((0x04010203)) ]; then
+            echo "AST2520-A2"
+        elif [ $((ID)) -eq $((0x04030203)) ]; then
+            echo "AST2520-A3"
+        else
+            echo "UNKNOWN"
+        fi
+    else
+        echo "UNKNOWN"
+    fi
 }

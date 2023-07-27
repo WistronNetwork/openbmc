@@ -1,0 +1,19 @@
+{
+	"board" : {
+		"mfg" : "Wistron                               ",
+		"pname" : "P3 Box Main Board                   ",
+		"date" : "01/01/2022 01:01:00",
+		"serial" : "XXXX-YYYY             ",
+		"pn" : "AAAABBBBCCCCDD        "
+	},
+	"product" : {
+		"lang": 1,
+		"mfg" : "Wistron",
+		"pname" : "P3 Box       ",
+		"pn" : "AAAABBBBCCCCD               ",
+		"serial" : "YYYY-XXXX               ",
+		"custom" : [
+			{ "data" : "XXXX-YYYY                " }
+		]
+	}
+}

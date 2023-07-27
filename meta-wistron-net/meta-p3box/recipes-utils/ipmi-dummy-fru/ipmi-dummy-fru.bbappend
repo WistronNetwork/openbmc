@@ -1,6 +1,8 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI:append = "file://obmc"
+SRC_URI:append = "file://obmc \
+                  file://p3box_frugen \
+                 "
 
 SYSTEMD_SERVICE:${PN}:append = " \
     ${PN}@bmc.service \

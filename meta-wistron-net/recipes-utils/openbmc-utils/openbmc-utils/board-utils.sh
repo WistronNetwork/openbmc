@@ -3,6 +3,10 @@
 # Copyright 2022-present Wistron. All Rights Reserved.
 #
 
+FW_STATUS_SUCCESS=0
+FW_STATUS_FAILURE=3
+FW_STATUS_NOT_SUPPORTED=4
+
 #shellcheck disable=SC1091
 if [ -f "/usr/local/bin/platform-board-utils.sh" ]; then
     source /usr/local/bin/platform-board-utils.sh
@@ -16,6 +20,8 @@ bios_boot_from() {
     printf "Not supported\n"
 }
 
+
+##################### Fan function start #####################
 # $1: Fan Unit
 get_fan_speed() {
     if [ -z "$FANCPLD_SYSFS_DIR" ]; then
@@ -89,7 +95,9 @@ set_fan_speed() {
         return 1
     fi
 }
+##################### Fan function end #####################
 
+##################### I2C/UART mux function start #####################
 get_i2c_mux_master() {
     if [ -z "$I2C_MUX" ]; then
         printf "Not supported\n"
@@ -275,6 +283,7 @@ set_mux_master() {
 
     return $ret
 }
+##################### I2C/UART mux function end #####################
 
 bmc_model() {
     # Get BMC CPU information and SOC ID
@@ -327,3 +336,283 @@ bmc_model() {
         echo "UNKNOWN"
     fi
 }
+
+##################### FW function start #####################
+fw_fru_list() {
+    if declare -F platform_fw_fru_list &> /dev/null; then
+        platform_fw_fru_list
+    else
+        echo "bmc"
+    fi
+}
+
+fw_component_list() {
+    local fru=$1
+
+    if declare -F platform_fw_component_list &> /dev/null; then
+        platform_fw_component_list "$fru"
+    else
+        if [ "$fru" = "bmc" ]; then
+            echo "bmc altbmc"
+        fi
+    fi
+}
+
+is_valid_fru() {
+    local fru=$1
+
+    fru_list=$(fw_fru_list)
+
+    for f in $fru_list;
+    do
+        if [ "$f" = "$fru" ]; then
+            echo "true"
+            return
+        fi
+    done
+
+    echo "false"
+}
+
+is_valid_component() {
+    local fru=$1
+    local component=$2
+
+    component_list=$(fw_component_list "$fru")
+
+    for c in $component_list;
+    do
+        if [ "$c" = "$component" ]; then
+            echo "true"
+            return
+        fi
+    done
+
+    echo "false"
+}
+
+print_fru_comp() {
+    fru_list=$(fw_fru_list)
+
+    for fru in $fru_list;
+    do
+        component_list=$(fw_component_list "$fru")
+        if [ -n "$component_list" ]; then
+            printf "%-11s:" "$fru"
+            printf " %s \n" "$component_list"
+        fi
+    done
+}
+
+get_mtd_name() {
+    local bmc_label=$1
+
+    mtd_name=$(cat < /proc/mtd | grep \""$bmc_label"\" | cut -d ":" -f 0)
+
+    echo "$mtd_name"
+}
+
+do_bmc_version() {
+    local component=$1
+
+    if [ "$component" = "bmc" ]; then
+        ver=$(cat < /etc/os-release | grep VERSION_ID= | cut -d "=" -f 2)
+        ret=$FW_STATUS_SUCCESS
+    elif [ "$component" = "altbmc" ]; then
+        altbmc_path="/run/media/rofs-alt/etc/os-release"
+        if [ -f "$altbmc_path" ]; then
+            ver=$(cat < $altbmc_path | grep VERSION_ID= | cut -d "=" -f 2)
+            ret=$FW_STATUS_SUCCESS
+        else
+            ver="Not Supported"
+            ret=$FW_STATUS_NOT_SUPPORTED
+        fi
+    else
+        ver="Not Supported"
+        ret=$FW_STATUS_NOT_SUPPORTED
+    fi
+    echo "$ver"
+
+    return "$ret"
+}
+
+do_bmc_update() {
+    local component=$1
+    local image=$2
+
+    extension=${image##*.}
+    if [ "$component" = "bmc" ]; then
+        if [ "$extension" != "tar" ]; then
+            printf "Invalid image format\n"
+            return $FW_STATUS_FAILURE
+        fi
+        cp "$image" /tmp/images && sleep 5
+        #shellcheck disable=SC2012
+        id=$(ls -t /tmp/images | head -n 1)
+
+        busctl set-property xyz.openbmc_project.Software.BMC.Updater \
+               /xyz/openbmc_project/software/"$id" \
+               xyz.openbmc_project.Software.Activation RequestedActivation s \
+               xyz.openbmc_project.Software.Activation.RequestedActivations.Active
+        ret=$?
+
+        if [ "$ret" -ne 0 ]; then
+            ret=$FW_STATUS_FAILURE
+        else
+            reboot
+        fi
+
+    elif [ "$component" = "altbmc" ]; then
+        ret=$FW_STATUS_NOT_SUPPORTED
+    else
+        ret=1
+    fi
+
+    return "$ret"
+}
+
+do_bmc_dump() {
+    local component=$1
+    local image=$2
+
+    if [ "$component" = "bmc" ]; then
+        label="bmc"
+    elif [ "$component" = "altbmc" ]; then
+        label="alt-bmc"
+    else
+        return 1
+    fi
+
+    mtd_name=$(get_mtd_name "$label")
+    if [ "$mtd_name" = "" ]; then
+        printf "Failed to get device for %s\n" "$label"
+        return "$FW_STATUS_FAILURE"
+    fi
+
+    dev_mtd="/dev/$mtd_name"
+    printf "Dumping from device: %s\n" "$dev_mtd"
+    dd if="$dev_mtd" of="$image"
+    ret=$?
+
+    if [ "$ret" -ne 0 ]; then
+        ret=$FW_STATUS_FAILURE
+    fi
+
+    return "$ret"
+}
+
+do_fw_version() {
+    local fru=$1
+    local component=$2
+    local ver_ret=0
+
+    if [ "$component" = "all" ]; then
+        component=$(fw_component_list "$fru")
+    fi
+
+    for comp in $component;
+    do
+        if [ "$(is_valid_component "$fru" "$comp")" = "true" ]; then
+            if declare -F platform_do_"$fru"_version &> /dev/null; then
+                ver=$(platform_do_"$fru"_version "$comp")
+                ver_ret=$((ver_ret | $?))
+            else
+                if declare -F do_"$fru"_version &> /dev/null; then
+                    ver=$(do_"$fru"_version "$comp")
+                    ver_ret=$((ver_ret | $?))
+                else
+                    ver="Not Supported"
+                    ver_ret=$FW_STATUS_NOT_SUPPORTED
+                fi
+            fi
+            printf "%s" "${comp^^} "
+            printf "Version: %s\n" "$ver"
+        else
+            ver_ret=1
+        fi
+    done
+
+    return $ver_ret
+}
+
+do_fw_update() {
+    local fru=$1
+    local component=$2
+    local image=$3
+    local update_ret=0
+
+    if [ "$(is_valid_component "$fru" "$component")" = "true" ]; then
+        start_time=$(date +%s)
+        if declare -F platform_do_"$fru"_update &> /dev/null; then
+            platform_do_"$fru"_update "$component" "$image"
+            update_ret=$((update_ret | $?))
+        else
+            if declare -F do_"$fru"_update &> /dev/null; then
+                do_"$fru"_update "$component" "$image"
+                update_ret=$((update_ret | $?))
+
+            else
+                update_ret=$FW_STATUS_NOT_SUPPORTED
+            fi
+        fi
+        end_time=$(date +%s)
+        total=$((end_time - start_time))
+
+        printf "\n"
+        printf "Upgrade of %s : %s" "$fru" "$component"
+        if [ "$update_ret" -eq "$FW_STATUS_SUCCESS" ]; then
+            printf " succeeded\n"
+        else
+            if [ "$update_ret" -eq "$FW_STATUS_NOT_SUPPORTED" ]; then
+                printf " not supported\n"
+            else
+                printf " fail\n"
+            fi
+        fi
+
+        printf "\n"
+        printf "FW update time: %s senconds\n" "$total"
+    else
+        update_ret=1
+    fi
+
+    return $update_ret
+}
+
+do_fw_dump() {
+    local fru=$1
+    local component=$2
+    local image=$3
+    local dump_ret=0
+
+    if [ "$(is_valid_component "$fru" "$component")" = "true" ]; then
+        if declare -F platform_do_"$fru"_dump &> /dev/null; then
+            platform_do_"$fru"_dump "$component" "$image"
+            dump_ret=$((dump_ret | $?))
+        else
+            if declare -F do_"$fru"_dump &> /dev/null; then
+                do_"$FRU"_dump "$component" "$image"
+                dump_ret=$((dump_ret | $?))
+            else
+                dump_ret=$FW_STATUS_NOT_SUPPORTED
+            fi
+        fi
+
+        printf "\n"
+        printf "Dump of %s : %s" "$FRU" "$component"
+        if [ "$dump_ret" -eq "$FW_STATUS_SUCCESS" ]; then
+            printf " succeeded\n"
+        else
+            if [ "$dump_ret" -eq "$FW_STATUS_NOT_SUPPORTED" ]; then
+                printf " not supported\n"
+            else
+                printf " fail\n"
+            fi
+        fi
+    else
+        dump_ret=1
+    fi
+
+    return $dump_ret
+}
+##################### FW function end #####################

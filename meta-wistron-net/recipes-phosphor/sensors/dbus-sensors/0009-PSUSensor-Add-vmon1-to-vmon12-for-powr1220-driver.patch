@@ -1,0 +1,35 @@
+From 6f617c420aa8eec4e09cb82f92d863e12a8a9b84 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Fri, 4 Aug 2023 15:53:31 +0800
+Subject: [PATCH] PSUSensor-Add-vmon1-to-vmon12-for-powr1220-driver
+
+---
+ src/PSUSensorMain.cpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/PSUSensorMain.cpp b/src/PSUSensorMain.cpp
+index a5362a7..5c162ce 100644
+--- a/src/PSUSensorMain.cpp
++++ b/src/PSUSensorMain.cpp
+@@ -1029,6 +1029,18 @@ void propertyInitialize(void)
+         {"vout31", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+         {"vout32", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+         {"vmon", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon1", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon2", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon3", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon4", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon5", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon6", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon7", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon8", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon9", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon10", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon11", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
++        {"vmon12", PSUProperty("Auxiliary Input Voltage", 255, 0, 3, 0)},
+         {"in0", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+         {"in1", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+         {"in2", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+-- 
+2.25.1
+

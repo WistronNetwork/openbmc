@@ -1,0 +1,42 @@
+From 3148891348f3ab41f891a275b4ddd17d4a7e7267 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 7 Aug 2023 02:58:18 +0800
+Subject: [PATCH] Add tps536xx series type
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ include/devices.hpp | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/include/devices.hpp b/include/devices.hpp
+index 2cfa99cd..8e9cc043 100644
+--- a/include/devices.hpp
++++ b/include/devices.hpp
+@@ -236,6 +236,24 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"UCD90160",
+           ExportTemplate("ucd90160 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"TPS53647",
++          ExportTemplate("tps53647 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"TPS53667",
++          ExportTemplate("tps53667 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"TPS53676",
++          ExportTemplate("tps53676 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"TPS53679",
++          ExportTemplate("tps53679 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"TPS53681",
++          ExportTemplate("tps53681 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
++         {"TPS53688",
++          ExportTemplate("tps53688 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
+          {"TMP112",
+           ExportTemplate("tmp112 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+-- 
+2.25.1
+

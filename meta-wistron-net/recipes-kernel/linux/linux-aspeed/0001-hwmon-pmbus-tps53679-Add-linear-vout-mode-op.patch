@@ -1,0 +1,56 @@
+From a90ec26e9d21a2b44db1f4d26d8437ca4059eb49 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 7 Aug 2023 02:04:55 +0800
+Subject: [PATCH] drivers: hwmon: pmbus: tps53679: Add linear vout mode option
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/hwmon/pmbus/tps53679.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/tps53679.c b/drivers/hwmon/pmbus/tps53679.c
+index 81b9d813655a..536ecdcba129 100644
+--- a/drivers/hwmon/pmbus/tps53679.c
++++ b/drivers/hwmon/pmbus/tps53679.c
+@@ -51,20 +51,24 @@ static int tps53679_identify_mode(struct i2c_client *client,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		vout_params = ret & GENMASK(4, 0);
+-
+-		switch (vout_params) {
+-		case TPS53679_PROT_VR13_10MV:
+-		case TPS53679_PROT_VR12_5_10MV:
+-			info->vrm_version[i] = vr13;
+-			break;
+-		case TPS53679_PROT_VR13_5MV:
+-		case TPS53679_PROT_VR12_5MV:
+-		case TPS53679_PROT_IMVP8_5MV:
+-			info->vrm_version[i] = vr12;
+-			break;
+-		default:
+-			return -EINVAL;
++		if (ret >> 5 == 0)
++			info->format[PSC_VOLTAGE_OUT] = linear;
++		else {
++			vout_params = ret & GENMASK(4, 0);
++
++			switch (vout_params) {
++			case TPS53679_PROT_VR13_10MV:
++			case TPS53679_PROT_VR12_5_10MV:
++				info->vrm_version[i] = vr13;
++				break;
++			case TPS53679_PROT_VR13_5MV:
++			case TPS53679_PROT_VR12_5MV:
++			case TPS53679_PROT_IMVP8_5MV:
++				info->vrm_version[i] = vr12;
++				break;
++			default:
++				return -EINVAL;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.25.1
+

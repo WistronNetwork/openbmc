@@ -1,0 +1,43 @@
+From f472a4e6921f505113cbfd52560992575927b379 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 7 Aug 2023 03:09:20 +0800
+Subject: [PATCH] PSUSensor: Add device type tps536xx series
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ src/PSUSensorMain.cpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/PSUSensorMain.cpp b/src/PSUSensorMain.cpp
+index a5362a7a..d01a0f73 100644
+--- a/src/PSUSensorMain.cpp
++++ b/src/PSUSensorMain.cpp
+@@ -81,6 +81,12 @@ static constexpr auto sensorTypes{std::to_array<const char*>(
+      "xyz.openbmc_project.Configuration.RAA229004",
+      "xyz.openbmc_project.Configuration.RAA229126",
+      "xyz.openbmc_project.Configuration.TPS546D24",
++     "xyz.openbmc_project.Configuration.TPS53647",
++     "xyz.openbmc_project.Configuration.TPS53667",
++     "xyz.openbmc_project.Configuration.TPS53676",
++     "xyz.openbmc_project.Configuration.TPS53679",
++     "xyz.openbmc_project.Configuration.TPS53681",
++     "xyz.openbmc_project.Configuration.TPS53688",
+      "xyz.openbmc_project.Configuration.UCD90160",
+      "xyz.openbmc_project.Configuration.XDPE132G5C",
+      "xyz.openbmc_project.Configuration.XDPE132G5D",
+@@ -128,6 +134,12 @@ static constexpr auto pmbusNames{std::to_array<const char*>({
+     "raa229004",
+     "raa229126",
+     "tps546d24",
++    "tps53647",
++    "tps53667",
++    "tps53676",
++    "tps53679",
++    "tps53681",
++    "tps53688",
+     "ucd90160",
+     "xdpe132g5c",
+     "xdpe132g5d",
+-- 
+2.25.1
+

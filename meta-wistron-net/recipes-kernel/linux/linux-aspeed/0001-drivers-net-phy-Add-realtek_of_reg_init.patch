@@ -1,4 +1,4 @@
-From 90cb69bb535d8f371f224aee7222f6c831e06e22 Mon Sep 17 00:00:00 2001
+From 63a85efde670db37035f8c3cb44006bdb52fc1a1 Mon Sep 17 00:00:00 2001
 From: Neal_Chen <neal_chen@wistron.com>
 Date: Tue, 13 Jun 2023 18:50:07 +0800
 Subject: [PATCH] drivers: net: phy: Add realtek_of_reg_init()
@@ -11,7 +11,7 @@ Signed-off-by: Neal_Chen <neal_chen@wistron.com>
  1 file changed, 60 insertions(+)
 
 diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index 11be60333fa8..602ed14f590f 100644
+index 11be60333fa8..0f97c39c7c32 100644
 --- a/drivers/net/phy/realtek.c
 +++ b/drivers/net/phy/realtek.c
 @@ -322,6 +322,58 @@ static int rtl8211_config_aneg(struct phy_device *phydev)
@@ -73,7 +73,7 @@ index 11be60333fa8..602ed14f590f 100644
  static int rtl8211c_config_init(struct phy_device *phydev)
  {
  	/* RTL8211C has an issue when operating in Gigabit slave mode */
-@@ -408,6 +460,13 @@ static int rtl8211f_config_init(struct phy_device *phydev)
+@@ -345,6 +397,13 @@ static int rtl8211f_config_init(struct phy_device *phydev)
  		return ret;
  	}
  
@@ -84,9 +84,9 @@ index 11be60333fa8..602ed14f590f 100644
 +		return ret;
 +	}
 +
- 	return genphy_soft_reset(phydev);
- }
- 
+ 	switch (phydev->interface) {
+ 	case PHY_INTERFACE_MODE_RGMII:
+ 		val_txdly = 0;
 @@ -1030,6 +1089,7 @@ module_phy_driver(realtek_drvs);
  
  static const struct mdio_device_id __maybe_unused realtek_tbl[] = {

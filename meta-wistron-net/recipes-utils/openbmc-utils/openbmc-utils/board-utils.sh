@@ -337,6 +337,51 @@ bmc_model() {
     fi
 }
 
+bmc_ready() {
+    if declare -F platform_bmc_ready &> /dev/null; then
+        platform_bmc_ready
+    else
+        if [ -z "$BMC_READY" ]; then
+            printf "Not supported\n"
+            return 2
+        fi
+
+        if [ ! -f "$BMC_READY_PATH" ]; then
+            gpiocli -c 1e780000.gpio -n "$BMC_READY" -s BMC_READY export 2> /dev/null
+        fi
+
+        if [ "$1" = "enable" ]; then
+            if [ -f "$BMC_READY_PATH" ]; then
+                echo "$BMC_READY_VALUE" > "$BMC_READY_PATH"
+            else
+                gpiocli -s BMC_READY set-init-value "$BMC_READY_VALUE" 2> /dev/null
+            fi
+            ret=$?
+        elif [ "$1" = "disable" ]; then
+            if [ $((BMC_READY_VALUE)) -eq $((1)) ]; then
+                value=0
+            else
+                value=1
+            fi
+
+            if [ -f "$BMC_READY_PATH" ]; then
+                echo "$value" > "$I2C_MUX_SEL_PATH"
+            else
+                gpiocli -s BMC_READY set-init-value "$value" 2> /dev/null
+            fi
+            ret=$?
+        else
+            return 1
+        fi
+
+        if [ ! -f "$BMC_READY_PATH" ]; then
+            gpiocli -s BMC_READY unexport 2> /dev/null
+        fi
+
+        return $ret
+    fi
+}
+
 ##################### FW function start #####################
 fw_fru_list() {
     if declare -F platform_fw_fru_list &> /dev/null; then

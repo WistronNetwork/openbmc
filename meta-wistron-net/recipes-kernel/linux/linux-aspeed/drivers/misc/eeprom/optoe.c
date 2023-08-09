@@ -849,6 +849,9 @@ static ssize_t temperature_value_show(struct device *dev,
 	value = i2c_smbus_read_word_swapped(client, temperature_reg);
 	mutex_unlock(&optoe->lock);
 
+	if (value < 0)
+		return value;
+
 	if (value & 0x8000) {
 		value = (value ^ 0xffff) + 1;
 		value = -value;
@@ -873,6 +876,9 @@ static ssize_t voltage_value_show(struct device *dev,
 	mutex_lock(&optoe->lock);
 	value = i2c_smbus_read_word_swapped(client, voltage_reg);
 	mutex_unlock(&optoe->lock);
+
+	if (value < 0)
+		return value;
 
 	/* voltage = (raw data x 100 uV) x 1000 = raw data / 10 */
 	return sprintf(buf, "%d\n", value / 10);

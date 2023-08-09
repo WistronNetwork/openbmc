@@ -1,0 +1,198 @@
+From 814b4496d31ac4bf9e33585edacec074c6f3ec9b Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Wed, 9 Aug 2023 15:21:20 +0800
+Subject: [PATCH] Add ec type and elevenBitScale3 translatation
+
+---
+ include/IpmbSensor.hpp | 25 ++++++++++++++--
+ src/IpmbSensor.cpp     | 68 ++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 81 insertions(+), 12 deletions(-)
+
+diff --git a/include/IpmbSensor.hpp b/include/IpmbSensor.hpp
+index a8a8c46..02ed457 100644
+--- a/include/IpmbSensor.hpp
++++ b/include/IpmbSensor.hpp
+@@ -18,7 +18,8 @@ enum class IpmbType
+     IR38363VR,
+     ADM1278HSC,
+     mpsVR,
+-    gpio
++    gpio,
++    EC
+ };
+ 
+ enum class IpmbSubType
+@@ -38,7 +39,24 @@ enum class ReadingFormat
+     elevenBit,
+     elevenBitShift,
+     linearElevenBit,
+-    gpio
++    elevenBitScale3,
++    gpio,
++    ECSensor
++};
++
++enum ECSencorType
++{
++    cputemp = 0x1,
++    dimm1temp,
++    dimm2temp,
++    cpuvolt1,
++    cpuvolt2,
++    cpuvolt3,
++    cpuvolt4,
++    cpuvolt5,
++    cpuvolt6,
++    cpuvolt7,
++    cpuvolt8
+ };
+ 
+ namespace ipmi
+@@ -48,8 +66,9 @@ namespace sensor
+ constexpr uint8_t netFn = 0x04;
+ constexpr uint8_t getSensorReading = 0x2d;
+ 
+-constexpr uint8_t gpionetFn = 0x38;
++constexpr uint8_t EcOemnetFn = 0x38;
+ constexpr uint8_t getGpioReading = 0x03;
++constexpr uint8_t getECSensorReading = 0x1a;
+ 
+ static bool isValid(const std::vector<uint8_t>& data)
+ {
+diff --git a/src/IpmbSensor.cpp b/src/IpmbSensor.cpp
+index a7120ee..13bc343 100644
+--- a/src/IpmbSensor.cpp
++++ b/src/IpmbSensor.cpp
+@@ -246,11 +246,47 @@ void IpmbSensor::loadDefaults()
+         /* refer to EC spec: Get all GPIO status
+            netFn: 0x38, Lun: 0, cmd: 0x3 */
+         commandAddress = ipmbAddress;
+-        netfn = ipmi::sensor::gpionetFn;
++        netfn = ipmi::sensor::EcOemnetFn;
+         command = ipmi::sensor::getGpioReading;
+         commandData = {0x99, 0x2b, 0x00};
+         readingFormat = ReadingFormat::gpio;
+     }
++    else if (type == IpmbType::EC)
++    {
++        /* refer to EC spec: Get CPU sensor
++           netFn: 0x38, Lun: 0, cmd: 0x1a */
++        commandAddress = ipmbAddress;
++        netfn = ipmi::sensor::EcOemnetFn;
++        command = ipmi::sensor::getECSensorReading;
++        // default read cputemp
++        commandData = {0x99, 0x2b, 0x00, 0x00, 0x00, 0x00};
++        if (deviceAddress == ECSencorType::cputemp)
++            commandData = {0x99, 0x2b, 0x00, 0x01, 0x00, 0x00};
++        else if (deviceAddress == ECSencorType::dimm1temp)
++            commandData = {0x99, 0x2b, 0x00, 0x01, 0x01, 0x00};
++        else if (deviceAddress == ECSencorType::dimm2temp)
++            commandData = {0x99, 0x2b, 0x00, 0x01, 0x02, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt1)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x00, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt2)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x01, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt3)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x02, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt4)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x03, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt5)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x04, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt6)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x05, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt7)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x06, 0x00};
++        else if (deviceAddress == ECSencorType::cpuvolt8)
++            commandData = {0x99, 0x2b, 0x00, 0x00, 0x07, 0x00};
++        /* data[3] == 0: read voltage
++           data[3] == 1: read temperature */
++        readingFormat = (commandData[3] == 1) ? ReadingFormat::byte3
++                                              : ReadingFormat::elevenBitScale3;
++    }
+     else
+     {
+         throw std::runtime_error("Invalid sensor type");
+@@ -348,6 +384,22 @@ bool IpmbSensor::processReading(const std::vector<uint8_t>& data, double& resp)
+             resp = value;
+             return true;
+         }
++        case (ReadingFormat::elevenBitScale3):
++        {
++            if (data.size() < 5)
++            {
++                if (!errCount)
++                {
++                    std::cerr << "Invalid data length returned for " << name
++                              << "\n";
++                }
++                return false;
++            }
++
++            double value = (double)((data[4] << 8) | data[3]) / 1000;
++            resp = value;
++            return true;
++        }
+         case (ReadingFormat::gpio):
+         {
+             if (data.size() < 7)
+@@ -465,6 +517,9 @@ bool IpmbSensor::sensorClassType(const std::string& sensorClass)
+     else if (sensorClass == "gpio")
+     {
+         type = IpmbType::gpio;
++    } else if (sensorClass == "EC")
++    {
++        type = IpmbType::EC;
+     }
+     else
+     {
+@@ -549,7 +604,6 @@ void createSensors(
+                 }
+                 std::string name =
+                     loadVariant<std::string>(entry.second, "Name");
+-
+                 std::vector<thresholds::Threshold> sensorThresholds;
+                 if (!parseThresholdsFromConfig(pathPair.second,
+                                                sensorThresholds))
+@@ -557,12 +611,11 @@ void createSensors(
+                     std::cerr << "error populating thresholds for " << name
+                               << "\n";
+                 }
+-                uint8_t deviceAddress =
+-                    loadVariant<uint8_t>(entry.second, "Address");
+-
++                std::string preAddress =
++                    loadVariant<std::string>(entry.second, "Address");
++                uint8_t deviceAddress = stoi(preAddress);
+                 std::string sensorClass =
+                     loadVariant<std::string>(entry.second, "Class");
+-
+                 uint8_t hostSMbusIndex = hostSMbusIndexDefault;
+                 auto findSmType = entry.second.find("HostSMbusIndex");
+                 if (findSmType != entry.second.end())
+@@ -570,7 +623,6 @@ void createSensors(
+                     hostSMbusIndex = std::visit(VariantToUnsignedIntVisitor(),
+                                                 findSmType->second);
+                 }
+-
+                 float pollRate = pollRateDefault;
+                 auto findPollRate = entry.second.find("PollRate");
+                 if (findPollRate != entry.second.end())
+@@ -582,7 +634,6 @@ void createSensors(
+                         pollRate = pollRateDefault;
+                     }
+                 }
+-
+                 /* Default sensor type is "temperature" */
+                 std::string sensorTypeName = "temperature";
+                 auto findType = entry.second.find("SensorType");
+@@ -596,7 +647,6 @@ void createSensors(
+                     dbusConnection, io, name, pathPair.first, objectServer,
+                     std::move(sensorThresholds), deviceAddress, hostSMbusIndex,
+                     pollRate, sensorTypeName);
+-
+                 sensor->parseConfigValues(entry.second);
+                 if (!(sensor->sensorClassType(sensorClass)))
+                 {
+-- 
+2.25.1
+

@@ -12,4 +12,5 @@ SRC_URI:append = " \
     file://0007-PSUSensor-Add-device-type-powr1220.patch \
     file://0008-PSUSensor-Add-device-type-optoe.patch \
     file://0009-PSUSensor-Add-vmon1-to-vmon12-for-powr1220-driver.patch \
+    file://0010-Add-ec-type-and-elevenBitScale3-translatation.patch \
     "

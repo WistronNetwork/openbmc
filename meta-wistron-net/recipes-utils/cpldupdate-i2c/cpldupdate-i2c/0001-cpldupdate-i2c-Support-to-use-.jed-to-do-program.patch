@@ -1,18 +1,18 @@
-From 2a5d6d88895b2a4fcac52d99f25791e49789199e Mon Sep 17 00:00:00 2001
+From acc97f93d56cdae80d7c198ec72feec4e7498ed3 Mon Sep 17 00:00:00 2001
 From: Neal_Chen <neal_chen@wistron.com>
 Date: Fri, 28 Jul 2023 16:05:17 +0800
 Subject: [PATCH] cpldupdate-i2c: Support to use .jed to do program
 
 Signed-off-by: Neal_Chen <neal_chen@wistron.com>
 ---
- cpldupdate-i2c.c | 202 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 169 insertions(+), 33 deletions(-)
+ cpldupdate-i2c.c | 190 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 157 insertions(+), 33 deletions(-)
 
 diff --git a/cpldupdate-i2c.c b/cpldupdate-i2c.c
-index 78d58aad5..e1ea28993 100644
+index 78d58aad5..2ff1f416d 100644
 --- a/cpldupdate-i2c.c
 +++ b/cpldupdate-i2c.c
-@@ -99,6 +99,115 @@ ascii_to_hex(int ascii) {
+@@ -99,6 +99,100 @@ ascii_to_hex(int ascii) {
    }
  }
  
@@ -53,7 +53,7 @@ index 78d58aad5..e1ea28993 100644
 +#define JED_START_STR "L000000"
 +#define JED_END_STR "*"
 +
-+int jed_file_parse(const char *filename, uint8_t *cfg_buf) {
++int jed_file_parse(const char *filename, uint8_t cfg_data[]) {
 +  FILE *fw_file;
 +  char bin[MACHXO2_PAGE_SIZE_BITS] = {0};
 +  char hex[MACHXO2_PAGE_SIZE] = {0};
@@ -67,12 +67,6 @@ index 78d58aad5..e1ea28993 100644
 +  }
 +
 +  num = 1;
-+  cfg_buf = (uint8_t *) malloc(num * MACHXO2_PAGE_SIZE);
-+  if (cfg_buf == NULL) {
-+    ERR_PRINT("jed_file_parse()");
-+    return -ENOMEM;
-+  }
-+
 +  while (fgets(bin, MACHXO2_PAGE_SIZE_BITS, fw_file) > 0) {
 +    if ((fetch == 1) & !strncmp(bin, JED_END_STR, 1))
 +      break;
@@ -80,16 +74,6 @@ index 78d58aad5..e1ea28993 100644
 +      fetch = 1;
 +      continue;
 +    } else if (fetch == 1) {
-+      if (num > 1) {
-+        uint8_t *new_cfg_buf;
-+
-+        new_cfg_buf = (uint8_t *) realloc(cfg_buf, num * MACHXO2_PAGE_SIZE);
-+        if (new_cfg_buf == NULL) {
-+          ERR_PRINT("jed_file_parse()");
-+          return -ENOMEM;
-+        }
-+        cfg_buf = new_cfg_buf;
-+      }
 +      bin[MACHXO2_PAGE_SIZE_BITS - 1] = '\0';
 +      bin_to_hex((uint8_t *) bin, (uint8_t *) hex);
 +
@@ -100,10 +84,11 @@ index 78d58aad5..e1ea28993 100644
 +        printf("0x%02x ",hex[k]);
 +      printf("\n");
 +#endif
-+
-+      memcpy(cfg_buf + ((num - 1) * MACHXO2_PAGE_SIZE), hex, MACHXO2_PAGE_SIZE);
-+      memset(bin, 0, sizeof(bin));
-+      memset(hex, 0, sizeof(hex));
++      if (cfg_data != NULL) {
++        memcpy(cfg_data + ((num - 1) * MACHXO2_PAGE_SIZE), hex, MACHXO2_PAGE_SIZE);
++        memset(bin, 0, sizeof(bin));
++        memset(hex, 0, sizeof(hex));
++      }
 +      num++;
 +    }
 +  }
@@ -122,13 +107,13 @@ index 78d58aad5..e1ea28993 100644
 +    return -1;
 +  }
 +
-+  return (num * 16);
++  return (num - 1) * 16;
 +}
 +
  static int
  read_device_id(i2c_info_t cpld) {
  
-@@ -112,7 +221,7 @@ read_device_id(i2c_info_t cpld) {
+@@ -112,7 +206,7 @@ read_device_id(i2c_info_t cpld) {
      ERR_PRINT("read_device_id()");
      return ret;
    }
@@ -137,7 +122,15 @@ index 78d58aad5..e1ea28993 100644
               device_id[0], device_id[1], device_id[2], device_id[3]);
    return 0;
  }
-@@ -352,6 +461,9 @@ verify_flash(i2c_info_t cpld, uint8_t page,
+@@ -319,6 +413,7 @@ get_img_data(const char *file_path, uint8_t cfg_data[], int cfg_len,
+       j+=2;
+     }
+   }
++
+   return 0;
+ }
+ 
+@@ -352,6 +447,9 @@ verify_flash(i2c_info_t cpld, uint8_t page,
    int i = 0, byte_index = 0;
    int ret = -1;
  
@@ -147,7 +140,7 @@ index 78d58aad5..e1ea28993 100644
    /* Reset Page Address */
    ret = i2c_rdwr_msg_transfer(cpld.fd, cpld.addr << 1, reset_addr_cmd,
                                sizeof(reset_addr_cmd), NULL, 0);
-@@ -396,7 +508,10 @@ verify_flash(i2c_info_t cpld, uint8_t page,
+@@ -396,7 +494,10 @@ verify_flash(i2c_info_t cpld, uint8_t page,
          CPLD_BEBUG("0x%2x ", data[byte_index+i]);
        }
        printf("\nCompare Fail - Do Clean Up Procedure\n");
@@ -159,7 +152,7 @@ index 78d58aad5..e1ea28993 100644
        refresh(cpld);
        return 1;
      }
-@@ -418,6 +533,9 @@ program_flash(i2c_info_t cpld, uint8_t page,
+@@ -418,6 +519,9 @@ program_flash(i2c_info_t cpld, uint8_t page,
    int i = 0, byte_index = 0;
    int ret = -1;
  
@@ -169,7 +162,7 @@ index 78d58aad5..e1ea28993 100644
    /* Reset Page Address */
    ret = i2c_rdwr_msg_transfer(cpld.fd, cpld.addr << 1, reset_addr_cmd,
                                sizeof(reset_addr_cmd), NULL, 0);
-@@ -491,9 +609,11 @@ int
+@@ -491,9 +595,11 @@ int
  main(int argc, const char *argv[]) {
  
    int cfg_len = 0, ufm_len = 0, pid_file = 0;
@@ -183,7 +176,7 @@ index 78d58aad5..e1ea28993 100644
  
    if (argc != 4) {
      print_usage(argv[0]);
-@@ -511,56 +631,72 @@ main(int argc, const char *argv[]) {
+@@ -511,56 +617,74 @@ main(int argc, const char *argv[]) {
  
    cpld.fd = i2c_open(cpld.bus, cpld.addr);
    if (cpld.fd < 0) {
@@ -197,9 +190,19 @@ index 78d58aad5..e1ea28993 100644
 -    close(cpld.fd);
 -    return -1;
 -  }
-+  if (check_file_extension(argv[3], "jed")) {
-+    cfg_len = jed_file_parse(argv[3], cfg_data);
++  if (!check_file_extension(argv[3], "jed")) {
++    cfg_len = jed_file_parse(argv[3], NULL);
 +    if (cfg_len <= 0) {
++      ret = cpld.fd;
++      goto exit;
++    }
++    cfg_data = (uint8_t *) malloc(cfg_len);
++    jed_file_parse(argv[3], cfg_data);
++
++    erase_location = 0x04;
++  } else if (!check_file_extension(argv[3], "hex")) {
++    get_data_len(argv[3], &cfg_len, &ufm_len);
++    if (cfg_len <= 0 || ufm_len <= 0) {
 +      ret = cpld.fd;
 +      goto exit;
 +    }
@@ -210,14 +213,6 @@ index 78d58aad5..e1ea28993 100644
 -    close(cpld.fd);
 -    return ENOMEM;
 -  }
-+    erase_location = 0x04;
-+  } else if (!check_file_extension(argv[3], "hex")) {
-+    get_data_len(argv[3], &cfg_len, &ufm_len);
-+    if (cfg_len <= 0 || ufm_len <= 0) {
-+      ret = cpld.fd;
-+      goto exit;
-+    }
-+
 +    cfg_data = (uint8_t *) malloc(cfg_len);
 +    if (!cfg_data) {
 +      ERR_PRINT("CFG Data");
@@ -275,7 +270,7 @@ index 78d58aad5..e1ea28993 100644
    program_done(cpld);
    read_status(cpld);
    refresh(cpld);
-+
++  ret = 0;
 +
 +exit:
    close(cpld.fd);

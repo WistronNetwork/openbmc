@@ -9,7 +9,7 @@ from ctypes import create_string_buffer
 try:
     from sonic_platform_base.sonic_xcvr.sfp_optoe_base import SfpOptoeBase
     from sonic_platform_base.sonic_py_common.logger import Logger
-    import sys
+    import glob
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
@@ -63,6 +63,8 @@ class Sfp(SfpOptoeBase):
 
         # Init eeprom path
         self.eeprom_path = '/sys/bus/i2c/devices/{0}-0050/eeprom'.format(self._port_to_i2c_mapping[self.port_num])
+        self.PRESENT_1_16_PATH = '/sys/bus/i2c/devices/3-0011/hwmon/hwmon*/qsfpdd_p{0}_present_n'
+        self.PRESENT_17_32_PATH = '/sys/bus/i2c/devices/3-0012/hwmon/hwmon*/qsfpdd_p{0}_present_n'
 
     def get_presence(self):
         """
@@ -71,9 +73,19 @@ class Sfp(SfpOptoeBase):
             bool: True if SFP is present, False if not
 
         """
-
-        # TODO, need to implement to read present value per port
-        return True
+        presence = False
+        try:
+            if self.port_num <= 16:
+                pres_path=self.PRESENT_1_16_PATH.format('%02d' % self.port_num)
+            else:
+                pres_path=self.PRESENT_17_32_PATH.format('%02d' % self.port_num)
+            for filename in glob.glob(pres_path):
+                with open(filename, 'r') as sfp_presence:
+                    presence = False if int(sfp_presence.read(), 0) else True
+        except IOError:
+            return False
+        logger.log_info("debug:port_ %s sfp presence is %s" % (str(self.port_num), str(presence)))
+        return presence
 
     def get_eeprom_path(self):
         return self.eeprom_path

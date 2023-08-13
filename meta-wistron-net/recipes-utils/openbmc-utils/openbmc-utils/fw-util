@@ -20,7 +20,7 @@ usage() {
     printf "\n"
     printf "FRU        : COMPONENT"
     printf "\n---------- : ----------\n"
-    print_fru_comp
+    print_fw_fru_comp
 }
 
 duplicate_process_check() {
@@ -63,7 +63,7 @@ shift
 COMPONENT="$1"
 shift
 
-if [ "$(is_valid_fru "$FRU")" = "false" ]; then
+if [ "$(is_valid_fw_fru "$FRU")" = "false" ]; then
     usage
     exit 1
 fi
@@ -75,7 +75,7 @@ if [ "$OPERATION" = "--version" ] && [ "$#" -eq 0 ]; then
 
     do_fw_version "$FRU" "$COMPONENT"
     ret=$?
-elif [ "$OPERATION" = "--update" ] && [ "$#" -le 2 ] && [ "$#" -ge 1 ]; then
+elif [ "$OPERATION" = "--update" ] && [ "$#" -ge 1 ]; then
     do_fw_update "$FRU" "$COMPONENT" "$@"
     ret=$?
 elif [ "$OPERATION" = "--dump" ] && [ "$#" -le 2 ] && [ "$#" -ge 1 ]; then
@@ -85,7 +85,7 @@ else
     ret=1
 fi
 
-if [ $"$ret" -eq 1 ]; then
+if [ "$ret" -eq 1 ]; then
     usage
 fi
 

@@ -3,9 +3,9 @@
 # Copyright 2022-present Wistron. All Rights Reserved.
 #
 
-FW_STATUS_SUCCESS=0
-FW_STATUS_FAILURE=3
-FW_STATUS_NOT_SUPPORTED=4
+STATUS_SUCCESS=0
+STATUS_FAILURE=3
+STATUS_NOT_SUPPORTED=4
 
 #shellcheck disable=SC1091
 if [ -f "/usr/local/bin/platform-board-utils.sh" ]; then
@@ -338,6 +338,8 @@ bmc_model() {
 }
 
 bmc_ready() {
+    local operation=$1
+
     if declare -F platform_bmc_ready &> /dev/null; then
         platform_bmc_ready
     else
@@ -350,14 +352,14 @@ bmc_ready() {
             gpiocli -c 1e780000.gpio -n "$BMC_READY" -s BMC_READY export 2> /dev/null
         fi
 
-        if [ "$1" = "enable" ]; then
+        if [ "$operation" = "enable" ]; then
             if [ -f "$BMC_READY_PATH" ]; then
                 echo "$BMC_READY_VALUE" > "$BMC_READY_PATH"
             else
                 gpiocli -s BMC_READY set-init-value "$BMC_READY_VALUE" 2> /dev/null
             fi
             ret=$?
-        elif [ "$1" = "disable" ]; then
+        elif [ "$operation" = "disable" ]; then
             if [ $((BMC_READY_VALUE)) -eq $((1)) ]; then
                 value=0
             else
@@ -403,7 +405,7 @@ fw_component_list() {
     fi
 }
 
-is_valid_fru() {
+is_valid_fw_fru() {
     local fru=$1
 
     fru_list=$(fw_fru_list)
@@ -419,7 +421,7 @@ is_valid_fru() {
     echo "false"
 }
 
-is_valid_component() {
+is_valid_fw_component() {
     local fru=$1
     local component=$2
 
@@ -436,7 +438,7 @@ is_valid_component() {
     echo "false"
 }
 
-print_fru_comp() {
+print_fw_fru_comp() {
     fru_list=$(fw_fru_list)
 
     for fru in $fru_list;
@@ -462,19 +464,19 @@ do_bmc_version() {
 
     if [ "$component" = "bmc" ]; then
         ver=$(cat < /etc/os-release | grep VERSION_ID= | cut -d "=" -f 2)
-        ret=$FW_STATUS_SUCCESS
+        ret=$STATUS_SUCCESS
     elif [ "$component" = "altbmc" ]; then
         altbmc_path="/run/media/rofs-alt/etc/os-release"
         if [ -f "$altbmc_path" ]; then
             ver=$(cat < $altbmc_path | grep VERSION_ID= | cut -d "=" -f 2)
-            ret=$FW_STATUS_SUCCESS
+            ret=$STATUS_SUCCESS
         else
             ver="Not Supported"
-            ret=$FW_STATUS_NOT_SUPPORTED
+            ret=$STATUS_NOT_SUPPORTED
         fi
     else
         ver="Not Supported"
-        ret=$FW_STATUS_NOT_SUPPORTED
+        ret=$STATUS_NOT_SUPPORTED
     fi
     echo "$ver"
 
@@ -484,12 +486,19 @@ do_bmc_version() {
 do_bmc_update() {
     local component=$1
     local image=$2
+    local force=$3
 
+    boot_source=$(boot_info.sh bmc | grep "Boot Code Source" | cut -d ":" -f 2)
     extension=${image##*.}
     if [ "$component" = "bmc" ]; then
+        if [[ $boot_source = *Slave* ]]; then
+            printf "\nNot allow to update BMC backup flash when boot from backup flash\n"
+            ret=$STATUS_NOT_SUPPORTED
+        fi
+
         if [ "$extension" != "tar" ]; then
             printf "Invalid image format\n"
-            return $FW_STATUS_FAILURE
+            return $STATUS_FAILURE
         fi
         cp "$image" /tmp/images && sleep 5
         #shellcheck disable=SC2012
@@ -502,13 +511,79 @@ do_bmc_update() {
         ret=$?
 
         if [ "$ret" -ne 0 ]; then
-            ret=$FW_STATUS_FAILURE
+            ret=$STATUS_FAILURE
         else
             reboot
         fi
-
     elif [ "$component" = "altbmc" ]; then
-        ret=$FW_STATUS_NOT_SUPPORTED
+        if [[ "$boot_source " = *Master* ]]; then
+            if [ "$force" = "force" ]; then
+                if [ "$extension" != "tar" ]; then
+                    printf "Invalid image format\n"
+                    return $STATUS_FAILURE
+                fi
+                tar -C /tmp -xvf "$image" &> /dev/null
+                img_machine=$(cat < /tmp/MANIFEST | grep MachineName | cut -d "=" -f 2)
+                machine=$(cat < /etc/os-release | grep -i machine | cut -d '"' -f 2)
+
+                if [ "$img_machine" = "$machine" ]; then
+                    alt_uboot_mtd=$(cat < /proc/mtd | grep \"alt-u-boot\" | cut -d ":" -f 0)
+                    alt_kernel_mtd=$(cat < /proc/mtd | grep \"alt-kernel\" | cut -d ":" -f 0)
+                    alt_rofs_mtd=$(cat < /proc/mtd | grep \"alt-rofs\" | cut -d ":" -f 0)
+
+                    printf "Updating alt-kernel...\n"
+                    flashcp -v /tmp/image-kernel /dev/"$alt_kernel_mtd"
+                    ret=$?
+                    printf "Updating alt-rofs...\n"
+                    flashcp -v /tmp/image-rofs /dev/"$alt_rofs_mtd"
+                    ret=$((ret | $?))
+                    printf "Updating alt-u-boot...\n"
+                    flashcp -v /tmp/image-u-boot /dev/"$alt_uboot_mtd"
+                    ret=$((ret | $?))
+
+                    rm /tmp/image-* &>/dev/null
+                    rm /tmp/MANIFEST* &>/dev/null
+                    rm "$image" &>/dev/null
+                else
+                    ret=$STATUS_FAILURE
+                fi
+            else
+                printf "\nNot allow to update BMC backup flash\n"
+                ret=$STATUS_NOT_SUPPORTED
+            fi
+        elif [[ "$boot_source " = *Slave* ]];then
+            if [ "$image" = "recovery" ]; then
+                uboot_mtd=$(cat < /proc/mtd | grep \"u-boot\" | cut -d ":" -f 0)
+                kernel_mtd=$(cat < /proc/mtd | grep \"kernel\" | cut -d ":" -f 0)
+                rofs_mtd=$(cat < /proc/mtd | grep \"rofs\" | cut -d ":" -f 0)
+                alt_uboot_mtd=$(cat < /proc/mtd | grep \"alt-u-boot\" | cut -d ":" -f 0)
+                alt_kernel_mtd=$(cat < /proc/mtd | grep \"alt-kernel\" | cut -d ":" -f 0)
+                alt_rofs_mtd=$(cat < /proc/mtd | grep \"alt-rofs\" | cut -d ":" -f 0)
+
+                cp /dev/"$uboot_mtd" /tmp/uboot && \
+                cp /dev/"$kernel_mtd" /tmp/kernel && \
+                cp /dev/"$rofs_mtd" /tmp/rofs
+
+                printf "Recovery primary kernel...\n"
+                flashcp -v /tmp/kernel /dev/"$alt_kernel_mtd"
+                ret=$?
+                printf "Recovery primary rofs...\n"
+                flashcp -v /tmp/rofs /dev/"$alt_rofs_mtd"
+                ret=$((ret | $?))
+                printf "Recovery primary u-boot...\n"
+                flashcp -v /tmp/uboot /dev/"$alt_uboot_mtd"
+                ret=$((ret | $?))
+
+                rm /tmp/uboot &>/dev/null
+                rm /tmp/kernel &>/dev/null
+                rm /tmp/rofs &>/dev/null
+            else
+                printf "\nNot allow to update BMC primary flash when boot from backup flash\n"
+                ret=$STATUS_NOT_SUPPORTED
+            fi
+        else
+            ret=1
+        fi
     else
         ret=1
     fi
@@ -531,7 +606,7 @@ do_bmc_dump() {
     mtd_name=$(get_mtd_name "$label")
     if [ "$mtd_name" = "" ]; then
         printf "Failed to get device for %s\n" "$label"
-        return "$FW_STATUS_FAILURE"
+        return "$STATUS_FAILURE"
     fi
 
     dev_mtd="/dev/$mtd_name"
@@ -540,7 +615,7 @@ do_bmc_dump() {
     ret=$?
 
     if [ "$ret" -ne 0 ]; then
-        ret=$FW_STATUS_FAILURE
+        ret=$STATUS_FAILURE
     fi
 
     return "$ret"
@@ -557,7 +632,7 @@ do_fw_version() {
 
     for comp in $component;
     do
-        if [ "$(is_valid_component "$fru" "$comp")" = "true" ]; then
+        if [ "$(is_valid_fw_component "$fru" "$comp")" = "true" ]; then
             if declare -F platform_do_"$fru"_version &> /dev/null; then
                 ver=$(platform_do_"$fru"_version "$comp")
                 ver_ret=$((ver_ret | $?))
@@ -567,7 +642,7 @@ do_fw_version() {
                     ver_ret=$((ver_ret | $?))
                 else
                     ver="Not Supported"
-                    ver_ret=$FW_STATUS_NOT_SUPPORTED
+                    ver_ret=$STATUS_NOT_SUPPORTED
                 fi
             fi
             printf "%s" "${comp^^} "
@@ -584,20 +659,21 @@ do_fw_update() {
     local fru=$1
     local component=$2
     local image=$3
+    local force=$4
     local update_ret=0
 
-    if [ "$(is_valid_component "$fru" "$component")" = "true" ]; then
+    if [ "$(is_valid_fw_component "$fru" "$component")" = "true" ]; then
         start_time=$(date +%s)
         if declare -F platform_do_"$fru"_update &> /dev/null; then
-            platform_do_"$fru"_update "$component" "$image"
+            platform_do_"$fru"_update "$component" "$image" "$force"
             update_ret=$((update_ret | $?))
         else
             if declare -F do_"$fru"_update &> /dev/null; then
-                do_"$fru"_update "$component" "$image"
+                do_"$fru"_update "$component" "$image" "$force"
                 update_ret=$((update_ret | $?))
 
             else
-                update_ret=$FW_STATUS_NOT_SUPPORTED
+                update_ret=$STATUS_NOT_SUPPORTED
             fi
         fi
         end_time=$(date +%s)
@@ -605,10 +681,10 @@ do_fw_update() {
 
         printf "\n"
         printf "Upgrade of %s : %s" "$fru" "$component"
-        if [ "$update_ret" -eq "$FW_STATUS_SUCCESS" ]; then
+        if [ "$update_ret" -eq "$STATUS_SUCCESS" ]; then
             printf " succeeded\n"
         else
-            if [ "$update_ret" -eq "$FW_STATUS_NOT_SUPPORTED" ]; then
+            if [ "$update_ret" -eq "$STATUS_NOT_SUPPORTED" ]; then
                 printf " not supported\n"
             else
                 printf " fail\n"
@@ -630,25 +706,25 @@ do_fw_dump() {
     local image=$3
     local dump_ret=0
 
-    if [ "$(is_valid_component "$fru" "$component")" = "true" ]; then
+    if [ "$(is_valid_fw_component "$fru" "$component")" = "true" ]; then
         if declare -F platform_do_"$fru"_dump &> /dev/null; then
             platform_do_"$fru"_dump "$component" "$image"
             dump_ret=$((dump_ret | $?))
         else
             if declare -F do_"$fru"_dump &> /dev/null; then
-                do_"$FRU"_dump "$component" "$image"
+                do_"$fru"_dump "$component" "$image"
                 dump_ret=$((dump_ret | $?))
             else
-                dump_ret=$FW_STATUS_NOT_SUPPORTED
+                dump_ret=$STATUS_NOT_SUPPORTED
             fi
         fi
 
         printf "\n"
-        printf "Dump of %s : %s" "$FRU" "$component"
-        if [ "$dump_ret" -eq "$FW_STATUS_SUCCESS" ]; then
+        printf "Dump of %s : %s" "$fru" "$component"
+        if [ "$dump_ret" -eq "$STATUS_SUCCESS" ]; then
             printf " succeeded\n"
         else
-            if [ "$dump_ret" -eq "$FW_STATUS_NOT_SUPPORTED" ]; then
+            if [ "$dump_ret" -eq "$STATUS_NOT_SUPPORTED" ]; then
                 printf " not supported\n"
             else
                 printf " fail\n"
@@ -661,3 +737,114 @@ do_fw_dump() {
     return $dump_ret
 }
 ##################### FW function end #####################
+
+##################### Power function start #####################
+power_fru_list() {
+    if declare -F platform_power_fru_list &> /dev/null; then
+        platform_power_fru_list
+    else
+        echo "cpu"
+    fi
+}
+
+power_component_list() {
+    local fru=$1
+
+    if declare -F platform_power_component_list &> /dev/null; then
+        platform_power_component_list "$fru"
+    else
+        if [ "$fru" = "cpu" ]; then
+            echo "cpu"
+        fi
+    fi
+}
+
+is_valid_power_fru() {
+    local fru=$1
+
+    fru_list=$(power_fru_list)
+
+    for f in $fru_list;
+    do
+        if [ "$f" = "$fru" ]; then
+            echo "true"
+            return
+        fi
+    done
+
+    echo "false"
+}
+
+is_valid_power_component() {
+    local fru=$1
+    local component=$2
+
+    component_list=$(power_component_list "$fru")
+
+    for c in $component_list;
+    do
+        if [ "$c" = "$component" ]; then
+            echo "true"
+            return
+        fi
+    done
+
+    echo "false"
+}
+
+print_power_fru_comp() {
+    fru_list=$(power_fru_list)
+
+    for fru in $fru_list;
+    do
+        component_list=$(power_component_list "$fru")
+        if [ -n "$component_list" ]; then
+            printf "%-11s:" "$fru"
+            printf " %s \n" "$component_list"
+        fi
+    done
+}
+
+do_power_operation() {
+    local fru=$1
+    local operation=$2
+    local component=$3
+    local ret=0
+
+    if [ "$component" = "all" ]; then
+        component=$(power_component_list "$fru")
+    fi
+
+    for comp in $component;
+    do
+        if [ "$(is_valid_power_component "$fru" "$comp")" = "true" ]; then
+            if declare -F platform_do_power_operation &> /dev/null; then
+                platform_do_power_operation "$fru" "$operation" "$comp"
+                ret=$?
+            else
+                if [ "$fru" = "cpu" ] && [ "$comp" = "cpu" ]; then
+                    ipmitool power "$operation" &> /dev/null
+                    ret=$?
+                else
+                    ret="$STATUS_NOT_SUPPORTED"
+                fi
+            fi
+            printf "\n"
+            printf "Power %s of %s : %s" "$operation" "$fru" "$comp"
+            if [ "$ret" -eq "$STATUS_SUCCESS" ]; then
+                printf " succeeded\n"
+            else
+                if [ "$ret" -eq "$STATUS_NOT_SUPPORTED" ]; then
+                    printf " not supported\n"
+                else
+                    printf " fail\n"
+                fi
+            fi
+        else
+            ret=1
+        fi
+    done
+
+    return $ret
+}
+##################### Power function end #####################

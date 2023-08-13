@@ -540,15 +540,243 @@
         },
         {
             "Address": "0x4e",
-            "Bus": 26,
+            "Bus": 28,
             "Name": "FAN_U7_TMP1",
             "Type": "TMP75"
         },
         {
             "Address": "0x4f",
-            "Bus": 26,
+            "Bus": 28,
             "Name": "FAN_U8_TMP2",
             "Type": "TMP75"
+        },
+        {
+            "Index": 0,
+            "Name": "FAN1_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 1,
+            "Tachs": [1],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 1,
+            "Name": "FAN1_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 1,
+            "Tachs": [2],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 2,
+            "Name": "FAN2_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 2,
+            "Tachs": [3],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 3,
+            "Name": "FAN2_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 2,
+            "Tachs": [4],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 4,
+            "Name": "FAN3_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 3,
+            "Tachs": [5],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 5,
+            "Name": "FAN3_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 3,
+            "Tachs": [6],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 6,
+            "Name": "FAN4_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 4,
+            "Tachs": [7],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 7,
+            "Name": "FAN4_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 4,
+            "Tachs": [8],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 8,
+            "Name": "FAN5_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 5,
+            "Tachs": [9],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 9,
+            "Name": "FAN5_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 5,
+            "Tachs": [10],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 10,
+            "Name": "FAN6_REAR_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 6,
+            "Tachs": [11],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
+        },
+        {
+            "Index": 11,
+            "Name": "FAN6_FRONT_TACH",
+            "PowerState": "Always",
+            "Address": "0x16",
+            "Bus": 3,
+            "Pwm": 6,
+            "Tachs": [12],
+            "MaxReading": 32000,
+            "Thresholds": [
+                {
+                    "Direction": "less than",
+                    "Name": "lower critical",
+                    "Severity": 1,
+                    "Value": 1500
+                }
+            ],
+            "Type": "I2CFan"
         }
     ],
     "Name": "Wistron Network P3 Box",

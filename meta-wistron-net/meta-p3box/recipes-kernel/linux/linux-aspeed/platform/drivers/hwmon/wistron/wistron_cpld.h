@@ -141,11 +141,12 @@ static CPLD_DEVICE_ATTR_RO(psu2_smbalert_interrupt_n, cpld_n_bits, CPLD1_PSU_STA
 static CPLD_DEVICE_ATTR_RO(psu2_present_n, cpld_n_bits, CPLD1_PSU_STATUS, 5, 1);
 static CPLD_DEVICE_ATTR_RO(psu2_pwrgd, cpld_n_bits, CPLD1_PSU_STATUS, 6, 1);
 static CPLD_DEVICE_ATTR_RO(psu2_acok, cpld_n_bits, CPLD1_PSU_STATUS, 7, 1);
-static CPLD_DEVICE_ATTR_RW(psu_on_n, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 0, 1);
+static CPLD_DEVICE_ATTR_RO(psu_on_n, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 0, 1);
 static CPLD_DEVICE_ATTR_RW(psu1_pson_n, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 1, 1);
 static CPLD_DEVICE_ATTR_RW(psu2_pson_n, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 2, 1);
 static CPLD_DEVICE_ATTR_RW(p3v3_b_en, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 4, 1);
 static CPLD_DEVICE_ATTR_RW(p3v3_a_en, cpld_n_bits, CPLD1_SYSTEM_POWER_CONTROL, 5, 1);
+static CPLD_DEVICE_ATTR_RO(bmc_pwrgd, cpld_n_bits, CPLD1_SYSTEM_POWER_STATUS, 0, 1);
 static CPLD_DEVICE_ATTR_RO(psu_pwrgd, cpld_n_bits, CPLD1_SYSTEM_POWER_STATUS, 1, 1);
 static CPLD_DEVICE_ATTR_RO(p3v3_b_pwrgd, cpld_n_bits, CPLD1_SYSTEM_POWER_STATUS, 3, 1);
 static CPLD_DEVICE_ATTR_RO(p3v3_a_pwrgd, cpld_n_bits, CPLD1_SYSTEM_POWER_STATUS, 4, 1);
@@ -154,11 +155,11 @@ static CPLD_DEVICE_ATTR_RO(cpld1_rst_platrst_cpld1_n, cpld_n_bits, CPLD1_RESET_S
 static CPLD_DEVICE_ATTR_RO(cpld1_rst_swrst_cpld1_n, cpld_n_bits, CPLD1_RESET_STATUS, 1, 1);
 static CPLD_DEVICE_ATTR_RO(cpld1_cpld2_thermtrip_n, cpld_n_bits, CPLD1_THERMTRIP, 0, 1);
 static CPLD_DEVICE_ATTR_RO(cpld1_thermtrip_n, cpld_n_bits, CPLD1_THERMTRIP, 1, 1);
-static CPLD_DEVICE_ATTR_RW(en_cpld1_hitless_n, cpld_n_bits, CPLD1_SYSTEM_INFO_CONTROL, 0, 1);
+static CPLD_DEVICE_ATTR_RO(en_cpld1_hitless_n, cpld_n_bits, CPLD1_SYSTEM_INFO_CONTROL, 0, 1);
 static CPLD_DEVICE_ATTR_RW(mb_eeprom_wc_n, cpld_n_bits, CPLD1_SYSTEM_INFO_CONTROL, 2, 1);
 static CPLD_DEVICE_ATTR_RW(rst_fancpld_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_1, 0, 1);
 static CPLD_DEVICE_ATTR_RW(rst_phy_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_1, 1, 1);
-static CPLD_DEVICE_ATTR_RW(rst_i2c_mux, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_1, 4, 1);
+static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_d0_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_1, 4, 1);
 static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_d1_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_2, 0, 1);
 static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_d2_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_2, 1, 1);
 static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_d3_n, cpld_n_bits, CPLD1_RESET_DEVICE_CONTROL_2, 2, 1);
@@ -348,6 +349,7 @@ static struct attribute *system_cpld1_attrs[] = {
   &cpld_dev_attr_psu2_pson_n.dev_attr.attr,
   &cpld_dev_attr_p3v3_b_en.dev_attr.attr,
   &cpld_dev_attr_p3v3_a_en.dev_attr.attr,
+  &cpld_dev_attr_bmc_pwrgd.dev_attr.attr,
   &cpld_dev_attr_psu_pwrgd.dev_attr.attr,
   &cpld_dev_attr_p3v3_b_pwrgd.dev_attr.attr,
   &cpld_dev_attr_p3v3_a_pwrgd.dev_attr.attr,
@@ -360,7 +362,7 @@ static struct attribute *system_cpld1_attrs[] = {
   &cpld_dev_attr_mb_eeprom_wc_n.dev_attr.attr,
   &cpld_dev_attr_rst_fancpld_n.dev_attr.attr,
   &cpld_dev_attr_rst_phy_n.dev_attr.attr,
-  &cpld_dev_attr_rst_i2c_mux.dev_attr.attr,
+  &cpld_dev_attr_rst_i2c_mux_d0_n.dev_attr.attr,
   &cpld_dev_attr_rst_i2c_mux_d1_n.dev_attr.attr,
   &cpld_dev_attr_rst_i2c_mux_d2_n.dev_attr.attr,
   &cpld_dev_attr_rst_i2c_mux_d3_n.dev_attr.attr,
@@ -573,7 +575,7 @@ static CPLD_DEVICE_ATTR_RO(cpld2_release_day, cpld_n_bits, CPLD_RELEASE_DATE_2, 
 static CPLD_DEVICE_ATTR_RO(cpld2_rst_platrst_cpld1_n, cpld_n_bits, CPLD2_RESET_STATUS, 0, 1);
 static CPLD_DEVICE_ATTR_RO(cpld2_rst_swrst_cpld1_n, cpld_n_bits, CPLD2_RESET_STATUS, 1, 1);
 static CPLD_DEVICE_ATTR_RO(cpld2_cpld2_thermtrip_n, cpld_n_bits, CPLD2_THERMTRIP, 0, 1);
-static CPLD_DEVICE_ATTR_RW(en_cpld2_hitless_n, cpld_n_bits, CPLD2_HITLESS, 0, 1);
+static CPLD_DEVICE_ATTR_RO(en_cpld2_hitless_n, cpld_n_bits, CPLD2_HITLESS, 0, 1);
 static CPLD_DEVICE_ATTR_RW(rst_qsfpdd_p17_n, cpld_n_bits, CPLD2_RESET_QDD_P17_P24_CONTROL, 0, 1);
 static CPLD_DEVICE_ATTR_RW(rst_qsfpdd_p18_n, cpld_n_bits, CPLD2_RESET_QDD_P17_P24_CONTROL, 1, 1);
 static CPLD_DEVICE_ATTR_RW(rst_qsfpdd_p19_n, cpld_n_bits, CPLD2_RESET_QDD_P17_P24_CONTROL, 2, 1);
@@ -982,14 +984,20 @@ static CPLD_DEVICE_ATTR_RO(fan4_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_IN
 static CPLD_DEVICE_ATTR_RO(fan5_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_INT_INSERTION, 4, 1);
 static CPLD_DEVICE_ATTR_RO(fan6_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_INT_INSERTION, 5, 1);
 static CPLD_DEVICE_ATTR_RO(fan_all_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_INT_INSERTION, 0, 6);
-static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 0, 1);
-static CPLD_DEVICE_ATTR_RW(rst_fan_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 1, 1);
+static CPLD_DEVICE_ATTR_RW(rst_fan_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 0, 1);
+static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 1, 1);
 static CPLD_DEVICE_ATTR_RO(fan1_led, cpld_n_bits, FANCPLD_REAR_FAN_LED1_CONTROL, 0, 3);
 static CPLD_DEVICE_ATTR_RW(fan2_led, cpld_n_bits, FANCPLD_REAR_FAN_LED1_CONTROL, 4, 3);
 static CPLD_DEVICE_ATTR_RW(fan3_led, cpld_n_bits, FANCPLD_REAR_FAN_LED2_CONTROL, 0, 3);
 static CPLD_DEVICE_ATTR_RW(fan4_led, cpld_n_bits, FANCPLD_REAR_FAN_LED2_CONTROL, 4, 3);
 static CPLD_DEVICE_ATTR_RW(fan5_led, cpld_n_bits, FANCPLD_REAR_FAN_LED3_CONTROL, 0, 3);
 static CPLD_DEVICE_ATTR_RW(fan6_led, cpld_n_bits, FANCPLD_REAR_FAN_LED3_CONTROL, 4, 3);
+static CPLD_DEVICE_ATTR_RO(fan1_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 0, 1);
+static CPLD_DEVICE_ATTR_RO(fan2_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 1, 1);
+static CPLD_DEVICE_ATTR_RO(fan3_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 2, 1);
+static CPLD_DEVICE_ATTR_RO(fan4_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 3, 1);
+static CPLD_DEVICE_ATTR_RO(fan5_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 4, 1);
+static CPLD_DEVICE_ATTR_RO(fan6_eeprom_wc, cpld_n_bits, FANCPLD_FM_FAN1_6_EEPROM_WC_CONTROL, 5, 1);
 static CPLD_DEVICE_ATTR_RO(fan1_pwrgd, cpld_n_bits, FANCPLD_PWRGD_P12V_FAN1_6_STATUS, 0, 1);
 static CPLD_DEVICE_ATTR_RO(fan2_pwrgd, cpld_n_bits, FANCPLD_PWRGD_P12V_FAN1_6_STATUS, 1, 1);
 static CPLD_DEVICE_ATTR_RO(fan3_pwrgd, cpld_n_bits, FANCPLD_PWRGD_P12V_FAN1_6_STATUS, 2, 1);
@@ -1073,6 +1081,12 @@ static struct attribute *fan_cpld_attrs[] = {
   &cpld_dev_attr_fan4_pwrgd.dev_attr.attr,
   &cpld_dev_attr_fan5_pwrgd.dev_attr.attr,
   &cpld_dev_attr_fan6_pwrgd.dev_attr.attr,
+  &cpld_dev_attr_fan1_eeprom_wc.dev_attr.attr,
+  &cpld_dev_attr_fan2_eeprom_wc.dev_attr.attr,
+  &cpld_dev_attr_fan3_eeprom_wc.dev_attr.attr,
+  &cpld_dev_attr_fan4_eeprom_wc.dev_attr.attr,
+  &cpld_dev_attr_fan5_eeprom_wc.dev_attr.attr,
+  &cpld_dev_attr_fan6_eeprom_wc.dev_attr.attr,
   &cpld_dev_attr_fan_all_pwrgd.dev_attr.attr,
   &cpld_dev_attr_fan1_fail_interrupt_n.dev_attr.attr,
   &cpld_dev_attr_fan2_fail_interrupt_n.dev_attr.attr,

@@ -8,13 +8,13 @@
         },
         {
             "Name" : "PowerOut",
-            "LineName" : "FM_PWR_BTN_BMC_N",
+            "LineName" : "FM_PSU_ON_N",
             "Type" : "GPIO",
             "Polarity" : "ActiveLow"
         },
         {
             "Name" : "ResetOut",
-            "LineName" : "FM_BMC_RST_BTN_N",
+            "LineName" : "RST_PLATRST_N",
             "Type" : "GPIO",
             "Polarity" : "ActiveLow"
         },
@@ -32,7 +32,7 @@
         },
         {
             "Name" : "PowerOk",
-            "LineName" : "PWRGD_SYSTEM",
+            "LineName" : "PWRGD_PSU",
             "Type" : "GPIO",
             "Polarity" : "ActiveHigh"
         }

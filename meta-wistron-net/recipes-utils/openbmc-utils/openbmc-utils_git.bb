@@ -16,6 +16,7 @@ SRC_URI += "git://github.com/facebook/openbmc;branch=helium;protocol=https;subpa
             file://board-utils.sh \
             file://fan-util \
             file://fw-util \
+            file://power-util \
             file://mux-util \
             file://i2c-utils.sh \
            "
@@ -28,6 +29,7 @@ OPENBMC_UTILS_FILES = " \
     fan-util \
     flashrom-utils.sh \
     fw-util \
+    power-util \
     boot_info.sh \
     board-utils.sh \
     mux-util \
@@ -39,6 +41,7 @@ do_configure() {
     cp -rfv ${WORKDIR}/boot-info/${SOC_FAMILY}/boot_info.sh ${S}
     cp -rfv ${WORKDIR}/fan-util ${S}
     cp -rfv ${WORKDIR}/fw-util ${S}
+    cp -rfv ${WORKDIR}/power-util ${S}
     cp -rfv ${WORKDIR}/mux-util ${S}
     cp -rfv ${WORKDIR}/i2c-utils.sh ${S}
     cp -rfv ${S}/${SOC_FAMILY}/disable_watchdog.sh ${S}

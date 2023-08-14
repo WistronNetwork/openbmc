@@ -17,6 +17,7 @@ SRC_URI:append = " \
     file://0009-add-device-type-powr1220.patch \
     file://0010-Add-OPTOE-device-type.patch \
     file://0011-Add-tps536xx-series-type.patch \
+    file://0012-Support-reading-the-same-FRU-content-from-different-.patch \
     file://fruid.hpp \
     "
 

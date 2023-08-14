@@ -56,13 +56,13 @@
 8:
   /xyz/openbmc_project/FruDevice/Psu1:
     entityID: 0x0a
-    entityInstance: 0x61
+    entityInstance: 0x1
     interfaces:
       xyz.openbmc_project.Inventory.Item.PowerSupply:
 
 9:
   /xyz/openbmc_project/FruDevice/Psu2:
     entityID: 0x0a
-    entityInstance: 0x62
+    entityInstance: 0x2
     interfaces:
       xyz.openbmc_project.Inventory.Item.PowerSupply:

@@ -14,6 +14,7 @@ SRCREV="c34232e791b37f292bf219782d3d04d663c03ae2"
 SRC_URI += "git://github.com/facebook/openbmc;branch=helium;protocol=https;subpath=common/recipes-utils/openbmc-utils/files/ \
             file://boot-info \
             file://board-utils.sh \
+            file://cmis-util \
             file://fan-util \
             file://fw-util \
             file://power-util \
@@ -39,6 +40,7 @@ OPENBMC_UTILS_FILES = " \
 do_configure() {
     cp -rfv ${WORKDIR}/board-utils.sh ${S}
     cp -rfv ${WORKDIR}/boot-info/${SOC_FAMILY}/boot_info.sh ${S}
+    cp -rfv ${WORKDIR}/cmis-util ${S}
     cp -rfv ${WORKDIR}/fan-util ${S}
     cp -rfv ${WORKDIR}/fw-util ${S}
     cp -rfv ${WORKDIR}/power-util ${S}

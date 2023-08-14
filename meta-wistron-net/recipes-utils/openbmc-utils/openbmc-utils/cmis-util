@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+. /usr/local/bin/openbmc-utils.sh
+
+usage() {
+    prog=$(basename "$0")
+    printf "Usage: %s read <port> <page> <offset> <length>\n" "$prog"
+    printf "       %s write <port> <page> <offset> <data1> .. <dataN>\n" "$prog"
+    printf "\n"
+}
+
+if [ $# -lt 4 ]; then
+    usage
+    exit 1
+fi
+
+OPERATION="$1"
+shift
+PORT="$1"
+shift
+PAGE="$1"
+shift
+OFFSET="$1"
+shift
+
+if [ "$#" -eq 1 ] && [ "$OPERATION" = "read" ]; then
+    LENGTH="$1"
+    ipmitool raw 0x30 0x41 "$PORT" 1 "$PAGE" "$OFFSET" "$LENGTH"
+    ret=$?
+    if [ "$ret" -ne 0 ]; then
+        ret=$STATUS_FAILURE
+    fi
+elif [ "$#" -ge 1 ] && [ "$#" -le 256 ] && [ "$OPERATION" = "write" ]; then
+    ipmitool raw 0x30 0x40 "$PORT" 1 "$PAGE" "$OFFSET" "$@"
+    ret=$?
+    if [ "$ret" -ne 0 ]; then
+        ret=$STATUS_FAILURE
+    fi
+else
+    ret=1
+fi
+
+if [ "$ret" -eq 1 ]; then
+    usage
+fi
+
+exit "$ret"

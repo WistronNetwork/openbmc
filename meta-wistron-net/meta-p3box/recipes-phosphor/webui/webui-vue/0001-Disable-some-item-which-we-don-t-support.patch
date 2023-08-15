@@ -1,0 +1,694 @@
+From ee9efa092c925e5ebf9b2c6d86571024c1d78c46 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 15 Aug 2023 10:32:43 +0800
+Subject: [PATCH] Disable some item which we don't support
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ .../AppNavigation/AppNavigationMixin.js       |  94 ++++----
+ src/router/routes.js                          | 200 +++++++++---------
+ .../HardwareStatus/Inventory/Inventory.vue    | 134 ++++++------
+ src/views/Overview/Overview.vue               |  12 +-
+ src/views/Overview/OverviewQuickLinks.vue     |  12 +-
+ 5 files changed, 226 insertions(+), 226 deletions(-)
+
+diff --git a/src/components/AppNavigation/AppNavigationMixin.js b/src/components/AppNavigation/AppNavigationMixin.js
+index bbbbb1e..000262f 100644
+--- a/src/components/AppNavigation/AppNavigationMixin.js
++++ b/src/components/AppNavigation/AppNavigationMixin.js
+@@ -37,11 +37,11 @@ const AppNavigationMixin = {
+               label: this.$t('appNavigation.eventLogs'),
+               route: '/logs/event-logs',
+             },
+-            {
+-              id: 'post-code-logs',
+-              label: this.$t('appNavigation.postCodeLogs'),
+-              route: '/logs/post-code-logs',
+-            },
++            // {
++            //   id: 'post-code-logs',
++            //   label: this.$t('appNavigation.postCodeLogs'),
++            //   route: '/logs/post-code-logs',
++            // },
+           ],
+         },
+         {
+@@ -71,16 +71,16 @@ const AppNavigationMixin = {
+               label: this.$t('appNavigation.factoryReset'),
+               route: '/operations/factory-reset',
+             },
+-            {
+-              id: 'kvm',
+-              label: this.$t('appNavigation.kvm'),
+-              route: '/operations/kvm',
+-            },
+-            {
+-              id: 'key-clear',
+-              label: this.$t('appNavigation.keyClear'),
+-              route: '/operations/key-clear',
+-            },
++            // {
++            //   id: 'kvm',
++            //   label: this.$t('appNavigation.kvm'),
++            //   route: '/operations/kvm',
++            // },
++            // {
++            //   id: 'key-clear',
++            //   label: this.$t('appNavigation.keyClear'),
++            //   route: '/operations/key-clear',
++            // },
+             {
+               id: 'firmware',
+               label: this.$t('appNavigation.firmware'),
+@@ -91,21 +91,21 @@ const AppNavigationMixin = {
+               label: this.$t('appNavigation.rebootBmc'),
+               route: '/operations/reboot-bmc',
+             },
+-            {
+-              id: 'serial-over-lan',
+-              label: this.$t('appNavigation.serialOverLan'),
+-              route: '/operations/serial-over-lan',
+-            },
+-            {
+-              id: 'server-power-operations',
+-              label: this.$t('appNavigation.serverPowerOperations'),
+-              route: '/operations/server-power-operations',
+-            },
+-            {
+-              id: 'virtual-media',
+-              label: this.$t('appNavigation.virtualMedia'),
+-              route: '/operations/virtual-media',
+-            },
++            // {
++            //   id: 'serial-over-lan',
++            //   label: this.$t('appNavigation.serialOverLan'),
++            //   route: '/operations/serial-over-lan',
++            // },
++            // {
++            //   id: 'server-power-operations',
++            //   label: this.$t('appNavigation.serverPowerOperations'),
++            //   route: '/operations/server-power-operations',
++            // },
++            // {
++            //   id: 'virtual-media',
++            //   label: this.$t('appNavigation.virtualMedia'),
++            //   route: '/operations/virtual-media',
++            // },
+           ],
+         },
+         {
+@@ -123,11 +123,11 @@ const AppNavigationMixin = {
+               label: this.$t('appNavigation.network'),
+               route: '/settings/network',
+             },
+-            {
+-              id: 'power-restore-policy',
+-              label: this.$t('appNavigation.powerRestorePolicy'),
+-              route: '/settings/power-restore-policy',
+-            },
++            // {
++            //   id: 'power-restore-policy',
++            //   label: this.$t('appNavigation.powerRestorePolicy'),
++            //   route: '/settings/power-restore-policy',
++            // },
+           ],
+         },
+         {
+@@ -162,18 +162,18 @@ const AppNavigationMixin = {
+             },
+           ],
+         },
+-        {
+-          id: 'resource-management',
+-          label: this.$t('appNavigation.resourceManagement'),
+-          icon: 'iconResourceManagement',
+-          children: [
+-            {
+-              id: 'power',
+-              label: this.$t('appNavigation.power'),
+-              route: '/resource-management/power',
+-            },
+-          ],
+-        },
++        // {
++        //   id: 'resource-management',
++        //   label: this.$t('appNavigation.resourceManagement'),
++        //   icon: 'iconResourceManagement',
++        //   children: [
++        //     {
++        //       id: 'power',
++        //       label: this.$t('appNavigation.power'),
++        //       route: '/resource-management/power',
++        //     },
++        //   ],
++        // },
+       ],
+     };
+   },
+diff --git a/src/router/routes.js b/src/router/routes.js
+index 3cbdabc..58cd2ac 100644
+--- a/src/router/routes.js
++++ b/src/router/routes.js
+@@ -1,13 +1,13 @@
+ import AppLayout from '@/layouts/AppLayout.vue';
+ import ChangePassword from '@/views/ChangePassword';
+-import ConsoleLayout from '@/layouts/ConsoleLayout.vue';
++// import ConsoleLayout from '@/layouts/ConsoleLayout.vue';
+ import DateTime from '@/views/Settings/DateTime';
+ import EventLogs from '@/views/Logs/EventLogs';
+ import FactoryReset from '@/views/Operations/FactoryReset';
+ import Firmware from '@/views/Operations/Firmware';
+ import Inventory from '@/views/HardwareStatus/Inventory';
+-import Kvm from '@/views/Operations/Kvm';
+-import KvmConsole from '@/views/Operations/Kvm/KvmConsole';
++// import Kvm from '@/views/Operations/Kvm';
++// import KvmConsole from '@/views/Operations/Kvm/KvmConsole';
+ import Sessions from '../views/SecurityAndAccess/Sessions';
+ import Ldap from '@/views/SecurityAndAccess/Ldap';
+ import UserManagement from '@/views/SecurityAndAccess/UserManagement';
+@@ -16,19 +16,19 @@ import LoginLayout from '@/layouts/LoginLayout';
+ import Network from '@/views/Settings/Network';
+ import Overview from '@/views/Overview';
+ import PageNotFound from '@/views/PageNotFound';
+-import PostCodeLogs from '@/views/Logs/PostCodeLogs';
+-import PowerRestorePolicy from '@/views/Settings/PowerRestorePolicy';
++// import PostCodeLogs from '@/views/Logs/PostCodeLogs';
++// import PowerRestorePolicy from '@/views/Settings/PowerRestorePolicy';
+ import ProfileSettings from '@/views/ProfileSettings';
+ import RebootBmc from '@/views/Operations/RebootBmc';
+ import Policies from '@/views/SecurityAndAccess/Policies';
+-import KeyClear from '@/views/Operations/KeyClear';
++// import KeyClear from '@/views/Operations/KeyClear';
+ import Sensors from '@/views/HardwareStatus/Sensors';
+-import SerialOverLan from '@/views/Operations/SerialOverLan';
+-import SerialOverLanConsole from '@/views/Operations/SerialOverLan/SerialOverLanConsole';
+-import ServerPowerOperations from '@/views/Operations/ServerPowerOperations';
++// import SerialOverLan from '@/views/Operations/SerialOverLan';
++// import SerialOverLanConsole from '@/views/Operations/SerialOverLan/SerialOverLanConsole';
++// import ServerPowerOperations from '@/views/Operations/ServerPowerOperations';
+ import Certificates from '@/views/SecurityAndAccess/Certificates';
+-import VirtualMedia from '@/views/Operations/VirtualMedia';
+-import Power from '@/views/ResourceManagement/Power';
++// import VirtualMedia from '@/views/Operations/VirtualMedia';
++// import Power from '@/views/ResourceManagement/Power';
+ import i18n from '@/i18n';
+ 
+ const routes = [
+@@ -55,31 +55,31 @@ const routes = [
+       },
+     ],
+   },
+-  {
+-    path: '/console',
+-    component: ConsoleLayout,
+-    meta: {
+-      requiresAuth: true,
+-    },
+-    children: [
+-      {
+-        path: 'serial-over-lan-console',
+-        name: 'serial-over-lan-console',
+-        component: SerialOverLanConsole,
+-        meta: {
+-          title: i18n.t('appPageTitle.serialOverLan'),
+-        },
+-      },
+-      {
+-        path: 'kvm',
+-        name: 'kvm-console',
+-        component: KvmConsole,
+-        meta: {
+-          title: i18n.t('appPageTitle.kvm'),
+-        },
+-      },
+-    ],
+-  },
++  // {
++  //   path: '/console',
++  //   component: ConsoleLayout,
++  //   meta: {
++  //     requiresAuth: true,
++  //   },
++  //   children: [
++  //     {
++  //       path: 'serial-over-lan-console',
++  //       name: 'serial-over-lan-console',
++  //       component: SerialOverLanConsole,
++  //       meta: {
++  //         title: i18n.t('appPageTitle.serialOverLan'),
++  //       },
++  //     },
++  //     {
++  //       path: 'kvm',
++  //       name: 'kvm-console',
++  //       component: KvmConsole,
++  //       meta: {
++  //         title: i18n.t('appPageTitle.kvm'),
++  //       },
++  //     },
++  //   ],
++  // },
+   {
+     path: '/',
+     meta: {
+@@ -111,14 +111,14 @@ const routes = [
+           title: i18n.t('appPageTitle.eventLogs'),
+         },
+       },
+-      {
+-        path: '/logs/post-code-logs',
+-        name: 'post-code-logs',
+-        component: PostCodeLogs,
+-        meta: {
+-          title: i18n.t('appPageTitle.postCodeLogs'),
+-        },
+-      },
++      // {
++      //   path: '/logs/post-code-logs',
++      //   name: 'post-code-logs',
++      //   component: PostCodeLogs,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.postCodeLogs'),
++      //   },
++      // },
+       {
+         path: '/hardware-status/inventory',
+         name: 'inventory',
+@@ -191,22 +191,22 @@ const routes = [
+           title: i18n.t('appPageTitle.factoryReset'),
+         },
+       },
+-      {
+-        path: '/operations/key-clear',
+-        name: 'key-clear',
+-        component: KeyClear,
+-        meta: {
+-          title: i18n.t('appPageTitle.keyClear'),
+-        },
+-      },
+-      {
+-        path: '/operations/kvm',
+-        name: 'kvm',
+-        component: Kvm,
+-        meta: {
+-          title: i18n.t('appPageTitle.kvm'),
+-        },
+-      },
++      // {
++      //   path: '/operations/key-clear',
++      //   name: 'key-clear',
++      //   component: KeyClear,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.keyClear'),
++      //   },
++      // },
++      // {
++      //   path: '/operations/kvm',
++      //   name: 'kvm',
++      //   component: Kvm,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.kvm'),
++      //   },
++      // },
+       {
+         path: '/operations/firmware',
+         name: 'firmware',
+@@ -223,22 +223,22 @@ const routes = [
+           title: i18n.t('appPageTitle.network'),
+         },
+       },
+-      {
+-        path: '/settings/power-restore-policy',
+-        name: 'power-restore-policy',
+-        component: PowerRestorePolicy,
+-        meta: {
+-          title: i18n.t('appPageTitle.powerRestorePolicy'),
+-        },
+-      },
+-      {
+-        path: '/resource-management/power',
+-        name: 'power',
+-        component: Power,
+-        meta: {
+-          title: i18n.t('appPageTitle.power'),
+-        },
+-      },
++      // {
++      //   path: '/settings/power-restore-policy',
++      //   name: 'power-restore-policy',
++      //   component: PowerRestorePolicy,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.powerRestorePolicy'),
++      //   },
++      // },
++      // {
++      //   path: '/resource-management/power',
++      //   name: 'power',
++      //   component: Power,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.power'),
++      //   },
++      // },
+       {
+         path: '/operations/reboot-bmc',
+         name: 'reboot-bmc',
+@@ -247,30 +247,30 @@ const routes = [
+           title: i18n.t('appPageTitle.rebootBmc'),
+         },
+       },
+-      {
+-        path: '/operations/serial-over-lan',
+-        name: 'serial-over-lan',
+-        component: SerialOverLan,
+-        meta: {
+-          title: i18n.t('appPageTitle.serialOverLan'),
+-        },
+-      },
+-      {
+-        path: '/operations/server-power-operations',
+-        name: 'server-power-operations',
+-        component: ServerPowerOperations,
+-        meta: {
+-          title: i18n.t('appPageTitle.serverPowerOperations'),
+-        },
+-      },
+-      {
+-        path: '/operations/virtual-media',
+-        name: 'virtual-media',
+-        component: VirtualMedia,
+-        meta: {
+-          title: i18n.t('appPageTitle.virtualMedia'),
+-        },
+-      },
++      // {
++      //   path: '/operations/serial-over-lan',
++      //   name: 'serial-over-lan',
++      //   component: SerialOverLan,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.serialOverLan'),
++      //   },
++      // },
++      // {
++      //   path: '/operations/server-power-operations',
++      //   name: 'server-power-operations',
++      //   component: ServerPowerOperations,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.serverPowerOperations'),
++      //   },
++      // },
++      // {
++      //   path: '/operations/virtual-media',
++      //   name: 'virtual-media',
++      //   component: VirtualMedia,
++      //   meta: {
++      //     title: i18n.t('appPageTitle.virtualMedia'),
++      //   },
++      // },
+       {
+         path: '*',
+         name: 'page-not-found',
+diff --git a/src/views/HardwareStatus/Inventory/Inventory.vue b/src/views/HardwareStatus/Inventory/Inventory.vue
+index fcdbf8d..710d19d 100644
+--- a/src/views/HardwareStatus/Inventory/Inventory.vue
++++ b/src/views/HardwareStatus/Inventory/Inventory.vue
+@@ -32,19 +32,19 @@
+     <table-chassis ref="chassis" />
+ 
+     <!-- DIMM slot table -->
+-    <table-dimm-slot ref="dimms" />
++    <!-- <table-dimm-slot ref="dimms" /> -->
+ 
+     <!-- Fans table -->
+-    <table-fans ref="fans" />
++    <!-- <table-fans ref="fans" /> -->
+ 
+     <!-- Power supplies table -->
+-    <table-power-supplies ref="powerSupply" />
++    <!-- <table-power-supplies ref="powerSupply" /> -->
+ 
+     <!-- Processors table -->
+-    <table-processors ref="processors" />
++    <!-- <table-processors ref="processors" /> -->
+ 
+     <!-- Assembly table -->
+-    <table-assembly ref="assembly" />
++    <!-- <table-assembly ref="assembly" /> -->
+   </b-container>
+ </template>
+ 
+@@ -52,13 +52,13 @@
+ import PageTitle from '@/components/Global/PageTitle';
+ import ServiceIndicator from './InventoryServiceIndicator';
+ import TableSystem from './InventoryTableSystem';
+-import TablePowerSupplies from './InventoryTablePowerSupplies';
+-import TableDimmSlot from './InventoryTableDimmSlot';
+-import TableFans from './InventoryTableFans';
++// import TablePowerSupplies from './InventoryTablePowerSupplies';
++// import TableDimmSlot from './InventoryTableDimmSlot';
++// import TableFans from './InventoryTableFans';
+ import TableBmcManager from './InventoryTableBmcManager';
+ import TableChassis from './InventoryTableChassis';
+-import TableProcessors from './InventoryTableProcessors';
+-import TableAssembly from './InventoryTableAssembly';
++// import TableProcessors from './InventoryTableProcessors';
++// import TableAssembly from './InventoryTableAssembly';
+ import LoadingBarMixin from '@/components/Mixins/LoadingBarMixin';
+ import PageSection from '@/components/Global/PageSection';
+ import JumpLink16 from '@carbon/icons-vue/es/jump-link/16';
+@@ -69,14 +69,14 @@ export default {
+   components: {
+     PageTitle,
+     ServiceIndicator,
+-    TableDimmSlot,
+-    TablePowerSupplies,
++    // TableDimmSlot,
++    // TablePowerSupplies,
+     TableSystem,
+-    TableFans,
++    // TableFans,
+     TableBmcManager,
+     TableChassis,
+-    TableProcessors,
+-    TableAssembly,
++    // TableProcessors,
++    // TableAssembly,
+     PageSection,
+     JumpLink: JumpLink16,
+   },
+@@ -108,36 +108,36 @@ export default {
+           href: '#chassis',
+           linkText: this.$t('pageInventory.chassis'),
+         },
+-        {
+-          id: 'dimms',
+-          dataRef: 'dimms',
+-          href: '#dimms',
+-          linkText: this.$t('pageInventory.dimmSlot'),
+-        },
+-        {
+-          id: 'fans',
+-          dataRef: 'fans',
+-          href: '#fans',
+-          linkText: this.$t('pageInventory.fans'),
+-        },
+-        {
+-          id: 'powerSupply',
+-          dataRef: 'powerSupply',
+-          href: '#powerSupply',
+-          linkText: this.$t('pageInventory.powerSupplies'),
+-        },
+-        {
+-          id: 'processors',
+-          dataRef: 'processors',
+-          href: '#processors',
+-          linkText: this.$t('pageInventory.processors'),
+-        },
+-        {
+-          id: 'assembly',
+-          dataRef: 'assembly',
+-          href: '#assembly',
+-          linkText: this.$t('pageInventory.assemblies'),
+-        },
++        // {
++        //   id: 'dimms',
++        //   dataRef: 'dimms',
++        //   href: '#dimms',
++        //   linkText: this.$t('pageInventory.dimmSlot'),
++        // },
++        // {
++        //   id: 'fans',
++        //   dataRef: 'fans',
++        //   href: '#fans',
++        //   linkText: this.$t('pageInventory.fans'),
++        // },
++        // {
++        //   id: 'powerSupply',
++        //   dataRef: 'powerSupply',
++        //   href: '#powerSupply',
++        //   linkText: this.$t('pageInventory.powerSupplies'),
++        // },
++        // {
++        //   id: 'processors',
++        //   dataRef: 'processors',
++        //   href: '#processors',
++        //   linkText: this.$t('pageInventory.processors'),
++        // },
++        // {
++        //   id: 'assembly',
++        //   dataRef: 'assembly',
++        //   href: '#assembly',
++        //   linkText: this.$t('pageInventory.assemblies'),
++        // },
+       ],
+     };
+   },
+@@ -155,41 +155,41 @@ export default {
+     const chassisTablePromise = new Promise((resolve) => {
+       this.$root.$on('hardware-status-chassis-complete', () => resolve());
+     });
+-    const dimmSlotTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-dimm-slot-complete', () => resolve());
+-    });
+-    const fansTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-fans-complete', () => resolve());
+-    });
+-    const powerSuppliesTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-power-supplies-complete', () =>
+-        resolve()
+-      );
+-    });
+-    const processorsTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-processors-complete', () => resolve());
+-    });
++    // const dimmSlotTablePromise = new Promise((resolve) => {
++    //   this.$root.$on('hardware-status-dimm-slot-complete', () => resolve());
++    // });
++    // const fansTablePromise = new Promise((resolve) => {
++    //   this.$root.$on('hardware-status-fans-complete', () => resolve());
++    // });
++    // const powerSuppliesTablePromise = new Promise((resolve) => {
++    //   this.$root.$on('hardware-status-power-supplies-complete', () =>
++    //     resolve()
++    //   );
++    // });
++    // const processorsTablePromise = new Promise((resolve) => {
++    //   this.$root.$on('hardware-status-processors-complete', () => resolve());
++    // });
+     const serviceIndicatorPromise = new Promise((resolve) => {
+       this.$root.$on('hardware-status-service-complete', () => resolve());
+     });
+     const systemTablePromise = new Promise((resolve) => {
+       this.$root.$on('hardware-status-system-complete', () => resolve());
+     });
+-    const assemblyTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-assembly-complete', () => resolve());
+-    });
++    // const assemblyTablePromise = new Promise((resolve) => {
++    //   this.$root.$on('hardware-status-assembly-complete', () => resolve());
++    // });
+     // Combine all child component Promises to indicate
+     // when page data load complete
+     Promise.all([
+       bmcManagerTablePromise,
+       chassisTablePromise,
+-      dimmSlotTablePromise,
+-      fansTablePromise,
+-      powerSuppliesTablePromise,
+-      processorsTablePromise,
++      // dimmSlotTablePromise,
++      // fansTablePromise,
++      // powerSuppliesTablePromise,
++      // processorsTablePromise,
+       serviceIndicatorPromise,
+       systemTablePromise,
+-      assemblyTablePromise,
++      // assemblyTablePromise,
+     ]).finally(() => this.endLoader());
+   },
+ };
+diff --git a/src/views/Overview/Overview.vue b/src/views/Overview/Overview.vue
+index 9960f37..ab669e9 100644
+--- a/src/views/Overview/Overview.vue
++++ b/src/views/Overview/Overview.vue
+@@ -32,7 +32,7 @@ import OverviewEvents from './OverviewEvents.vue';
+ import OverviewFirmware from './OverviewFirmware.vue';
+ import OverviewInventory from './OverviewInventory.vue';
+ import OverviewNetwork from './OverviewNetwork';
+-import OverviewPower from './OverviewPower';
++// import OverviewPower from './OverviewPower';
+ import OverviewQuickLinks from './OverviewQuickLinks';
+ import OverviewServer from './OverviewServer';
+ import PageSection from '@/components/Global/PageSection';
+@@ -46,7 +46,7 @@ export default {
+     OverviewFirmware,
+     OverviewInventory,
+     OverviewNetwork,
+-    OverviewPower,
++    // OverviewPower,
+     OverviewQuickLinks,
+     OverviewServer,
+     PageSection,
+@@ -75,9 +75,9 @@ export default {
+     const networkPromise = new Promise((resolve) => {
+       this.$root.$on('overview-network-complete', () => resolve());
+     });
+-    const powerPromise = new Promise((resolve) => {
+-      this.$root.$on('overview-power-complete', () => resolve());
+-    });
++    // const powerPromise = new Promise((resolve) => {
++    //   this.$root.$on('overview-power-complete', () => resolve());
++    // });
+     const quicklinksPromise = new Promise((resolve) => {
+       this.$root.$on('overview-quicklinks-complete', () => resolve());
+     });
+@@ -91,7 +91,7 @@ export default {
+       firmwarePromise,
+       inventoryPromise,
+       networkPromise,
+-      powerPromise,
++      // powerPromise,
+       quicklinksPromise,
+       serverPromise,
+     ]).finally(() => this.endLoader());
+diff --git a/src/views/Overview/OverviewQuickLinks.vue b/src/views/Overview/OverviewQuickLinks.vue
+index bc579b0..95c708e 100644
+--- a/src/views/Overview/OverviewQuickLinks.vue
++++ b/src/views/Overview/OverviewQuickLinks.vue
+@@ -10,7 +10,7 @@
+           <dd v-else>--</dd>
+         </dl>
+       </b-col>
+-      <b-col sm="6" lg="3" class="mb-2 mt-2">
++      <!-- <b-col sm="6" lg="3" class="mb-2 mt-2">
+         <b-button
+           to="/operations/serial-over-lan"
+           variant="secondary"
+@@ -20,20 +20,20 @@
+           {{ $t('pageOverview.solConsole') }}
+           <icon-arrow-right />
+         </b-button>
+-      </b-col>
++      </b-col> -->
+     </b-row>
+   </b-card>
+ </template>
+ 
+ <script>
+-import ArrowRight16 from '@carbon/icons-vue/es/arrow--right/16';
++// import ArrowRight16 from '@carbon/icons-vue/es/arrow--right/16';
+ import BVToastMixin from '@/components/Mixins/BVToastMixin';
+ 
+ export default {
+   name: 'QuickLinks',
+-  components: {
+-    IconArrowRight: ArrowRight16,
+-  },
++  // components: {
++  //   IconArrowRight: ArrowRight16,
++  // },
+   mixins: [BVToastMixin],
+   computed: {
+     bmcTime() {
+-- 
+2.25.1
+

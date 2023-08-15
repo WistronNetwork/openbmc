@@ -92,7 +92,7 @@
     sensorReadingType: 0x01
     unit: xyz.openbmc_project.Sensor.Value.Unit.Watts
     scale: 0
-    multiplierM: 98
+    multiplierM: 196
     offsetB: 0
     bExp: 0
     rExp: -2

@@ -14,4 +14,5 @@ SRC_URI:append = " \
     file://0009-PSUSensor-Add-vmon1-to-vmon12-for-powr1220-driver.patch \
     file://0010-Add-ec-type-and-elevenBitScale3-translatation.patch \
     file://0011-PSUSensor-Add-device-type-tps536xx-series.patch \
+    file://0012-PSUSensor-add-vin1-to-vin3-parameter.patch \
     "

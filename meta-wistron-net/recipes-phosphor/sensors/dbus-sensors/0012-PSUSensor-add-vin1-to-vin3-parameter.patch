@@ -1,0 +1,26 @@
+From d688ef7347303b998480be857acf663ddc30e4cb Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Tue, 12 Sep 2023 14:04:26 +0800
+Subject: [PATCH] PSUSensor add vin1-to-vin3 parameter
+
+---
+ src/PSUSensorMain.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/PSUSensorMain.cpp b/src/PSUSensorMain.cpp
+index bf431ca..54da162 100644
+--- a/src/PSUSensorMain.cpp
++++ b/src/PSUSensorMain.cpp
+@@ -1007,6 +1007,9 @@ void propertyInitialize(void)
+         {"power4", PSUProperty("Output Power", 3000, 0, 6, 0)},
+         {"maxpin", PSUProperty("Max Input Power", 3000, 0, 6, 0)},
+         {"vin", PSUProperty("Input Voltage", 300, 0, 3, 0)},
++        {"vin1", PSUProperty("Input Voltage", 300, 0, 3, 0)},
++        {"vin2", PSUProperty("Input Voltage", 300, 0, 3, 0)},
++        {"vin3", PSUProperty("Input Voltage", 300, 0, 3, 0)},
+         {"maxvin", PSUProperty("Max Input Voltage", 300, 0, 3, 0)},
+         {"vout1", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+         {"vout2", PSUProperty("Output Voltage", 255, 0, 3, 0)},
+-- 
+2.25.1
+

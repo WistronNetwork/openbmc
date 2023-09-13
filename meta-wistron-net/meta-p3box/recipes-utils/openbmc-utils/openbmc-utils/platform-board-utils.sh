@@ -10,6 +10,7 @@ CPLD1_SYSFS_DIR="$(i2c_device_sysfs_abspath 3-0011)/hwmon/hwmon*"
 CPLD2_SYSFS_DIR="$(i2c_device_sysfs_abspath 3-0012)/hwmon/hwmon*"
 FANCPLD_SYSFS_DIR="$(i2c_device_sysfs_abspath 3-0016)/hwmon/hwmon*"
 FAN_MAX=6
+FAN_ROTOR=2
 BMC_READY=GPIOD2
 BMC_READY_VALUE=1
 

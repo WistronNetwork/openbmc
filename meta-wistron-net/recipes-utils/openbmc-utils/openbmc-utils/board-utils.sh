@@ -42,11 +42,21 @@ get_fan_speed() {
         fi
 
         for ((i=unit_start; i<=unit_end; i++)); do
-            rpm_reg="$FANCPLD_SYSFS_DIR"/fan"$i"_input
-            rpm=$(head -n1 $rpm_reg 2> /dev/null)
+            ((fan_rotor_id++))
+            rpm_reg="$FANCPLD_SYSFS_DIR"/fan"$fan_rotor_id"_input
+            rpm_f=$(head -n1 $rpm_reg 2> /dev/null)
+            if [ "$((FAN_ROTOR))" -eq 2 ]; then
+                ((fan_rotor_id++))
+                rpm_reg="$FANCPLD_SYSFS_DIR"/fan"$fan_rotor_id"_input
+                rpm_r=$(head -n1 $rpm_reg 2> /dev/null)
+            fi
             pwm_reg="$FANCPLD_SYSFS_DIR"/pwm"$i"
             pwm=$(head -n1 $pwm_reg 2> /dev/null)
-            printf "Fan %s RPM: %s, PWM: %s %%\n" "$i" "$rpm" "$((pwm))"
+            if [ "$((FAN_ROTOR))" -eq 2 ]; then
+                printf "Fan %s RPM: %s, %s, PWM: %s %%\n" "$i" "$rpm_f" "$rpm_r" "$((pwm))"
+            else
+                printf "Fan %s RPM: %s, PWM: %s %%\n" "$i" "$rpm_f" "$((pwm))"
+            fi
         done
 
         return 0

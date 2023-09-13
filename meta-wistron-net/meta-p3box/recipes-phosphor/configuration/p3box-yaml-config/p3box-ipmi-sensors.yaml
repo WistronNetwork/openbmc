@@ -249,7 +249,7 @@
     sensorReadingType: 0x01
     unit: xyz.openbmc_project.Sensor.Value.Unit.RPMS
     scale: 0
-    multiplierM: 125
+    multiplierM: 150
     offsetB: 0
     bExp: 0
     rExp: 0

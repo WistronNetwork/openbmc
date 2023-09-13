@@ -552,13 +552,13 @@
         },
         {
             "Index": 0,
-            "Name": "FAN1_REAR_TACH",
+            "Name": "FAN1_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 1,
             "Tachs": [1],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -571,13 +571,13 @@
         },
         {
             "Index": 1,
-            "Name": "FAN1_FRONT_TACH",
+            "Name": "FAN1_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 1,
             "Tachs": [2],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -590,13 +590,13 @@
         },
         {
             "Index": 2,
-            "Name": "FAN2_REAR_TACH",
+            "Name": "FAN2_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 2,
             "Tachs": [3],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -609,13 +609,13 @@
         },
         {
             "Index": 3,
-            "Name": "FAN2_FRONT_TACH",
+            "Name": "FAN2_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 2,
             "Tachs": [4],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -628,13 +628,13 @@
         },
         {
             "Index": 4,
-            "Name": "FAN3_REAR_TACH",
+            "Name": "FAN3_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 3,
             "Tachs": [5],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -647,13 +647,13 @@
         },
         {
             "Index": 5,
-            "Name": "FAN3_FRONT_TACH",
+            "Name": "FAN3_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 3,
             "Tachs": [6],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -666,13 +666,13 @@
         },
         {
             "Index": 6,
-            "Name": "FAN4_REAR_TACH",
+            "Name": "FAN4_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 4,
             "Tachs": [7],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -685,13 +685,13 @@
         },
         {
             "Index": 7,
-            "Name": "FAN4_FRONT_TACH",
+            "Name": "FAN4_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 4,
             "Tachs": [8],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -704,13 +704,13 @@
         },
         {
             "Index": 8,
-            "Name": "FAN5_REAR_TACH",
+            "Name": "FAN5_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 5,
             "Tachs": [9],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -723,13 +723,13 @@
         },
         {
             "Index": 9,
-            "Name": "FAN5_FRONT_TACH",
+            "Name": "FAN5_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 5,
             "Tachs": [10],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -742,13 +742,13 @@
         },
         {
             "Index": 10,
-            "Name": "FAN6_REAR_TACH",
+            "Name": "FAN6_FRONT_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 6,
             "Tachs": [11],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",
@@ -761,13 +761,13 @@
         },
         {
             "Index": 11,
-            "Name": "FAN6_FRONT_TACH",
+            "Name": "FAN6_REAR_TACH",
             "PowerState": "Always",
             "Address": "0x16",
             "Bus": 3,
             "Pwm": 6,
             "Tachs": [12],
-            "MaxReading": 32000,
+            "MaxReading": 36000,
             "Thresholds": [
                 {
                     "Direction": "less than",

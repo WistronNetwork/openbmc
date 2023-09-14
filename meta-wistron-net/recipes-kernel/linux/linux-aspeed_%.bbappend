@@ -30,6 +30,7 @@ SRC_URI += "\
 	file://0001-misc-eeprom-Add-optoe-eeprom-driver.patch \
 	file://0001-mtd-spi-nor-gigadevice-Add-gd55b01ge-support.patch \
 	file://0001-drivers-net-phy-Add-realtek_of_reg_init.patch \
+	file://0002-hwmon-pmbus-xdpe12284.c-Add-a-multiple-for-POUT.patch \
 	"
 
 do_kernel_prepare() {

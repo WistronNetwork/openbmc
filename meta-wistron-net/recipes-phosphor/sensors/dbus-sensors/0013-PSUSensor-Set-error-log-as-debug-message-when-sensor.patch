@@ -1,0 +1,39 @@
+From d836d666a7157f565bf4466285adaf2d309fa4c4 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 2 Oct 2023 18:39:42 +0800
+Subject: [PATCH] PSUSensor: Set error log as debug message when sensor read
+ error
+
+Set error log as debug message when sensor read error to decrease
+system loading when sensor device always can't access
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ src/PSUSensor.cpp | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/src/PSUSensor.cpp b/src/PSUSensor.cpp
+index eedbfcc0..bc2a43f1 100644
+--- a/src/PSUSensor.cpp
++++ b/src/PSUSensor.cpp
+@@ -186,10 +186,13 @@ void PSUSensor::handleResponse(const boost::system::error_code& err)
+     }
+     else
+     {
+-        std::cerr
+-            << "System error " << errno << " ("
+-            << std::generic_category().default_error_condition(errno).message()
+-            << ") reading from " << path << ", line: " << __LINE__ << "\n";
++        if constexpr (debug)
++        {
++            std::cerr
++                << "System error " << errno << " ("
++                << std::generic_category().default_error_condition(errno).message()
++                << ") reading from " << path << ", line: " << __LINE__ << "\n";
++        }
+         incrementError();
+     }
+ 
+-- 
+2.25.1
+

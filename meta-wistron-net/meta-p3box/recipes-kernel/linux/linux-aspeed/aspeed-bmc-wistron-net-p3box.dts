@@ -323,6 +323,9 @@
 	fan_cpld: cpld@16 {
 		compatible = "wistron,fan_cpld";
 		reg = <0x16>;
+
+		gpio-controller;
+		#gpio-cells = <2>;
 	};
 
 	i2c-mux@70 {

@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRCREV = "4a105cd64232ab66cef8461dac0302aa9021d9da"
+SRCREV = "76889090d85dade0e4c486cbd4977d8275765fbe"
 
 SRC_URI:append = " \
     file://0001-Set-MAC-into-eeprom.patch \
@@ -14,7 +14,7 @@ SRC_URI:append = " \
 
 inherit meson
 
-PACKAGECONFIG = "allowlist boot-flag-safe-mode softoff libuserlayer transport-oem sel-logger-clears-sel"
+PACKAGECONFIG = "allowlist boot-flag-safe-mode softoff libuserlayer transport-oem sel-logger-clears-sel sensors-cache"
 PACKAGECONFIG[dynamic-sensors] = "-Ddynamic-sensors=enabled,-Ddynamic-sensors=disabled"
 PACKAGECONFIG[hybrid-sensors] = "-Dhybrid-sensors=enabled,-Dhybrid-sensors=disabled"
 PACKAGECONFIG[sel-logger-clears-sel] = "-Dsel-logger-clears-sel=enabled,-Dsel-logger-clears-sel=disabled"

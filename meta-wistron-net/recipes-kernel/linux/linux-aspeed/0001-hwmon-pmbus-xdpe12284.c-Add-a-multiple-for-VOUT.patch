@@ -99,9 +99,9 @@ index b07da06a40c9..d4c9103b4a86 100644
 +	}
 +
 +	if (attr->index == 0) // PAGE 0
-+		return sprintf(buf, "%lu\n", val * vout_loop_a_multiple / 1000);
++		return sprintf(buf, "%u\n", val * vout_loop_a_multiple / 1000);
 +	else if (attr->index == 1) // PAGE 1
-+		return sprintf(buf, "%lu\n", val * vout_loop_b_multiple / 1000);
++		return sprintf(buf, "%u\n", val * vout_loop_b_multiple / 1000);
 +	else
 +		return -EINVAL;
 +}

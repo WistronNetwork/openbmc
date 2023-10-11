@@ -84,7 +84,7 @@ index 0169246747e3..6373007088d3 100644
 +		val = val * 1000;
 +
 +	if (attr->index == 0 || attr->index == 1) // PAGE 0 or PAGE 1
-+		return sprintf(buf, "%lu\n", val);
++		return sprintf(buf, "%u\n", val);
 +	else
 +		return -EINVAL;
 +}

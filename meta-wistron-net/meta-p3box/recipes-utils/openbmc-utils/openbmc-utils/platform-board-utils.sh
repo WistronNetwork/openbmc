@@ -287,7 +287,7 @@ platform_do_power_operation() {
             ret=$?
         elif [ "$operation" = "cycle" ]; then
             ipmitool power cycle
-            echo
+            ret=$?
         else
             ret=$STATUS_NOT_SUPPORTED
         fi

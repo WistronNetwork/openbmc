@@ -986,7 +986,7 @@ static CPLD_DEVICE_ATTR_RO(fan6_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_IN
 static CPLD_DEVICE_ATTR_RO(fan_all_present_interrupt_n, cpld_n_bits, FANCPLD_FAN_INT_INSERTION, 0, 6);
 static CPLD_DEVICE_ATTR_RW(rst_fan_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 0, 1);
 static CPLD_DEVICE_ATTR_RW(rst_i2c_mux_n, cpld_n_bits, FANCPLD_RESET_CONTROL, 1, 1);
-static CPLD_DEVICE_ATTR_RO(fan1_led, cpld_n_bits, FANCPLD_REAR_FAN_LED1_CONTROL, 0, 3);
+static CPLD_DEVICE_ATTR_RW(fan1_led, cpld_n_bits, FANCPLD_REAR_FAN_LED1_CONTROL, 0, 3);
 static CPLD_DEVICE_ATTR_RW(fan2_led, cpld_n_bits, FANCPLD_REAR_FAN_LED1_CONTROL, 4, 3);
 static CPLD_DEVICE_ATTR_RW(fan3_led, cpld_n_bits, FANCPLD_REAR_FAN_LED2_CONTROL, 0, 3);
 static CPLD_DEVICE_ATTR_RW(fan4_led, cpld_n_bits, FANCPLD_REAR_FAN_LED2_CONTROL, 4, 3);

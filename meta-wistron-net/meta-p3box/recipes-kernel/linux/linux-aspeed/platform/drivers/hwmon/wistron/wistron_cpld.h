@@ -898,6 +898,10 @@ static struct attribute *system_cpld2_attrs[] = {
   NULL,
 };
 
+static struct attribute *system_cpld3_attrs[] = {
+  NULL,
+};
+
 enum fancpld_regs {
   FANCPLD_BMC_STATUS                  = 0x5,
   FANCPLD_FM_PWM_FAN1_CONTROL         = 0x10,
@@ -1147,6 +1151,12 @@ static struct cpld_gpio_info system_cpld1_gpios[] = {
 static struct cpld_gpio_info system_cpld2_gpios[] = {
 /* Define gpio numbers for SYSTEM CPLD2 */
 #define MAX_SYS_CPLD2_GPIO 0
+  NULL,
+};
+
+static struct cpld_gpio_info system_cpld3_gpios[] = {
+/* Define gpio numbers for SYSTEM CPLD3 */
+#define MAX_SYS_CPLD3_GPIO 0
   NULL,
 };
 

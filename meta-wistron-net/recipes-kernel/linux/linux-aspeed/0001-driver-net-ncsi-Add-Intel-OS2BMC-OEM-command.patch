@@ -1,0 +1,125 @@
+From 63a85efde670db37035f8c3cb44006bdb52fc1a1 Mon Sep 17 00:00:00 2001
+From: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+Date: Tue, 25 Oct 2023 18:50:07 +0800
+Subject: [PATCH] net/ncsi: Add Intel OS2BMC OEM command
+
+The Intel OS2BMC OEM NCSI command is used for controlling whether
+network traffic between host and sideband is allowed or not. By
+default such traffic is disallowed, meaning that if the device using
+NCS (usually BMC) does not have extra active connection, it cannot
+reach the host.
+
+This patch enables the host-sideband traffic by sending the Enable
+OS2BMC flow OEM NCSI command, which is controlled by kernel option
+CONFIG_NCSI_OEM_CMD_INTEL_OS2BMC.
+
+Signed-off-by: Jiaqing Zhao <jiaqing.zhao@linux.intel.com>
+---
+ net/ncsi/Kconfig       |  6 ++++++
+ net/ncsi/internal.h    |  4 ++++
+ net/ncsi/ncsi-manage.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+)
+
+diff --git a/net/ncsi/Kconfig b/net/ncsi/Kconfig
+index ea1dd32b6b1f..faeddbd48fe9 100644
+--- a/net/ncsi/Kconfig
++++ b/net/ncsi/Kconfig
+@@ -23,3 +23,9 @@ config NCSI_OEM_CMD_KEEP_PHY
+ 	help
+ 	  This allows to keep PHY link up and prevents any channel resets during
+ 	  the host load.
++config NCSI_OEM_CMD_INTEL_OS2BMC
++	bool "Allow traffic between host and sideband (Intel-specific)"
++	depends on NET_NCSI
++	help
++	  This allows network traffic between host and sideband, specific to
++	  Intel network controllers.
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 03757e76bb6b..d730f435d136 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -82,6 +82,8 @@ enum {
+ /* Intel specific OEM command */
+ #define NCSI_OEM_INTEL_CMD_GMA          0x06   /* CMD ID for Get MAC */
+ #define NCSI_OEM_INTEL_CMD_KEEP_PHY     0x20   /* CMD ID for Keep PHY up */
++#define NCSI_OEM_INTEL_CMD_OS2BMC	0x40   /* CMD ID for Enable OS2BMC traffic */
++#define NCSI_OEM_INTEL_CMD_OS2BMC_PARAM	0x03   /* Parameter for Enable OS2BMC */
+ /* Broadcom specific OEM Command */
+ #define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
+ /* Mellanox specific OEM Command */
+@@ -92,6 +94,7 @@ enum {
+ /* OEM Command payload lengths*/
+ #define NCSI_OEM_INTEL_CMD_GMA_LEN      5
+ #define NCSI_OEM_INTEL_CMD_KEEP_PHY_LEN 7
++#define NCSI_OEM_INTEL_CMD_OS2BMC_LEN   6
+ #define NCSI_OEM_BCM_CMD_GMA_LEN        12
+ #define NCSI_OEM_MLX_CMD_GMA_LEN        8
+ #define NCSI_OEM_MLX_CMD_SMAF_LEN        60
+@@ -285,6 +288,7 @@ enum {
+ 	ncsi_dev_state_probe_dp,
+ 	ncsi_dev_state_config_sp	= 0x0301,
+ 	ncsi_dev_state_config_cis,
++	ncsi_dev_state_config_intel_os2bmc,
+ 	ncsi_dev_state_config_oem_gma,
+ 	ncsi_dev_state_config_clear_vids,
+ 	ncsi_dev_state_config_svf,
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 80713febfac6..d8b9fcedf7ec 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -718,6 +718,34 @@ static int ncsi_oem_keep_phy_intel(struct ncsi_cmd_arg *nca)
+ 
+ #endif
+ 
++#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_INTEL_OS2BMC)
++
++static int ncsi_oem_enable_os2bmc_intel(struct ncsi_cmd_arg *nca)
++{
++	unsigned char data[NCSI_OEM_INTEL_CMD_OS2BMC_LEN];
++	int ret = 0;
++
++	nca->payload = NCSI_OEM_INTEL_CMD_OS2BMC_LEN;
++
++	memset(data, 0, NCSI_OEM_INTEL_CMD_OS2BMC_LEN);
++	*(unsigned int *)data = ntohl((__force __be32)NCSI_OEM_MFR_INTEL_ID);
++	data[4] = NCSI_OEM_INTEL_CMD_OS2BMC;
++
++	/* Enable both Network-to-BMC and Host-to-BMC traffic */
++	data[5] = NCSI_OEM_INTEL_CMD_OS2BMC_PARAM;
++
++	nca->data = data;
++
++	ret = ncsi_xmit_cmd(nca);
++	if (ret)
++		netdev_err(nca->ndp->ndev.dev,
++			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
++			   nca->type);
++	return ret;
++}
++
++#endif
++
+ #if IS_ENABLED(CONFIG_NCSI_OEM_CMD_GET_MAC)
+ 
+ /* NCSI OEM Command APIs */
+@@ -1039,6 +1067,20 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
+ 			goto error;
+ 		}
+ 
++#if IS_ENABLED(CONFIG_NCSI_OEM_CMD_INTEL_OS2BMC)
++		nd->state = ncsi_dev_state_config_intel_os2bmc;
++		break;
++	case ncsi_dev_state_config_intel_os2bmc:
++		nca.type = NCSI_PKT_CMD_OEM;
++		nca.package = np->id;
++		nca.channel = nc->id;
++		ndp->pending_req_num = 1;
++		ret = ncsi_oem_enable_os2bmc_intel(&nca);
++
++		if (ret)
++			goto error;
++#endif /* CONFIG_NCSI_OEM_CMD_INTEL_OS2BMC */
++
+ 		nd->state = ncsi_dev_state_config_oem_gma;
+ 		break;
+ 	case ncsi_dev_state_config_oem_gma:

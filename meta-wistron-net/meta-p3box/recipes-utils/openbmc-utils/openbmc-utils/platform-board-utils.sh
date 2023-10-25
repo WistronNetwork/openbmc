@@ -24,20 +24,12 @@ platform_boot_ready() {
         value=$(printf "%02d" "$i")
         if [ "$((i))" -le 16 ]; then
             led_path=$(realpath $CPLD1_SYSFS_DIR/qsfpdd_p"$value"_led_control)
-            pwrgd=$(head -n1 $CPLD1_SYSFS_DIR/qsfpdd_p${value}_pwrgd 2> /dev/null)
-            present=$(head -n1 $CPLD1_SYSFS_DIR/qsfpdd_p${value}_present_n 2> /dev/null)
         else
             led_path=$(realpath $CPLD2_SYSFS_DIR/qsfpdd_p"$value"_led_control)
-            pwrgd=$(head -n1 $CPLD2_SYSFS_DIR/qsfpdd_p${value}_pwrgd 2> /dev/null)
-            present=$(head -n1 $CPLD2_SYSFS_DIR/qsfpdd_p${value}_present_n 2> /dev/null)
         fi
         # CPLD control
         echo 7 > "$led_path"
-
-        if  [ $((pwrgd)) -ne 1 ] && [ $((present)) -eq 0 ]; then
-            power-util xcvr off port"$i"
-            power-util xcvr on port"$i"
-        fi
+        power-util xcvr on port"$i"
     done
 
     sfputil &> /dev/null
@@ -278,15 +270,10 @@ platform_do_power_operation() {
     local ret=0
 
     if [ "$fru" = "psu" ]; then
-        #shellcheck disable=SC2046
-        if [ "$operation" = "on" ]; then
-            ipmitool power on
-            ret=$?
-        elif [ "$operation" = "off" ]; then
-            ipmitool power off
-            ret=$?
-        elif [ "$operation" = "cycle" ]; then
-            ipmitool power cycle
+        if [ "$operation" = "on" ] ||
+           [ "$operation" = "off" ] ||
+           [ "$operation" = "cycle" ]; then
+            ipmitool power "$operation" > /dev/null
             ret=$?
         else
             ret=$STATUS_NOT_SUPPORTED
@@ -295,23 +282,42 @@ platform_do_power_operation() {
         port=$(printf "%02d" "${component/port/}")
 
         if [[ "$((10#$port))" -le 16 ]]; then
-            switch_path=$(realpath $CPLD1_SYSFS_DIR/en_p3v3_qsfpdd_p"$port")
+            pwrgd_path=$(realpath $CPLD1_SYSFS_DIR/qsfpdd_p"$port"_pwrgd)
+            load_switch_path=$(realpath $CPLD1_SYSFS_DIR/en_p3v3_qsfpdd_p"$port")
+            present_path=$(realpath $CPLD1_SYSFS_DIR/qsfpdd_p"$port"_present_n)
         else
-            switch_path=$(realpath $CPLD2_SYSFS_DIR/en_p3v3_qsfpdd_p"$port")
+            pwrgd_path=$(realpath $CPLD2_SYSFS_DIR/qsfpdd_p"$port"_pwrgd)
+            load_switch_path=$(realpath $CPLD2_SYSFS_DIR/en_p3v3_qsfpdd_p"$port")
+            present_path=$(realpath $CPLD2_SYSFS_DIR/qsfpdd_p"$port"_present_n)
         fi
 
+        present=$(head -n1 $present_path 2> /dev/null)
+        if [ $((present)) -ne 0 ]; then
+            printf "\n"
+            printf "%s : %s not present" "${fru^}" "$component"
+            return "$STATUS_FAILURE"
+        fi
+
+        pwrgd=$(head -n1 $pwrgd_path 2> /dev/null)
+        load_switch=$(head -n1 $load_switch_path 2> /dev/null)
         #shellcheck disable=SC2320
         if [ "$operation" = "on" ]; then
-            echo 1 > "$switch_path"
+            if  [ $((pwrgd)) -eq 0 ] && [ $((load_switch)) -eq 1 ]; then
+                echo 0 > "$load_switch_path"
+            fi
+            echo 1 > "$load_switch_path"
             ret=$?
         elif [ "$operation" = "off" ]; then
-            echo 0 > "$switch_path"
+            if  [ $((pwrgd)) -eq 1 ] && [ $((load_switch)) -eq 0 ]; then
+                echo 1 > "$load_switch_path"
+            fi
+            echo 0 > "$load_switch_path"
             ret=$?
         elif [ "$operation" = "cycle" ]; then
-            echo 0 > "$switch_path"
+            echo 0 > "$load_switch_path"
             ret=$?
             sleep 1
-            echo 1 > "$switch_path"
+            echo 1 > "$load_switch_path"
             ret=$((ret | $?))
         else
             ret=$STATUS_NOT_SUPPORTED

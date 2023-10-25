@@ -8,12 +8,21 @@
 #include <linux/of_device.h>
 #include "wistron_cpld.h"
 
-enum chips {cpu_cpld, system_cpld0, system_cpld1, system_cpld2, fan_cpld, fpga};
+enum chips {
+  cpu_cpld,
+  system_cpld0,
+  system_cpld1,
+  system_cpld2,
+  system_cpld3,
+  fan_cpld,
+  fpga
+};
 
 ATTRIBUTE_GROUPS(cpu_cpld);
 ATTRIBUTE_GROUPS(system_cpld0);
 ATTRIBUTE_GROUPS(system_cpld1);
 ATTRIBUTE_GROUPS(system_cpld2);
+ATTRIBUTE_GROUPS(system_cpld3);
 ATTRIBUTE_GROUPS(fan_cpld);
 ATTRIBUTE_GROUPS(fpga);
 
@@ -104,6 +113,10 @@ static void cpld_probe_gpio(cpld_data *data)
       data->gpio.ngpio = MAX_SYS_CPLD2_GPIO;
       data->gpio_info = system_cpld2_gpios;
       break;
+    case system_cpld3:
+      data->gpio.ngpio = MAX_SYS_CPLD3_GPIO;
+      data->gpio_info = system_cpld3_gpios;
+      break;
     case fan_cpld:
       data->gpio.ngpio = MAX_FAN_CPLD_GPIO;
       data->gpio_info = fan_cpld_gpios;
@@ -177,6 +190,10 @@ static int wistron_cpld_probe(struct i2c_client *client,
       data->hwmon_dev = devm_hwmon_device_register_with_groups(dev,
                                     client->name, data, system_cpld2_groups);
       break;
+    case system_cpld3:
+      data->hwmon_dev = devm_hwmon_device_register_with_groups(dev,
+                                    client->name, data, system_cpld3_groups);
+      break;
     case fan_cpld:
       data->hwmon_dev = devm_hwmon_device_register_with_groups(dev,
                                     client->name, data, fan_cpld_groups);
@@ -208,6 +225,7 @@ static const struct i2c_device_id wistron_cpld_id[] = {
   { "system_cpld0", system_cpld0 },
   { "system_cpld1", system_cpld1 },
   { "system_cpld2", system_cpld2 },
+  { "system_cpld3", system_cpld3 },
   { "fan_cpld", fan_cpld },
   { "fpga", fpga },
   { }
@@ -219,6 +237,7 @@ static const struct of_device_id __maybe_unused wistron_cpld_of_match[] = {
   { .compatible = "wistron,system_cpld0", .data = (void *)system_cpld0 },
   { .compatible = "wistron,system_cpld1", .data = (void *)system_cpld1 },
   { .compatible = "wistron,system_cpld2", .data = (void *)system_cpld2 },
+  { .compatible = "wistron,system_cpld3", .data = (void *)system_cpld3 },
   { .compatible = "wistron,fan_cpld", .data = (void *)fan_cpld },
   { .compatible = "wistron,fpga", .data = (void *)fpga },
   { }

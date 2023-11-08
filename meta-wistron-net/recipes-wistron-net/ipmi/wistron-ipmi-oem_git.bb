@@ -20,7 +20,7 @@ PACKAGECONFIG[oem-platform] = "-Doem-platform=enabled,-Doem-platform=disabled"
 LIBRARY_NAMES = "libzwistronoemcmds.so"
 
 SRC_URI = "git://git@10.31.80.71/justine_team/openbmc/wistron-net-ipmi-oem.git;branch=master;protocol=ssh"
-SRCREV = "1dd1c9c3167d6565167cf0b4d0c5810f54a253b7"
+SRCREV = "4c8f95117a1c26b9af06e1e6f465b4ef15027784"
 
 sensor_yaml_path = "${STAGING_DIR_NATIVE}/../recipe-sysroot/usr/share/${MACHINE}-yaml-config"
 

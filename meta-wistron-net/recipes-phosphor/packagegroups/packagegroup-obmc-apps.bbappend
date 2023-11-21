@@ -13,6 +13,8 @@ RDEPENDS:${PN}-extras:append += " bmc-mac-setup \
                                   jbi \
                                   jq \
                                   libpeci \
+                                  libcpldupdate-dll-gpio \
+                                  libcpldupdate-dll-ioctl \
                                   lmsensors-sensors \
                                   memtester \
                                   openbmc-utils \

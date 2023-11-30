@@ -1,0 +1,6 @@
+[Unit]
+Description=PSU hotswap operation
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/phosphor-gpio-monitor/psu-hotswap %i

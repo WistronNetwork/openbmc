@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+source /usr/local/bin/platform-board-utils.sh
+
+arg=$1
+PSU=${arg:3:1}
+
+if [[ ! $PSU == ?(-)+([[:digit:]]) ]] || [[ $PSU -le 0 ]] || [[ $PSU -ge 3 ]]; then
+    printf "PSU number invalid, exit psu hotswap process \n"
+    exit 1
+fi
+
+printf "Starting to do %s hotswap process\n" "$arg"
+
+psu_pwrgd_path=$(realpath $CPLD1_SYSFS_DIR/psu"$PSU"_pwrgd)
+psu_pson_path=$(realpath $CPLD1_SYSFS_DIR/psu"$PSU"_pson_n)
+psu_pwrgd=$(head -n1 $psu_pwrgd_path 2> /dev/null)
+if  [ $((psu_pwrgd)) -eq 0 ]; then
+    echo 1 > "$psu_pson_path"
+fi
+
+echo 0 > "$psu_pson_path"
+#shellcheck disable=SC2320
+ret=$?
+if  [ $((ret)) -eq 0 ]; then
+    printf "Finished to do %s hotswap process: success\n" "$arg"
+else
+    printf "Finished to do %s hotswap process: fail\n" "$arg"
+fi

@@ -1,0 +1,27 @@
+From 605281aa77297f21677d918d50332eec72d0aaf8 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Mon, 27 Nov 2023 13:44:39 +0800
+Subject: [PATCH] arch: arm: mach-aspeed: ast2500: platform.S: Disable
+ CONFIG_DDR4_SUPPORT_HYNIX
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ arch/arm/mach-aspeed/ast2500/platform.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-aspeed/ast2500/platform.S b/arch/arm/mach-aspeed/ast2500/platform.S
+index aef55c4a0a..5b7cf8a773 100644
+--- a/arch/arm/mach-aspeed/ast2500/platform.S
++++ b/arch/arm/mach-aspeed/ast2500/platform.S
+@@ -149,7 +149,7 @@
+   on the MB layout. Customer can find the appropriate frequency for their products.
+   Below are the new defined parameters for the Hynix DDR4 supporting.
+  ******************************************************************************/
+-#define CONFIG_DDR4_SUPPORT_HYNIX              @ Enable this when Hynix DDR4 included in the BOM
++//#define CONFIG_DDR4_SUPPORT_HYNIX              @ Enable this when Hynix DDR4 included in the BOM
+ //#define CONFIG_DDR4_HYNIX_SET_1536
+ //#define CONFIG_DDR4_HYNIX_SET_1488
+ #define CONFIG_DDR4_HYNIX_SET_1440
+-- 
+2.25.1
+

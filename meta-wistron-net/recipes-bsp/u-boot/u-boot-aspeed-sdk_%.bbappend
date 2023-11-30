@@ -17,6 +17,7 @@ SRC_URI += "file://fw_env_flash_nor.config \
             file://0003-board-aspeed-evb_ast2500-Add-watchdog-option.patch \
             file://0004-common-main-Execute-PRECLICOMMAND-when-stop-autoboot.patch \
             file://0005-mtd-spi-spi-nor-ids-Correct-Gigadevice-flag.patch \
+            file://0006-arch-arm-mach-aspeed-ast2500-platform.S-Disable-CONF.patch \
            "
 SRC_URI:append:uboot-flash-32768 = " file://u-boot_flash_32M.cfg"
 SRC_URI:append:uboot-flash-65536 = " file://u-boot_flash_64M.cfg"

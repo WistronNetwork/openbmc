@@ -35,6 +35,7 @@ SRC_URI += "\
 	file://0001-net-ftgmac100-support-fixed-link.patch \
 	file://0001-hwmon-ina2xx-set-config-and-calibration-register.patch \
 	file://0002-hwmon-pmbus-Add-support-max17616.patch \
+	file://0001-Documentation-sphinx-Fix-for-CVE-issue.patch \
 	"
 
 do_kernel_prepare() {

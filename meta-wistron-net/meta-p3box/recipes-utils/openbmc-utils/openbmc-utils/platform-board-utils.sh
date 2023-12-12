@@ -103,16 +103,31 @@ platform_do_mb_update() {
     if [ "$extension" = "jed" ]; then
         device_name=$(cat < "$image" | grep -i "DEVICE NAME")
         design_name=$(cat < "$image" | grep -i "DESIGN NAME")
-        if [ "$component" = "cpld1" ] &&
-           [[ "$device_name " = *LCMXO3LF-4300C-5CABGA324* ]] &&
-           [[ "$design_name " = *SYS_CPLD* ]]; then
-            bus=4
-            addr=0x10
-        elif [ "$component" = "cpld2" ] &&
-           [[ "$device_name " = *LCMXO3LF-4300C-5CABGA324* ]] &&
-           [[ "$design_name " = *LED_CPLD* ]]; then
-            bus=4
-            addr=0x14
+        if [ "$component" = "cpld1" ]; then
+           if [[ "$device_name " = *LCMXO3LF-4300C-5CABGA324* ]] &&
+              [[ "$design_name " = *SYS_CPLD* ]]; then
+                bus=4
+                addr=0x10
+                gpiocli -c aspeed-gpio -n GPIOM3 -s FM_EN_PLD1_HITLESS_N export 2> /dev/null
+                gpiocli -s FM_EN_PLD1_HITLESS_N set-init-value 0 2> /dev/null
+                ret=$?
+                if [ "$ret" -ne 0 ]; then
+                    printf "Hitless setup fail\n"
+                    return "$STATUS_FAILURE"
+                fi
+            else
+                printf "Invalid image format\n"
+                return "$STATUS_FAILURE"
+            fi
+        elif [ "$component" = "cpld2" ]; then
+           if [[ "$device_name " = *LCMXO3LF-4300C-5CABGA324* ]] &&
+              [[ "$design_name " = *LED_CPLD* ]]; then
+                bus=4
+                addr=0x14
+            else
+                printf "Invalid image format\n"
+                return "$STATUS_FAILURE"
+            fi
         else
             return "$STATUS_NOT_SUPPORTED"
         fi
@@ -122,6 +137,11 @@ platform_do_mb_update() {
         ret=$?
         if [ "$ret" -ne 0 ]; then
             ret=$STATUS_FAILURE
+        fi
+
+        if [ "$component" = "cpld1" ]; then
+            gpiocli -s FM_EN_PLD1_HITLESS_N set-init-value 1 2> /dev/null
+            gpiocli -c aspeed-gpio -s FM_EN_PLD1_HITLESS_N unexport 2> /dev/null
         fi
     else
         printf "Invalid image format\n"
@@ -160,11 +180,15 @@ platform_do_fan_update() {
     if [ "$extension" = "jed" ]; then
         device_name=$(cat < "$image" | grep -i "DEVICE NAME")
         design_name=$(cat < "$image" | grep -i "DESIGN NAME")
-        if [ "$component" = "cpld3" ] &&
-           [[ "$device_name " = *LCMXO3LF-2100C-5CABGA324* ]] &&
-           [[ "$design_name " = *FAN_CPLD* ]]; then
-            bus=4
-            addr=0x1c
+        if [ "$component" = "cpld3" ]; then
+            if [[ "$device_name " = *LCMXO3LF-2100C-5CABGA324* ]] &&
+               [[ "$design_name " = *FAN_CPLD* ]]; then
+                bus=4
+                addr=0x1c
+            else
+                printf "Invalid image format\n"
+                return "$STATUS_FAILURE"
+            fi
         else
             return "$STATUS_NOT_SUPPORTED"
         fi

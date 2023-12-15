@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+source /usr/local/bin/platform-board-utils.sh
+
+arg=$1
+FAN=${arg:3:1}
+
+if [[ ! $FAN == ?(-)+([[:digit:]]) ]] || [[ $FAN -le 0 ]] || [[ $FAN -ge 7 ]]; then
+    printf "Fan number invalid, exit fan hotswap process \n"
+    exit 1
+fi
+
+printf "Starting to do %s hotswap process\n" "$arg"
+

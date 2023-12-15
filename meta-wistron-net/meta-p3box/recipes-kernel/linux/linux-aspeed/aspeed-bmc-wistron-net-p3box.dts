@@ -78,6 +78,67 @@
 		io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>, <&adc 4>, <&adc 5>,
 		              <&adc 6>, <&adc 8>, <&adc 9>;
 	};
+
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <1000>;
+
+		psu1-present {
+			label = "psu1-present";
+			gpios = <&system_cpld1 0 GPIO_ACTIVE_LOW>;
+			linux,code = <1>;
+		};
+
+		psu2-present {
+			label = "psu2-present";
+			gpios = <&system_cpld1 1 GPIO_ACTIVE_LOW>;
+			linux,code = <2>;
+		};
+
+		fan-fail {
+			label = "fan-fail";
+			gpios = <&system_cpld1 2 GPIO_ACTIVE_LOW>;
+			linux,code = <3>;
+		};
+
+		fan1-present {
+			label = "fan1-present";
+			gpios = <&fan_cpld 0 GPIO_ACTIVE_LOW>;
+			linux,code = <21>;
+		};
+
+		fan2-present {
+			label = "fan2-present";
+			gpios = <&fan_cpld 1 GPIO_ACTIVE_LOW>;
+			linux,code = <22>;
+		};
+
+		fan3-present {
+			label = "fan3-present";
+			gpios = <&fan_cpld 2 GPIO_ACTIVE_LOW>;
+			linux,code = <23>;
+		};
+
+		fan4-present {
+			label = "fan4-present";
+			gpios = <&fan_cpld 3 GPIO_ACTIVE_LOW>;
+			linux,code = <24>;
+		};
+
+		fan5-present {
+			label = "fan5-present";
+			gpios = <&fan_cpld 4 GPIO_ACTIVE_LOW>;
+			linux,code = <25>;
+		};
+
+		fan6-present {
+			label = "fan6-present";
+			gpios = <&fan_cpld 5 GPIO_ACTIVE_LOW>;
+			linux,code = <26>;
+		};
+	};
 };
 
 &fmc {
@@ -313,6 +374,9 @@
 	system_cpld1: cpld@11 {
 		compatible = "wistron,system_cpld1";
 		reg = <0x11>;
+
+		gpio-controller;
+		#gpio-cells = <2>;
 	};
 
 	system_cpld2: cpld@12 {

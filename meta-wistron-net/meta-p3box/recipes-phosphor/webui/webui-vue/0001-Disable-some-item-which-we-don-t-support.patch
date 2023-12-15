@@ -1,19 +1,19 @@
-From ee9efa092c925e5ebf9b2c6d86571024c1d78c46 Mon Sep 17 00:00:00 2001
+From 93a882522ba8680bde80aac800471d8e73996193 Mon Sep 17 00:00:00 2001
 From: Neal_Chen <neal_chen@wistron.com>
-Date: Tue, 15 Aug 2023 10:32:43 +0800
+Date: Fri, 15 Dec 2023 11:31:54 +0800
 Subject: [PATCH] Disable some item which we don't support
 
 Signed-off-by: Neal_Chen <neal_chen@wistron.com>
 ---
  .../AppNavigation/AppNavigationMixin.js       |  94 ++++----
  src/router/routes.js                          | 200 +++++++++---------
- .../HardwareStatus/Inventory/Inventory.vue    | 134 ++++++------
+ .../HardwareStatus/Inventory/Inventory.vue    | 104 ++++-----
  src/views/Overview/Overview.vue               |  12 +-
  src/views/Overview/OverviewQuickLinks.vue     |  12 +-
- 5 files changed, 226 insertions(+), 226 deletions(-)
+ 5 files changed, 211 insertions(+), 211 deletions(-)
 
 diff --git a/src/components/AppNavigation/AppNavigationMixin.js b/src/components/AppNavigation/AppNavigationMixin.js
-index bbbbb1e..000262f 100644
+index bbbbb1ee..000262f7 100644
 --- a/src/components/AppNavigation/AppNavigationMixin.js
 +++ b/src/components/AppNavigation/AppNavigationMixin.js
 @@ -37,11 +37,11 @@ const AppNavigationMixin = {
@@ -146,7 +146,7 @@ index bbbbb1e..000262f 100644
      };
    },
 diff --git a/src/router/routes.js b/src/router/routes.js
-index 3cbdabc..58cd2ac 100644
+index 3cbdabce..58cd2ac2 100644
 --- a/src/router/routes.js
 +++ b/src/router/routes.js
 @@ -1,13 +1,13 @@
@@ -408,7 +408,7 @@ index 3cbdabc..58cd2ac 100644
          path: '*',
          name: 'page-not-found',
 diff --git a/src/views/HardwareStatus/Inventory/Inventory.vue b/src/views/HardwareStatus/Inventory/Inventory.vue
-index fcdbf8d..710d19d 100644
+index fcdbf8d2..96adb1c7 100644
 --- a/src/views/HardwareStatus/Inventory/Inventory.vue
 +++ b/src/views/HardwareStatus/Inventory/Inventory.vue
 @@ -32,19 +32,19 @@
@@ -423,8 +423,7 @@ index fcdbf8d..710d19d 100644
 +    <!-- <table-fans ref="fans" /> -->
  
      <!-- Power supplies table -->
--    <table-power-supplies ref="powerSupply" />
-+    <!-- <table-power-supplies ref="powerSupply" /> -->
+     <table-power-supplies ref="powerSupply" />
  
      <!-- Processors table -->
 -    <table-processors ref="processors" />
@@ -436,14 +435,12 @@ index fcdbf8d..710d19d 100644
    </b-container>
  </template>
  
-@@ -52,13 +52,13 @@
- import PageTitle from '@/components/Global/PageTitle';
+@@ -53,12 +53,12 @@ import PageTitle from '@/components/Global/PageTitle';
  import ServiceIndicator from './InventoryServiceIndicator';
  import TableSystem from './InventoryTableSystem';
--import TablePowerSupplies from './InventoryTablePowerSupplies';
+ import TablePowerSupplies from './InventoryTablePowerSupplies';
 -import TableDimmSlot from './InventoryTableDimmSlot';
 -import TableFans from './InventoryTableFans';
-+// import TablePowerSupplies from './InventoryTablePowerSupplies';
 +// import TableDimmSlot from './InventoryTableDimmSlot';
 +// import TableFans from './InventoryTableFans';
  import TableBmcManager from './InventoryTableBmcManager';
@@ -460,9 +457,8 @@ index fcdbf8d..710d19d 100644
      PageTitle,
      ServiceIndicator,
 -    TableDimmSlot,
--    TablePowerSupplies,
 +    // TableDimmSlot,
-+    // TablePowerSupplies,
+     TablePowerSupplies,
      TableSystem,
 -    TableFans,
 +    // TableFans,
@@ -491,24 +487,6 @@ index fcdbf8d..710d19d 100644
 -          href: '#fans',
 -          linkText: this.$t('pageInventory.fans'),
 -        },
--        {
--          id: 'powerSupply',
--          dataRef: 'powerSupply',
--          href: '#powerSupply',
--          linkText: this.$t('pageInventory.powerSupplies'),
--        },
--        {
--          id: 'processors',
--          dataRef: 'processors',
--          href: '#processors',
--          linkText: this.$t('pageInventory.processors'),
--        },
--        {
--          id: 'assembly',
--          dataRef: 'assembly',
--          href: '#assembly',
--          linkText: this.$t('pageInventory.assemblies'),
--        },
 +        // {
 +        //   id: 'dimms',
 +        //   dataRef: 'dimms',
@@ -521,12 +499,24 @@ index fcdbf8d..710d19d 100644
 +        //   href: '#fans',
 +        //   linkText: this.$t('pageInventory.fans'),
 +        // },
-+        // {
-+        //   id: 'powerSupply',
-+        //   dataRef: 'powerSupply',
-+        //   href: '#powerSupply',
-+        //   linkText: this.$t('pageInventory.powerSupplies'),
-+        // },
+         {
+           id: 'powerSupply',
+           dataRef: 'powerSupply',
+           href: '#powerSupply',
+           linkText: this.$t('pageInventory.powerSupplies'),
+         },
+-        {
+-          id: 'processors',
+-          dataRef: 'processors',
+-          href: '#processors',
+-          linkText: this.$t('pageInventory.processors'),
+-        },
+-        {
+-          id: 'assembly',
+-          dataRef: 'assembly',
+-          href: '#assembly',
+-          linkText: this.$t('pageInventory.assemblies'),
+-        },
 +        // {
 +        //   id: 'processors',
 +        //   dataRef: 'processors',
@@ -552,25 +542,20 @@ index fcdbf8d..710d19d 100644
 -    const fansTablePromise = new Promise((resolve) => {
 -      this.$root.$on('hardware-status-fans-complete', () => resolve());
 -    });
--    const powerSuppliesTablePromise = new Promise((resolve) => {
--      this.$root.$on('hardware-status-power-supplies-complete', () =>
--        resolve()
--      );
--    });
--    const processorsTablePromise = new Promise((resolve) => {
--      this.$root.$on('hardware-status-processors-complete', () => resolve());
--    });
 +    // const dimmSlotTablePromise = new Promise((resolve) => {
 +    //   this.$root.$on('hardware-status-dimm-slot-complete', () => resolve());
 +    // });
 +    // const fansTablePromise = new Promise((resolve) => {
 +    //   this.$root.$on('hardware-status-fans-complete', () => resolve());
 +    // });
-+    // const powerSuppliesTablePromise = new Promise((resolve) => {
-+    //   this.$root.$on('hardware-status-power-supplies-complete', () =>
-+    //     resolve()
-+    //   );
-+    // });
+     const powerSuppliesTablePromise = new Promise((resolve) => {
+       this.$root.$on('hardware-status-power-supplies-complete', () =>
+         resolve()
+       );
+     });
+-    const processorsTablePromise = new Promise((resolve) => {
+-      this.$root.$on('hardware-status-processors-complete', () => resolve());
+-    });
 +    // const processorsTablePromise = new Promise((resolve) => {
 +    //   this.$root.$on('hardware-status-processors-complete', () => resolve());
 +    // });
@@ -593,11 +578,10 @@ index fcdbf8d..710d19d 100644
        chassisTablePromise,
 -      dimmSlotTablePromise,
 -      fansTablePromise,
--      powerSuppliesTablePromise,
--      processorsTablePromise,
 +      // dimmSlotTablePromise,
 +      // fansTablePromise,
-+      // powerSuppliesTablePromise,
+       powerSuppliesTablePromise,
+-      processorsTablePromise,
 +      // processorsTablePromise,
        serviceIndicatorPromise,
        systemTablePromise,
@@ -607,7 +591,7 @@ index fcdbf8d..710d19d 100644
    },
  };
 diff --git a/src/views/Overview/Overview.vue b/src/views/Overview/Overview.vue
-index 9960f37..ab669e9 100644
+index 9960f373..ab669e93 100644
 --- a/src/views/Overview/Overview.vue
 +++ b/src/views/Overview/Overview.vue
 @@ -32,7 +32,7 @@ import OverviewEvents from './OverviewEvents.vue';
@@ -651,7 +635,7 @@ index 9960f37..ab669e9 100644
        serverPromise,
      ]).finally(() => this.endLoader());
 diff --git a/src/views/Overview/OverviewQuickLinks.vue b/src/views/Overview/OverviewQuickLinks.vue
-index bc579b0..95c708e 100644
+index bc579b03..95c708e7 100644
 --- a/src/views/Overview/OverviewQuickLinks.vue
 +++ b/src/views/Overview/OverviewQuickLinks.vue
 @@ -10,7 +10,7 @@

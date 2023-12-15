@@ -1,0 +1,6 @@
+[Unit]
+Description=FAN fail operation
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/phosphor-gpio-monitor/fan-fail %i

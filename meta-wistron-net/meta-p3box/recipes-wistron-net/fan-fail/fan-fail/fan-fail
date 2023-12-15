@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+source /usr/local/bin/platform-board-utils.sh
+
+printf "Fan fail process starting\n"
+
+fan_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_fail_interrupt_n 2> /dev/null)
+fan_all_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_fail_interrupt_n 2> /dev/null)
+fan_all_present_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_present_interrupt_n 2> /dev/null)
+
+printf "Fan fail interrupt: %s\n" "$fan_fail_interrupt_n"
+printf "All fan fail interrupt: %s\n" "$fan_all_fail_interrupt_n"
+printf "All fan present interrupt: %s\n" "$fan_all_present_interrupt_n"
+
+while [ "$((fan_fail_interrupt_n))" -eq 0 ];
+do
+  fan_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_fail_interrupt_n 2> /dev/null)
+  fan_all_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_fail_interrupt_n 2> /dev/null)
+  fan_all_present_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_present_interrupt_n 2> /dev/null)
+  sleep 3
+done
+
+printf "Fan fail process finish\n"

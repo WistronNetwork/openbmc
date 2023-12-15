@@ -1144,7 +1144,22 @@ static struct cpld_gpio_info system_cpld0_gpios[] = {
 
 static struct cpld_gpio_info system_cpld1_gpios[] = {
 /* Define gpio numbers for SYSTEM CPLD1 */
-#define MAX_SYS_CPLD1_GPIO 0
+#define MAX_SYS_CPLD1_GPIO 3
+  [0] = {
+    .reg = CPLD1_PSU_STATUS,
+    .shift = 1,
+    .direction = 1
+  },
+  [1] = {
+    .reg = CPLD1_PSU_STATUS,
+    .shift = 5,
+    .direction = 1
+  },
+  [2] = {
+    .reg = CPLD1_INTERRUPT_STATUS_3,
+    .shift = 3,
+    .direction = 1
+  },
   NULL,
 };
 

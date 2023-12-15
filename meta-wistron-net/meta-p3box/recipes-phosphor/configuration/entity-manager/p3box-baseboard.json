@@ -1,800 +1,764 @@
-{
-    "Exposes": [
-        {
-            "Index": 0,
-            "Name": "P12V_STBY_BMC",
-            "ScaleFactor": 0.1083,
-            "Type": "ADC"
-        },
-        {
-            "Index": 1,
-            "Name": "P3V3_STBY_BMC",
-            "ScaleFactor": 0.4048,
-            "Type": "ADC"
-        },
-        {
-            "Index": 2,
-            "Name": "P2V5_SB_BMC",
-            "ScaleFactor": 0.4048,
-            "Type": "ADC"
-        },
-        {
-            "Index": 3,
-            "Name": "P1V2_SB_BMC",
-            "ScaleFactor": 1,
-            "Type": "ADC"
-        },
-        {
-            "Index": 4,
-            "Name": "P1V15_SB_BMC",
-            "ScaleFactor": 1,
-            "Type": "ADC"
-        },
-        {
-            "Index": 5,
-            "Name": "P5V",
-            "ScaleFactor": 0.2326,
-            "Type": "ADC"
-        },
-        {
-            "Index": 6,
-            "Name": "P3V3_A",
-            "ScaleFactor": 0.4048,
-             "Type": "ADC"
-        },
-        {
-            "Index": 7,
-            "Name": "P3V3_B",
-            "ScaleFactor": 0.4048,
-            "Type": "ADC"
-        },
-        {
-            "Index": 8,
-            "Name": "P12V",
-            "ScaleFactor": 0.1127,
-            "Type": "ADC"
-        },
-        {
-            "Address": "0x48",
-            "Bus": 16,
-            "Name": "MB_U9_TMP1",
-            "Type": "TMP75"
-        },
-        {
-            "Address": "0x49",
-            "Bus": 16,
-            "Name": "MB_U11_TMP2",
-            "Type": "TMP75"
-        },
-        {
-            "Address": "0x4a",
-            "Bus": 16,
-            "Name": "MB_U13_TMP3",
-            "Type": "TMP75"
-        },
-        {
-            "Address": "0x4b",
-            "Bus": 16,
-            "Name": "MB_U10_TMP4",
-            "Type": "TMP75"
-        },
-        {
-            "Address": "0x58",
-            "Bus": 17,
-            "Name": "PSU1",
-            "vin_Name": "PSU1_VIN_AC",
-            "vout1_Name": "PSU1_VOUT_DC",
-            "fan1_Name": "PSU1_FAN_TACH1",
-            "temp1_Name": "PSU1_TMP",
-            "temp2_Name": "PSU1_TMP2",
-            "temp3_Name": "PSU1_TMP3",
-            "pin_Name": "PSU1_PIN_AC",
-            "pout1_Name": "PSU1_POUT_DC",
-            "iin_Name": "PSU1_IIN_AC",
-            "iout1_Name": "PSU1_IOUT_DC",
-            "Labels": [
-                "vin",
-                "vout1",
-                "fan1",
-                "temp1",
-                "temp2",
-                "temp3",
-                "pin",
-                "pout1",
-                "iin",
-                "iout1"
-            ],
-            "Type": "pmbus_psu"
-        },
-        {
-            "Address": "0x59",
-            "Bus": 17,
-            "Name": "PSU2",
-            "vin_Name": "PSU2_VIN_AC",
-            "vout1_Name": "PSU2_VOUT_DC",
-            "fan1_Name": "PSU2_FAN_TACH1",
-            "temp1_Name": "PSU2_TMP",
-            "temp2_Name": "PSU2_TMP2",
-            "temp3_Name": "PSU2_TMP3",
-            "pin_Name": "PSU2_PIN_AC",
-            "pout1_Name": "PSU2_POUT_DC",
-            "iin_Name": "PSU2_IIN_AC",
-            "iout1_Name": "PSU2_IOUT_DC",
-            "Labels": [
-                "vin",
-                "vout1",
-                "fan1",
-                "temp1",
-                "temp2",
-                "temp3",
-                "pin",
-                "pout1",
-                "iin",
-                "iout1"
-            ],
-            "Type": "pmbus_psu"
-        },
-        {
-            "Address": "0x62",
-            "Bus": 19,
-            "Name": "VR_P3V3",
-            "vout1_Name": "VR_P3V3_A_VOUT",
-            "vout2_Name": "VR_P3V3_B_VOUT",
-            "pout1_Name": "VR_P3V3_A_POUT",
-            "pout2_Name": "VR_P3V3_B_POUT",
-            "temp1_Name": "VR_P3V3_A_TMP",
-            "temp2_Name": "VR_P3V3_B_TMP",
-            "Labels": [
-                "vout1",
-                "vout2",
-                "pout1",
-                "pout2",
-                "temp1",
-                "temp2"
-            ],
-            "Type": "TPS53688"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 32,
-            "Name": "XCVR1",
-            "in0_Name": "XCVR1_VIN",
-            "temp1_Name": "XCVR1_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 33,
-            "Name": "XCVR2",
-            "in0_Name": "XCVR2_VIN",
-            "temp1_Name": "XCVR2_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 34,
-            "Name": "XCVR3",
-            "in0_Name": "XCVR3_VIN",
-            "temp1_Name": "XCVR3_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 35,
-            "Name": "XCVR4",
-            "in0_Name": "XCVR4_VIN",
-            "temp1_Name": "XCVR4_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 36,
-            "Name": "XCVR5",
-            "in0_Name": "XCVR5_VIN",
-            "temp1_Name": "XCVR5_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 37,
-            "Name": "XCVR6",
-            "in0_Name": "XCVR6_VIN",
-            "temp1_Name": "XCVR6_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 38,
-            "Name": "XCVR7",
-            "in0_Name": "XCVR7_VIN",
-            "temp1_Name": "XCVR7_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 39,
-            "Name": "XCVR8",
-            "in0_Name": "XCVR8_VIN",
-            "temp1_Name": "XCVR8_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 40,
-            "Name": "XCVR9",
-            "in0_Name": "XCVR9_VIN",
-            "temp1_Name": "XCVR9_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 41,
-            "Name": "XCVR10",
-            "in0_Name": "XCVR10_VIN",
-            "temp1_Name": "XCVR10_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 42,
-            "Name": "XCVR11",
-            "in0_Name": "XCVR11_VIN",
-            "temp1_Name": "XCVR11_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 43,
-            "Name": "XCVR12",
-            "in0_Name": "XCVR12_VIN",
-            "temp1_Name": "XCVR12_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 44,
-            "Name": "XCVR13",
-            "in0_Name": "XCVR13_VIN",
-            "temp1_Name": "XCVR13_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 45,
-            "Name": "XCVR14",
-            "in0_Name": "XCVR14_VIN",
-            "temp1_Name": "XCVR14_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 46,
-            "Name": "XCVR15",
-            "in0_Name": "XCVR15_VIN",
-            "temp1_Name": "XCVR15_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 47,
-            "Name": "XCVR16",
-            "in0_Name": "XCVR16_VIN",
-            "temp1_Name": "XCVR16_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 48,
-            "Name": "XCVR17",
-            "in0_Name": "XCVR17_VIN",
-            "temp1_Name": "XCVR17_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 49,
-            "Name": "XCVR18",
-            "in0_Name": "XCVR18_VIN",
-            "temp1_Name": "XCVR18_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 50,
-            "Name": "XCVR19",
-            "in0_Name": "XCVR19_VIN",
-            "temp1_Name": "XCVR19_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 51,
-            "Name": "XCVR20",
-            "in0_Name": "XCVR20_VIN",
-            "temp1_Name": "XCVR20_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 52,
-            "Name": "XCVR21",
-            "in0_Name": "XCVR21_VIN",
-            "temp1_Name": "XCVR21_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 53,
-            "Name": "XCVR22",
-            "in0_Name": "XCVR22_VIN",
-            "temp1_Name": "XCVR22_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 54,
-            "Name": "XCVR23",
-            "in0_Name": "XCVR23_VIN",
-            "temp1_Name": "XCVR23_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 55,
-            "Name": "XCVR24",
-            "in0_Name": "XCVR24_VIN",
-            "temp1_Name": "XCVR24_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 56,
-            "Name": "XCVR25",
-            "in0_Name": "XCVR25_VIN",
-            "temp1_Name": "XCVR25_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 57,
-            "Name": "XCVR26",
-            "in0_Name": "XCVR26_VIN",
-            "temp1_Name": "XCVR26_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 58,
-            "Name": "XCVR27",
-            "in0_Name": "XCVR27_VIN",
-            "temp1_Name": "XCVR27_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 59,
-            "Name": "XCVR28",
-            "in0_Name": "XCVR28_VIN",
-            "temp1_Name": "XCVR28_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 60,
-            "Name": "XCVR29",
-            "in0_Name": "XCVR29_VIN",
-            "temp1_Name": "XCVR29_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 61,
-            "Name": "XCVR30",
-            "in0_Name": "XCVR30_VIN",
-            "temp1_Name": "XCVR30_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 62,
-            "Name": "XCVR31",
-            "in0_Name": "XCVR31_VIN",
-            "temp1_Name": "XCVR31_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x50",
-            "Bus": 63,
-            "Name": "XCVR32",
-            "in0_Name": "XCVR32_VIN",
-            "temp1_Name": "XCVR32_TMP",
-            "Labels": [
-                "in0",
-                "temp1"
-            ],
-            "Type": "OPTOE3"
-        },
-        {
-            "Address": "0x4e",
-            "Bus": 28,
-            "Name": "FAN_U7_TMP1",
-            "Type": "TMP75"
-        },
-        {
-            "Address": "0x4f",
-            "Bus": 28,
-            "Name": "FAN_U8_TMP2",
-            "Type": "TMP75"
-        },
-        {
-            "Index": 0,
-            "Name": "FAN1_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 1,
-            "Tachs": [1],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 1,
-            "Name": "FAN1_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 1,
-            "Tachs": [2],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 2,
-            "Name": "FAN2_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 2,
-            "Tachs": [3],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 3,
-            "Name": "FAN2_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 2,
-            "Tachs": [4],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 4,
-            "Name": "FAN3_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 3,
-            "Tachs": [5],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 5,
-            "Name": "FAN3_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 3,
-            "Tachs": [6],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 6,
-            "Name": "FAN4_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 4,
-            "Tachs": [7],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 7,
-            "Name": "FAN4_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 4,
-            "Tachs": [8],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 8,
-            "Name": "FAN5_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 5,
-            "Tachs": [9],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 9,
-            "Name": "FAN5_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 5,
-            "Tachs": [10],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 10,
-            "Name": "FAN6_FRONT_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 6,
-            "Tachs": [11],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
-        },
-        {
-            "Index": 11,
-            "Name": "FAN6_REAR_TACH",
-            "PowerState": "Always",
-            "Address": "0x16",
-            "Bus": 3,
-            "Pwm": 6,
-            "Tachs": [12],
-            "MaxReading": 36000,
-            "Thresholds": [
-                {
-                    "Direction": "less than",
-                    "Name": "lower critical",
-                    "Severity": 1,
-                    "Value": 1500
-                }
-            ],
-            "Type": "I2CFan"
+[
+    {
+        "Exposes": [
+            {
+                "Index": 0,
+                "Name": "P12V_STBY_BMC",
+                "ScaleFactor": 0.1083,
+                "Type": "ADC"
+            },
+            {
+                "Index": 1,
+                "Name": "P3V3_STBY_BMC",
+                "ScaleFactor": 0.4048,
+                "Type": "ADC"
+            },
+            {
+                "Index": 2,
+                "Name": "P2V5_SB_BMC",
+                "ScaleFactor": 0.4048,
+                "Type": "ADC"
+            },
+            {
+                "Index": 3,
+                "Name": "P1V2_SB_BMC",
+                "ScaleFactor": 1,
+                "Type": "ADC"
+            },
+            {
+                "Index": 4,
+                "Name": "P1V15_SB_BMC",
+                "ScaleFactor": 1,
+                "Type": "ADC"
+            },
+            {
+                "Index": 5,
+                "Name": "P5V",
+                "ScaleFactor": 0.2326,
+                "Type": "ADC"
+            },
+            {
+                "Index": 6,
+                "Name": "P3V3_A",
+                "ScaleFactor": 0.4048,
+                "Type": "ADC"
+            },
+            {
+                "Index": 7,
+                "Name": "P3V3_B",
+                "ScaleFactor": 0.4048,
+                "Type": "ADC"
+            },
+            {
+                "Index": 8,
+                "Name": "P12V",
+                "ScaleFactor": 0.1127,
+                "Type": "ADC"
+            }
+        ],
+        "Name": "P3 Box BMC Board",
+        "Probe": [
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': '', 'BOARD_PRODUCT_NAME': 'P3 Box'})",
+            "OR",
+            "TRUE"
+        ],
+        "Type": "Bmc",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$BOARD_MANUFACTURER",
+            "Model": "$BOARD_PRODUCT_NAME",
+            "PartNumber": "$BOARD_PART_NUMBER",
+            "SerialNumber": "$BOARD_SERIAL_NUMBER"
         }
-    ],
-    "Name": "Wistron Network P3 Box",
-    "Probe": [
-        "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'P3 Box'})",
-        "OR",
-        "TRUE"
-    ],
-    "Type": "Board",
-    "xyz.openbmc_project.Inventory.Decorator.Asset": {
-        "Manufacturer": "$PRODUCT_MANUFACTURER",
-        "Model": "$PRODUCT_PRODUCT_NAME",
-        "PartNumber": "$PRODUCT_PART_NUMBER",
-        "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
     },
-    "xyz.openbmc_project.Inventory.Item.System": {
-        "Manufacturer": "$PRODUCT_MANUFACTURER",
-        "PartNumber": "$PRODUCT_PART_NUMBER",
-        "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+    {
+        "Exposes": [
+            {
+                "Address": "0x48",
+                "Bus": 16,
+                "Name": "MB_U9_TMP1",
+                "Type": "TMP75"
+            },
+            {
+                "Address": "0x49",
+                "Bus": 16,
+                "Name": "MB_U11_TMP2",
+                "Type": "TMP75"
+            },
+            {
+                "Address": "0x4a",
+                "Bus": 16,
+                "Name": "MB_U13_TMP3",
+                "Type": "TMP75"
+            },
+            {
+                "Address": "0x4b",
+                "Bus": 16,
+                "Name": "MB_U10_TMP4",
+                "Type": "TMP75"
+            },
+            {
+                "Address": "0x62",
+                "Bus": 19,
+                "Name": "VR_P3V3",
+                "vout1_Name": "VR_P3V3_A_VOUT",
+                "vout2_Name": "VR_P3V3_B_VOUT",
+                "pout1_Name": "VR_P3V3_A_POUT",
+                "pout2_Name": "VR_P3V3_B_POUT",
+                "temp1_Name": "VR_P3V3_A_TMP",
+                "temp2_Name": "VR_P3V3_B_TMP",
+                "Labels": [
+                    "vout1",
+                    "vout2",
+                    "pout1",
+                    "pout2",
+                    "temp1",
+                    "temp2"
+                ],
+                "Type": "TPS53688"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 32,
+                "Name": "XCVR1",
+                "in0_Name": "XCVR1_VIN",
+                "temp1_Name": "XCVR1_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 33,
+                "Name": "XCVR2",
+                "in0_Name": "XCVR2_VIN",
+                "temp1_Name": "XCVR2_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 34,
+                "Name": "XCVR3",
+                "in0_Name": "XCVR3_VIN",
+                "temp1_Name": "XCVR3_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 35,
+                "Name": "XCVR4",
+                "in0_Name": "XCVR4_VIN",
+                "temp1_Name": "XCVR4_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 36,
+                "Name": "XCVR5",
+                "in0_Name": "XCVR5_VIN",
+                "temp1_Name": "XCVR5_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 37,
+                "Name": "XCVR6",
+                "in0_Name": "XCVR6_VIN",
+                "temp1_Name": "XCVR6_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 38,
+                "Name": "XCVR7",
+                "in0_Name": "XCVR7_VIN",
+                "temp1_Name": "XCVR7_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 39,
+                "Name": "XCVR8",
+                "in0_Name": "XCVR8_VIN",
+                "temp1_Name": "XCVR8_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 40,
+                "Name": "XCVR9",
+                "in0_Name": "XCVR9_VIN",
+                "temp1_Name": "XCVR9_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 41,
+                "Name": "XCVR10",
+                "in0_Name": "XCVR10_VIN",
+                "temp1_Name": "XCVR10_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 42,
+                "Name": "XCVR11",
+                "in0_Name": "XCVR11_VIN",
+                "temp1_Name": "XCVR11_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 43,
+                "Name": "XCVR12",
+                "in0_Name": "XCVR12_VIN",
+                "temp1_Name": "XCVR12_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 44,
+                "Name": "XCVR13",
+                "in0_Name": "XCVR13_VIN",
+                "temp1_Name": "XCVR13_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 45,
+                "Name": "XCVR14",
+                "in0_Name": "XCVR14_VIN",
+                "temp1_Name": "XCVR14_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 46,
+                "Name": "XCVR15",
+                "in0_Name": "XCVR15_VIN",
+                "temp1_Name": "XCVR15_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 47,
+                "Name": "XCVR16",
+                "in0_Name": "XCVR16_VIN",
+                "temp1_Name": "XCVR16_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 48,
+                "Name": "XCVR17",
+                "in0_Name": "XCVR17_VIN",
+                "temp1_Name": "XCVR17_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 49,
+                "Name": "XCVR18",
+                "in0_Name": "XCVR18_VIN",
+                "temp1_Name": "XCVR18_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 50,
+                "Name": "XCVR19",
+                "in0_Name": "XCVR19_VIN",
+                "temp1_Name": "XCVR19_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 51,
+                "Name": "XCVR20",
+                "in0_Name": "XCVR20_VIN",
+                "temp1_Name": "XCVR20_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 52,
+                "Name": "XCVR21",
+                "in0_Name": "XCVR21_VIN",
+                "temp1_Name": "XCVR21_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 53,
+                "Name": "XCVR22",
+                "in0_Name": "XCVR22_VIN",
+                "temp1_Name": "XCVR22_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 54,
+                "Name": "XCVR23",
+                "in0_Name": "XCVR23_VIN",
+                "temp1_Name": "XCVR23_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 55,
+                "Name": "XCVR24",
+                "in0_Name": "XCVR24_VIN",
+                "temp1_Name": "XCVR24_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 56,
+                "Name": "XCVR25",
+                "in0_Name": "XCVR25_VIN",
+                "temp1_Name": "XCVR25_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 57,
+                "Name": "XCVR26",
+                "in0_Name": "XCVR26_VIN",
+                "temp1_Name": "XCVR26_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 58,
+                "Name": "XCVR27",
+                "in0_Name": "XCVR27_VIN",
+                "temp1_Name": "XCVR27_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 59,
+                "Name": "XCVR28",
+                "in0_Name": "XCVR28_VIN",
+                "temp1_Name": "XCVR28_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 60,
+                "Name": "XCVR29",
+                "in0_Name": "XCVR29_VIN",
+                "temp1_Name": "XCVR29_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 61,
+                "Name": "XCVR30",
+                "in0_Name": "XCVR30_VIN",
+                "temp1_Name": "XCVR30_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 62,
+                "Name": "XCVR31",
+                "in0_Name": "XCVR31_VIN",
+                "temp1_Name": "XCVR31_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x50",
+                "Bus": 63,
+                "Name": "XCVR32",
+                "in0_Name": "XCVR32_VIN",
+                "temp1_Name": "XCVR32_TMP",
+                "Labels": [
+                    "in0",
+                    "temp1"
+                ],
+                "Type": "OPTOE3"
+            },
+            {
+                "Address": "0x4e",
+                "Bus": 28,
+                "Name": "FAN_U7_TMP1",
+                "Type": "TMP75"
+            },
+            {
+                "Address": "0x4f",
+                "Bus": 28,
+                "Name": "FAN_U8_TMP2",
+                "Type": "TMP75"
+            },
+            {
+                "Index": 0,
+                "Name": "FAN1_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 1,
+                "Tachs": [1],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 1,
+                "Name": "FAN1_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 1,
+                "Tachs": [2],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 2,
+                "Name": "FAN2_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 2,
+                "Tachs": [3],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 3,
+                "Name": "FAN2_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 2,
+                "Tachs": [4],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 4,
+                "Name": "FAN3_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 3,
+                "Tachs": [5],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 5,
+                "Name": "FAN3_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 3,
+                "Tachs": [6],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 6,
+                "Name": "FAN4_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 4,
+                "Tachs": [7],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 7,
+                "Name": "FAN4_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 4,
+                "Tachs": [8],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 8,
+                "Name": "FAN5_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 5,
+                "Tachs": [9],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 9,
+                "Name": "FAN5_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 5,
+                "Tachs": [10],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 10,
+                "Name": "FAN6_FRONT_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 6,
+                "Tachs": [11],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            },
+            {
+                "Index": 11,
+                "Name": "FAN6_REAR_TACH",
+                "PowerState": "Always",
+                "Address": "0x16",
+                "Bus": 3,
+                "Pwm": 6,
+                "Tachs": [12],
+                "MaxReading": 36000,
+                "Thresholds": [
+                    {
+                        "Direction": "less than",
+                        "Name": "lower critical",
+                        "Severity": 1,
+                        "Value": 1500
+                    }
+                ],
+                "Type": "I2CFan"
+            }
+        ],
+        "Name": "Wistron Network P3 Box",
+        "Probe": [
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'P3 Box', 'BOARD_PRODUCT_NAME': 'P3 Box Main Board'})",
+            "OR",
+            "TRUE"
+        ],
+        "Type": "Chassis",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$PRODUCT_MANUFACTURER",
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Item.System": {
+            "Manufacturer": "$PRODUCT_MANUFACTURER",
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        }
     }
-}
+]

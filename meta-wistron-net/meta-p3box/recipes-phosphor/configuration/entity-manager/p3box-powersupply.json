@@ -1,0 +1,58 @@
+[
+    {
+        "Exposes": [
+            {
+                "Address": "$ADDRESS % 2 + 88",
+                "Bus": "$bus",
+                "Name": "PSU$ADDRESS % 2 + 1",
+                "temp2_Name": "PSU$ADDRESS % 2 + 1 TMP2",
+                "temp3_Name": "PSU$ADDRESS % 2 + 1 TMP3",
+                "vin_Name": "PSU$ADDRESS % 2 + 1 VIN_AC",
+                "vout1_Name": "PSU$ADDRESS % 2 + 1 VOUT_DC",
+                "fan1_Name": "PSU$ADDRESS % 2 + 1 FAN_TACH1",
+                "temp1_Name": "PSU$ADDRESS % 2 + 1 TMP",
+                "pin_Name": "PSU$ADDRESS % 2 + 1 PIN_AC",
+                "pout1_Name": "PSU$ADDRESS % 2 + 1 POUT_DC",
+                "iin_Name": "PSU$ADDRESS % 2 + 1 IIN_AC",
+                "iout1_Name": "PSU$ADDRESS % 2 + 1 IOUT_DC",
+                "Labels": [
+                    "vin",
+                    "vout1",
+                    "fan1",
+                    "temp1",
+                    "temp2",
+                    "temp3",
+                    "pin",
+                    "pout1",
+                    "iin",
+                    "iout1"
+                ],
+                "Type": "pmbus_psu"
+            }
+        ],
+        "Name": "PSU$ADDRESS % 2 + 1",
+        "Probe": [
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'PWR-C1200-OADA'})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'R1CA2122A'})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'G1136-1300WNA'})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'R1CD2122A'})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'R1CD2112A'})",
+            "OR",
+            "xyz.openbmc_project.FruDevice({'PRODUCT_PRODUCT_NAME': 'G1232-1300WNA'})"
+        ],
+        "Type": "PowerSupply",
+        "xyz.openbmc_project.Inventory.Decorator.Asset": {
+            "Manufacturer": "$PRODUCT_MANUFACTURER",
+            "Model": "$PRODUCT_PRODUCT_NAME",
+            "PartNumber": "$PRODUCT_PART_NUMBER",
+            "SerialNumber": "$PRODUCT_SERIAL_NUMBER"
+        },
+        "xyz.openbmc_project.Inventory.Decorator.AssetTag": {
+            "AssetTag": "$PRODUCT_ASSET_TAG"
+        }
+    }
+]

@@ -15,4 +15,34 @@ if [[ ! $FAN == ?(-)+([[:digit:]]) ]] || [[ $FAN -le 0 ]] || [[ $FAN -ge 7 ]]; t
 fi
 
 printf "Starting to do %s hotswap process\n" "$arg"
+# Setup Fan Control Mode to manual control and set all Fan PWM to 60% duty
+printf "Set all Fan speed to 60 %% and check all fan work\n"
+ipmitool raw 0x30 0x21 1 60
 
+# Check swap Fan is workable
+front_rpm_path="$FANCPLD_SYSFS_DIR/fan$((FAN * 2 - 1))_input"
+rear_rpm_path="$FANCPLD_SYSFS_DIR/fan$((FAN * 2))_input"
+continue=1
+retry=1
+while [ $continue -lt 4 ] && [ $retry -lt 30 ];
+do
+    front_rpm=$(head -n1 $front_rpm_path 2> /dev/null)
+    rear_rpm=$(head -n1 $rear_rpm_path 2> /dev/null)
+
+    if [ $((front_rpm)) -ge $((5000)) ] && [ $((rear_rpm)) -ge $((5000)) ]; then
+        ((continue++))
+    else
+        continue=1
+    fi
+
+    sleep 2
+    ((retry++))
+done
+if [ $retry -ge 30 ]; then
+    printf "Check all fan work timeout, time = 60s\n"
+fi
+
+
+# Setup Fan Control Mode to auto control
+ipmitool raw 0x30 0x21 0
+printf "Finished to do %s hotswap process\n" "$arg"

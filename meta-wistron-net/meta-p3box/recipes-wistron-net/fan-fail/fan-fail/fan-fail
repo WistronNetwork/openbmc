@@ -16,12 +16,40 @@ printf "Fan fail interrupt: %s\n" "$fan_fail_interrupt_n"
 printf "All fan fail interrupt: %s\n" "$fan_all_fail_interrupt_n"
 printf "All fan present interrupt: %s\n" "$fan_all_present_interrupt_n"
 
+xcvr_off=0
 while [ "$((fan_fail_interrupt_n))" -eq 0 ];
 do
+  if [ "$((xcvr_off))" -eq 0 ]; then
+    fail_cnt=0
+    for bit in {0..5};
+    do
+      val=$(((fan_all_fail_interrupt_n >> $bit) & 0x1))
+      if [ "$((val))" -eq 0 ]; then
+        ((fail_cnt++))
+      fi
+    done
+
+    present_cnt=0
+    for bit in {0..5};
+    do
+      val=$(((fan_all_present_interrupt_n >> $bit) & 0x1))
+      if [ "$((val))" -eq 0 ]; then
+        ((present_cnt++))
+      fi
+    done
+
+    if [ "$((fail_cnt))" -ge 2 ] || [ "$((present_cnt))" -ge 2 ]; then
+      echo "Starting to power off all XCVR power"
+      /usr/local/bin/power-util xcvr off
+      echo "Finish to power off all XCVR power"
+      xcvr_off=1
+    fi
+  fi
+
+  sleep 3
   fan_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_fail_interrupt_n 2> /dev/null)
   fan_all_fail_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_fail_interrupt_n 2> /dev/null)
   fan_all_present_interrupt_n=$(head -n1 $FANCPLD_SYSFS_DIR/fan_all_present_interrupt_n 2> /dev/null)
-  sleep 3
 done
 
 printf "Fan fail process finish\n"

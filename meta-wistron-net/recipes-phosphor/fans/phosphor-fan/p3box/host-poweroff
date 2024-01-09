@@ -1,4 +1,9 @@
 #!/bin/bash
 # Power off the hosts when fan sensors crossed thresholds.
 
-echo "This feature is not implemented in P3 Box and it will be implemented in future."
+#shellcheck disable=SC1091
+source /usr/local/bin/openbmc-utils.sh
+
+echo "Starting to power off all XCVR power"
+/usr/local/bin/power-util xcvr off
+echo "Finish to power off all XCVR power"

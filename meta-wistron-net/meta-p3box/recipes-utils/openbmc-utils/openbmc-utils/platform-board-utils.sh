@@ -143,6 +143,76 @@ platform_do_mb_update() {
             gpiocli -s FM_EN_PLD1_HITLESS_N set-init-value 1 2> /dev/null
             gpiocli -c aspeed-gpio -s FM_EN_PLD1_HITLESS_N unexport 2> /dev/null
         fi
+    elif [ "$extension" = "vme" ]; then
+        gpiocli -c aspeed-gpio -n GPIOO0 -s JTAG_TCK_BMC export 2> /dev/null
+        ret=$?
+        gpiocli -c aspeed-gpio -n GPIOO1 -s JTAG_TMS_BMC export 2> /dev/null
+        ret=$((ret | $?))
+        gpiocli -c aspeed-gpio -n GPIOO2 -s JTAG_TDO_BMC export 2> /dev/null
+        ret=$((ret | $?))
+        gpiocli -c aspeed-gpio -n GPIOO3 -s JTAG_TDI_BMC export 2> /dev/null
+        ret=$((ret | $?))
+        if [ "$ret" -ne 0 ]; then
+            printf "JTAG mux switch setup fail\n"
+            gpiocli -c aspeed-gpio -s JTAG_TCK_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TMS_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDO_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDI_BMC unexport 2> /dev/null
+            return "$STATUS_FAILURE"
+        fi
+
+        gpiocli -c aspeed-gpio -n GPIOM2 -s FM_BMC_JTAG_SWITCH_N export 2> /dev/null
+        gpiocli -s FM_BMC_JTAG_SWITCH_N set-init-value 0 2> /dev/null
+        if [ "$ret" -ne 0 ]; then
+            printf "JTAG mux switch setup fail\n"
+            gpiocli -c aspeed-gpio -s JTAG_TCK_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TMS_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDO_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDI_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s FM_BMC_JTAG_SWITCH_N unexport 2> /dev/null
+            return "$STATUS_FAILURE"
+        fi
+
+        if [ "$component" = "cpld1" ]; then
+            gpiocli -c aspeed-gpio -n GPIOM3 -s FM_EN_PLD1_HITLESS_N export 2> /dev/null
+            gpiocli -s FM_EN_PLD1_HITLESS_N set-init-value 0 2> /dev/null
+        fi
+        ret=$?
+        if [ "$ret" -ne 0 ]; then
+            printf "Hitless setup fail\n"
+            gpiocli -c aspeed-gpio -s JTAG_TCK_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TMS_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDO_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s JTAG_TDI_BMC unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s FM_BMC_JTAG_SWITCH_N unexport 2> /dev/null
+            gpiocli -c aspeed-gpio -s FM_EN_PLD1_HITLESS_N unexport 2> /dev/null
+            return "$STATUS_FAILURE"
+        fi
+
+        printf "\n"
+        ispvm dll /usr/lib/libcpldupdate_dll_gpio.so "$image" \
+            --tms JTAG_TMS_BMC \
+            --tdo JTAG_TDO_BMC \
+            --tdi JTAG_TDI_BMC \
+            --tck JTAG_TCK_BMC
+        ret=$?
+        if [ "$ret" -eq 1 ]; then
+            ret=$STATUS_SUCCESS
+            printf "Please do AC power cycle to refresh %s FW\n" "${component^^}"
+        else
+            ret=$STATUS_FAILURE
+        fi
+
+        if [ "$component" = "cpld1" ]; then
+            gpiocli -s FM_EN_PLD1_HITLESS_N set-init-value 1 2> /dev/null
+        fi
+        gpiocli -s FM_BMC_JTAG_SWITCH_N set-init-value 1 2> /dev/null
+        gpiocli -c aspeed-gpio -s JTAG_TCK_BMC unexport 2> /dev/null
+        gpiocli -c aspeed-gpio -s JTAG_TMS_BMC unexport 2> /dev/null
+        gpiocli -c aspeed-gpio -s JTAG_TDO_BMC unexport 2> /dev/null
+        gpiocli -c aspeed-gpio -s JTAG_TDI_BMC unexport 2> /dev/null
+        gpiocli -c aspeed-gpio -s FM_BMC_JTAG_SWITCH_N unexport 2> /dev/null
+        gpiocli -c aspeed-gpio -s FM_EN_PLD1_HITLESS_N unexport 2> /dev/null
     else
         printf "Invalid image format\n"
         ret=$STATUS_FAILURE

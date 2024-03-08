@@ -1,0 +1,30 @@
+From d9479e75c417ed37f2d280726cfe3822d5d0f096 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Tue, 5 Mar 2024 13:28:00 +0800
+Subject: [PATCH] i2c: busses: i2c-aspeed: Swap clk_high/clk_low calculation
+
+Swap clk_high/clk_low calculation to meet I2C spec
+
+Signed-off-by: Neal_Chen <neal_chen@wistron.com>
+---
+ drivers/i2c/busses/i2c-aspeed.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index 67e8b97c0c95..146b6c6bad9a 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -844,8 +844,8 @@ static u32 aspeed_i2c_get_clk_reg_val(struct device *dev,
+ 	} else {
+ 		tmp = (divisor + (1 << base_clk_divisor) - 1)
+ 				>> base_clk_divisor;
+-		clk_low = tmp / 2;
+-		clk_high = tmp - clk_low;
++		clk_high = tmp / 2;
++		clk_low = tmp - clk_high;
+ 
+ 		if (clk_high)
+ 			clk_high--;
+-- 
+2.25.1
+

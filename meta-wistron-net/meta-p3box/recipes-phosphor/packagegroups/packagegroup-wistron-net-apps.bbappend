@@ -4,3 +4,7 @@ RDEPENDS:${PN}-system:remove:p3box = " \
         phosphor-post-code-manager \
         phosphor-host-postd \
         "
+
+RDEPENDS:${PN}-system:append:p3box = " \
+        phosphor-virtual-sensor \
+        "

@@ -74,21 +74,21 @@
     <<: *VOLTAGE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/voltage/VR_P3V3_A_VOUT
+    path: /xyz/openbmc_project/sensors/voltage/QDD_P01_P16_VOUT
     multiplierM: 17
 
 41:
     <<: *VOLTAGE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/voltage/VR_P3V3_B_VOUT
+    path: /xyz/openbmc_project/sensors/voltage/QDD_P17_P32_VOUT
     multiplierM: 17
 
 42: &POWER_DEFAULT
     sensorType: 0x0b
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/power/VR_P3V3_A_POUT
+    path: /xyz/openbmc_project/sensors/power/QDD_P01_P16_POUT
     sensorReadingType: 0x01
     unit: xyz.openbmc_project.Sensor.Value.Unit.Watts
     scale: 0
@@ -109,9 +109,14 @@
 43:
     <<: *POWER_DEFAULT
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/power/VR_P3V3_B_POUT
+    path: /xyz/openbmc_project/sensors/power/QDD_P17_P32_POUT
 
-44: &TEMPERATURE_DEFAULT
+44:
+    <<: *POWER_DEFAULT
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/power/QDD_TOTAL_POUT
+
+45: &TEMPERATURE_DEFAULT
     sensorType: 0x01
     entityID: 0x07
     entityInstance: 1
@@ -133,30 +138,30 @@
             0xFF:
               type: double
 
-45:
+46:
     <<: *TEMPERATURE_DEFAULT
     entityInstance: 1
     path: /xyz/openbmc_project/sensors/temperature/VR_P3V3_B_TMP
-
-46:
-    <<: *TEMPERATURE_DEFAULT
-    entityID: 0x07
-    entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_U9_TMP1
 
 47:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_U11_TMP2
+    path: /xyz/openbmc_project/sensors/temperature/MB_U9_TMP1
 
 48:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1
-    path: /xyz/openbmc_project/sensors/temperature/MB_U13_TMP3
+    path: /xyz/openbmc_project/sensors/temperature/MB_U11_TMP2
 
 49:
+    <<: *TEMPERATURE_DEFAULT
+    entityID: 0x07
+    entityInstance: 1
+    path: /xyz/openbmc_project/sensors/temperature/MB_U13_TMP3
+
+50:
     <<: *TEMPERATURE_DEFAULT
     entityID: 0x07
     entityInstance: 1

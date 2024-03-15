@@ -1,0 +1,38 @@
+[
+    {
+        "Desc":
+        {
+            "Name": "QDD_TOTAL_POUT",
+            "SensorType": "power",
+            "MaxValue": 3000,
+            "MinValue": 0
+        },
+        "Threshold" :
+        {
+        },
+        "Params":
+        {
+            "DbusParam":
+            [
+                {
+                    "ParamName": "QDD_P01_P16_POUT",
+                    "Desc":
+                    {
+                        "Name": "QDD_P01_P16_POUT",
+                        "SensorType": "power"
+                    }
+                },
+                {
+                    "ParamName": "QDD_P17_P32_POUT",
+                    "Desc":
+                    {
+                        "Name": "QDD_P17_P32_POUT",
+                        "SensorType": "power"
+                    }
+                }
+            ]
+        },
+        "Expression": "QDD_P01_P16_POUT + QDD_P17_P32_POUT"
+    }
+]
+

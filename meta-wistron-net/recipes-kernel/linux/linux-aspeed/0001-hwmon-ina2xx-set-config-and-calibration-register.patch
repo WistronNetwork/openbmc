@@ -1,0 +1,295 @@
+From 5cd753cfe2616015997df7e6d62e677d7741e0f5 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Fri, 10 Nov 2023 12:53:53 +0800
+Subject: [PATCH] hwmon-ina2xx-set-config-and-calibration-register
+
+---
+ drivers/hwmon/ina2xx.c | 230 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 228 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index 00fc70305a89..9f21a53bacb9 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -112,7 +112,7 @@ struct ina2xx_config {
+ };
+ 
+ struct ina2xx_data {
+-	const struct ina2xx_config *config;
++	struct ina2xx_config *config;
+ 
+ 	long rshunt;
+ 	long current_lsb_uA;
+@@ -123,7 +123,7 @@ struct ina2xx_data {
+ 	const struct attribute_group *groups[INA2XX_MAX_ATTRIBUTE_GROUPS];
+ };
+ 
+-static const struct ina2xx_config ina2xx_config[] = {
++static struct ina2xx_config ina2xx_config[] = {
+ 	[ina219] = {
+ 		.config_default = INA219_CONFIG_DEFAULT,
+ 		.calibration_value = 4096,
+@@ -501,6 +501,186 @@ static ssize_t ina2xx_shunt_store(struct device *dev,
+ 	return count;
+ }
+ 
++static ssize_t ina2xx_config_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cfg;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++	ret = regmap_read(data->regmap, INA2XX_CONFIG, &cfg);
++	if (ret)
++		return -EINVAL;
++	return sysfs_emit(buf, "%ld\n", cfg);
++}
++
++static ssize_t ina2xx_config_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	status = regmap_write(data->regmap, INA2XX_CONFIG, val);
++	if (status < 0)
++		return status;
++
++	data->config->config_default = val;
++
++	return count;
++}
++
++static ssize_t ina2xx_calibration_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cal;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++	ret = regmap_read(data->regmap, INA2XX_CALIBRATION, &cal);
++	if (ret)
++		return -EINVAL;
++	return sysfs_emit(buf, "%ld\n", cal);
++}
++
++static ssize_t ina2xx_calibration_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	status = regmap_write(data->regmap, INA2XX_CALIBRATION, val);
++	if (status < 0)
++		return status;
++
++	data->config->calibration_value = val;
++
++	return count;
++}
++
++static ssize_t ina2xx_shunt_div_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cal;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", data->config->shunt_div);
++}
++
++static ssize_t ina2xx_shunt_div_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	data->config->shunt_div = (int)val;
++
++	return count;
++}
++
++static ssize_t ina2xx_bus_voltage_shift_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cal;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", data->config->bus_voltage_shift);
++}
++
++static ssize_t ina2xx_bus_voltage_shift_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	data->config->bus_voltage_shift = (int)val;
++
++	return count;
++}
++
++static ssize_t ina2xx_bus_voltage_lsb_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cal;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", data->config->bus_voltage_lsb);
++}
++
++static ssize_t ina2xx_bus_voltage_lsb_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	data->config->bus_voltage_lsb = (int)val;
++
++	return count;
++}
++
++static ssize_t ina2xx_power_lsb_factor_show(struct device *dev,
++				 struct device_attribute *da, char *buf)
++{
++	int ret;
++	unsigned int cal;
++
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", data->config->power_lsb_factor);
++}
++
++static ssize_t ina2xx_power_lsb_factor_store(struct device *dev,
++				  struct device_attribute *da,
++				  const char *buf, size_t count)
++{
++	unsigned int val;
++	int status;
++	struct ina2xx_data *data = dev_get_drvdata(dev);
++
++	status = kstrtouint(buf, 10, &val);
++	if (status < 0)
++		return status;
++
++	data->config->power_lsb_factor = (int)val;
++
++	return count;
++}
++
+ static ssize_t ina226_interval_store(struct device *dev,
+ 				     struct device_attribute *da,
+ 				     const char *buf, size_t count)
+@@ -577,6 +757,17 @@ static SENSOR_DEVICE_ATTR_RO(power1_crit_alarm, ina226_alarm,
+ /* shunt resistance */
+ static SENSOR_DEVICE_ATTR_RW(shunt_resistor, ina2xx_shunt, INA2XX_CALIBRATION);
+ 
++/* config register */
++static SENSOR_DEVICE_ATTR_RW(config_reg, ina2xx_config, INA2XX_CONFIG);
++
++/* calibration register */
++static SENSOR_DEVICE_ATTR_RW(calibration_reg, ina2xx_calibration, INA2XX_CALIBRATION);
++
++static SENSOR_DEVICE_ATTR_RW(shunt_div, ina2xx_shunt_div, 0);
++static SENSOR_DEVICE_ATTR_RW(bus_voltage_shift, ina2xx_bus_voltage_shift, 0);
++static SENSOR_DEVICE_ATTR_RW(bus_voltage_lsb, ina2xx_bus_voltage_lsb, 0);
++static SENSOR_DEVICE_ATTR_RW(power_lsb_factor, ina2xx_power_lsb_factor, 0);
++
+ /* update interval (ina226 only) */
+ static SENSOR_DEVICE_ATTR_RW(update_interval, ina226_interval, 0);
+ 
+@@ -587,6 +778,12 @@ static struct attribute *ina2xx_attrs[] = {
+ 	&sensor_dev_attr_curr1_input.dev_attr.attr,
+ 	&sensor_dev_attr_power1_input.dev_attr.attr,
+ 	&sensor_dev_attr_shunt_resistor.dev_attr.attr,
++	&sensor_dev_attr_config_reg.dev_attr.attr,
++	&sensor_dev_attr_calibration_reg.dev_attr.attr,
++	&sensor_dev_attr_shunt_div.dev_attr.attr,
++	&sensor_dev_attr_bus_voltage_shift.dev_attr.attr,
++	&sensor_dev_attr_bus_voltage_lsb.dev_attr.attr,
++	&sensor_dev_attr_power_lsb_factor.dev_attr.attr,
+ 	NULL,
+ };
+ 
+@@ -621,6 +818,8 @@ static int ina2xx_probe(struct i2c_client *client)
+ 	struct ina2xx_data *data;
+ 	struct device *hwmon_dev;
+ 	u32 val;
++	u32 cfg, calibrate;
++	u32 shunt_div, bus_voltage_shift, bus_voltage_lsb, power_lsb_factor;
+ 	int ret, group = 0;
+ 	enum ina2xx_ids chip;
+ 
+@@ -648,6 +847,33 @@ static int ina2xx_probe(struct i2c_client *client)
+ 
+ 	ina2xx_set_shunt(data, val);
+ 
++	if (!of_property_read_u32(dev->of_node, "config-reg", &cfg)) {
++		data->config->config_default = cfg;
++	}
++
++	if (!of_property_read_u32(dev->of_node, "calibration-reg", &calibrate)) {
++		data->config->calibration_value = calibrate;
++	}
++
++	if (!of_property_read_u32(dev->of_node, "shunt_div", &shunt_div)) {
++		data->config->shunt_div = shunt_div;
++	}
++
++	if (!of_property_read_u32(dev->of_node, "bus_voltage_shift",
++	                          &bus_voltage_shift)) {
++		data->config->bus_voltage_shift = bus_voltage_shift;
++	}
++
++	if (!of_property_read_u32(dev->of_node, "bus_voltage_lsb",
++	                          &bus_voltage_lsb)) {
++		data->config->bus_voltage_lsb = bus_voltage_lsb;
++	}
++
++	if (!of_property_read_u32(dev->of_node, "power_lsb_factor",
++	                          &power_lsb_factor)) {
++		data->config->power_lsb_factor = power_lsb_factor;
++	}
++
+ 	ina2xx_regmap_config.max_register = data->config->registers;
+ 
+ 	data->regmap = devm_regmap_init_i2c(client, &ina2xx_regmap_config);
+-- 
+2.25.1
+

@@ -32,6 +32,7 @@ SRC_URI += "\
 	file://0001-mtd-spi-nor-gigadevice-Add-gd55b01ge-support.patch \
 	file://0001-drivers-net-phy-Add-realtek_of_reg_init.patch \
 	file://0001-driver-net-ncsi-Add-Intel-OS2BMC-OEM-command.patch \
+	file://0001-hwmon-ina2xx-set-config-and-calibration-register.patch \
 	"
 
 do_kernel_prepare() {

@@ -28,3 +28,21 @@ do_compile:prepend() {
         cp -rfv ${WORKDIR}/fruid.hpp ${S}/include/fruid.hpp
     fi
 }
+
+do_install:append() {
+    blacklist="${WORKDIR}/blacklist.json"
+
+    rm -f ${D}/usr/share/entity-manager/configurations/*.json
+    install -d ${D}/usr/share/entity-manager/configurations
+
+    if [ -f "$blacklist" ]; then
+        install -m 0644 -D ${WORKDIR}/blacklist.json ${D}${datadir}/${PN}/blacklist.json
+    fi
+
+    for f in ${WORKDIR}/*.json;
+    do
+        if [ -f "$f" ]; then
+            install -m 0444 ${f} ${D}/usr/share/entity-manager/configurations
+        fi
+    done
+}

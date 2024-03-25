@@ -1,0 +1,13 @@
+[Unit]
+Description=Setup I2C Mux Selection And Re-bind I2C driver
+Requires=xyz.openbmc_project.EntityManager.service
+Before=bmc-mac-setup.service
+
+[Service]
+ExecStart=/usr/local/bin/i2c-mux-setup
+SyslogIdentifier=i2c-mux-setup
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy={SYSTEMD_DEFAULT_TARGET}

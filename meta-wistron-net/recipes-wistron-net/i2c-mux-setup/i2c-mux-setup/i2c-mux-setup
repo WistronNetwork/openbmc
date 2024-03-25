@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Copyright 2022-present Wistron. All Rights Reserved.
+#
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+#shellcheck disable=SC1091
+. /usr/local/bin/openbmc-utils.sh
+
+if declare -F platform_i2c_mux_setup &> /dev/null; then
+    platform_i2c_mux_setup
+else
+    mux-util --set i2c bmc
+    i2c_check_driver_binding fix-binding 10
+fi

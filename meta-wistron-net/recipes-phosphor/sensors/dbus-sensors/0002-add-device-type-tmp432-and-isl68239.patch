@@ -1,0 +1,45 @@
+From ae999081e4be8f962b4981873324525d5dc174a3 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 10 Nov 2022 18:54:45 +0800
+Subject: [PATCH] add-device-type-tmp432-and-isl68239
+
+---
+ src/HwmonTempMain.cpp | 1 +
+ src/PSUSensorMain.cpp | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/src/HwmonTempMain.cpp b/src/HwmonTempMain.cpp
+index d39c554..a76afe2 100644
+--- a/src/HwmonTempMain.cpp
++++ b/src/HwmonTempMain.cpp
+@@ -70,6 +70,7 @@ static auto sensorTypes{
+                                 "xyz.openbmc_project.Configuration.TMP112",
+                                 "xyz.openbmc_project.Configuration.TMP175",
+                                 "xyz.openbmc_project.Configuration.TMP421",
++                                "xyz.openbmc_project.Configuration.TMP432",
+                                 "xyz.openbmc_project.Configuration.TMP441",
+                                 "xyz.openbmc_project.Configuration.TMP75",
+                                 "xyz.openbmc_project.Configuration.W83773G"})};
+diff --git a/src/PSUSensorMain.cpp b/src/PSUSensorMain.cpp
+index 6425065..309e51d 100644
+--- a/src/PSUSensorMain.cpp
++++ b/src/PSUSensorMain.cpp
+@@ -55,6 +55,7 @@ static constexpr auto sensorTypes{std::to_array<const char*>(
+      "xyz.openbmc_project.Configuration.ISL68137",
+      "xyz.openbmc_project.Configuration.ISL68220",
+      "xyz.openbmc_project.Configuration.ISL68223",
++     "xyz.openbmc_project.Configuration.ISL68239",
+      "xyz.openbmc_project.Configuration.ISL69225",
+      "xyz.openbmc_project.Configuration.ISL69243",
+      "xyz.openbmc_project.Configuration.ISL69260",
+@@ -96,6 +97,7 @@ static constexpr auto pmbusNames{std::to_array<const char*>({
+     "isl68137",
+     "isl68220",
+     "isl68223",
++    "isl68239",
+     "isl69225",
+     "isl69243",
+     "isl69260",
+-- 
+2.25.1
+

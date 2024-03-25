@@ -3,6 +3,9 @@
 # Copyright 2022-present Wistron. All Rights Reserved.
 #
 
+#shellcheck disable=SC1091
+source /usr/local/bin/openbmc-utils.sh
+
 Usage() {
     prog=$(basename "$0")
     printf "Usage: %s <fruid> <fru bus> <fru addr>\n" "$prog"
@@ -49,10 +52,15 @@ if [[ $result == *"Unknown"* ]] || [[ $result == *"Invalid"* ]]; then
         echo "Cannot create dummy $FRU_INTF binary"
         exit $ret
     fi
-
+    if [ -f platform_write_ee_wp ]; then
+        platform_write_ee_wp "unlock" $FRU_INTF
+    fi
     if [ "$FRU_INTF" = "bmc" ]; then
         dd if="$fru_file" of="$fru_eeprom_path" seek=32 bs=1
     else
         dd if="$fru_file" of="$fru_eeprom_path" bs=1
+    fi
+    if [ -f platform_write_ee_wp ]; then
+        platform_write_ee_wp "lock" $FRU_INTF
     fi
 fi

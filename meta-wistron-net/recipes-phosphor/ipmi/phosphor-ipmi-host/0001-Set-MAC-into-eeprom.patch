@@ -1,14 +1,14 @@
-From c1671703e262eedf3e69a045237306abd8ef2400 Mon Sep 17 00:00:00 2001
-From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
-Date: Wed, 27 Jul 2022 08:27:59 +0000
+From b0697a81e1213708228bf9a820ec021880702592 Mon Sep 17 00:00:00 2001
+From: Neal_Chen <neal_chen@wistron.com>
+Date: Thu, 18 Aug 2022 02:28:02 +0000
 Subject: [PATCH] Set MAC into eeprom
 
 ---
- transporthandler.cpp | 58 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 2 deletions(-)
+ transporthandler.cpp | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/transporthandler.cpp b/transporthandler.cpp
-index b2b7dce..9f5fd4d 100644
+index ba4e4b0f..c8c72e19 100644
 --- a/transporthandler.cpp
 +++ b/transporthandler.cpp
 @@ -10,6 +10,8 @@ using sdbusplus::xyz::openbmc_project::Network::server::EthernetInterface;
@@ -20,7 +20,7 @@ index b2b7dce..9f5fd4d 100644
  namespace cipher
  {
  
-@@ -305,6 +307,31 @@ void setMACProperty(sdbusplus::bus::bus& bus, const ChannelParams& params,
+@@ -305,6 +307,18 @@ void setMACProperty(sdbusplus::bus_t& bus, const ChannelParams& params,
                      macStr);
  }
  
@@ -36,41 +36,14 @@ index b2b7dce..9f5fd4d 100644
 +    return macNonVolatile;
 +}
 +
-+/** @brief Sets the system value for MAC volatile attribute.
-+ *
-+ *  @param[in] bus        - The bus object used for lookups
-+ *  @param[in] params     - The parameters for the channel
-+ *  @param[in] isnonvolatile - MAC volatile attribute.
-+ */
-+void setMACVolatileProperty(sdbusplus::bus::bus& bus, const ChannelParams& params,
-+                    const bool isnonvolatile)
-+{
-+    setDbusProperty(bus, params.service, params.ifPath, INTF_MAC, "MacNonVolatile",
-+                    isnonvolatile);
-+}
-+
- void deleteObjectIfExists(sdbusplus::bus::bus& bus, const std::string& service,
+ void deleteObjectIfExists(sdbusplus::bus_t& bus, const std::string& service,
                            const std::string& path)
  {
-@@ -805,7 +832,13 @@ RspType<message::Payload> getLanOem(uint8_t channel, uint8_t parameter,
- RspType<> setLanOem(uint8_t channel, uint8_t parameter, message::Payload& req)
+@@ -811,6 +825,23 @@ RspType<message::Payload> getLanOem(uint8_t, uint8_t, uint8_t, uint8_t)
  {
-     req.trailingOk = true;
--    return response(ccParamNotSupported);
-+    if (parameter == 0xc1) {
-+        channelCall<setMACVolatileProperty>(channel, 0);
-+    }
-+    if (parameter == 0xc2) {
-+        channelCall<setMACVolatileProperty>(channel, 1);
-+    }
-+    return responseSuccess();
+     return response(ccParamNotSupported);
  }
- 
- RspType<message::Payload> getLanOem(uint8_t channel, uint8_t parameter,
-@@ -838,6 +871,22 @@ bool isValidMACAddress(const ether_addr& mac)
-     return true;
- }
- 
++
 +int writeMacToEeprom(ether_addr mac)
 +{
 +    auto fp = open(BMC_PATH, O_RDWR);
@@ -87,18 +60,14 @@ index b2b7dce..9f5fd4d 100644
 +    return 0;
 +}
 +
- RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
-                  uint8_t parameter, message::Payload& req)
- {
-@@ -968,11 +1017,17 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
-                 return responseReqDataLenInvalid();
-             }
-             copyInto(mac, bytes);
--
-             if (!isValidMACAddress(mac))
+ /**
+  * @brief is MAC address valid.
+  *
+@@ -971,6 +1002,14 @@ RspType<> setLan(Context::ptr ctx, uint4_t channelBits, uint4_t reserved1,
              {
                  return responseInvalidFieldRequest();
              }
++
 +            auto isNonVolatile = channelCall<getMACVolatileProperty>(channel);
 +            if (isNonVolatile) {
 +                auto ret = writeMacToEeprom(mac);

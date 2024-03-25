@@ -1,0 +1,54 @@
+From 3830091c3f563dd0bf39603d1bd638cd3500f1a9 Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Mon, 23 May 2022 16:40:30 +0800
+Subject: [PATCH 3/3] mfd: peci: Add support intel-peci-client
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ drivers/mfd/Kconfig  | 17 +++++++++++++++++
+ drivers/mfd/Makefile |  1 +
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index d2f345245538..3accc3ff9e6f 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -690,6 +690,23 @@ config MFD_INTEL_PMC_BXT
+ 	  Register and P-unit access. In addition this creates devices
+ 	  for iTCO watchdog and telemetry that are part of the PMC.
+ 
++config MFD_INTEL_PECI_CLIENT
++	tristate "Intel PECI client"
++	depends on (PECI || COMPILE_TEST)
++	select MFD_CORE
++	help
++	  If you say yes to this option, support will be included for the
++	  Intel PECI (Platform Environment Control Interface) client. PECI is a
++	  one-wire bus interface that provides a communication channel from PECI
++	  clients in Intel processors and chipset components to external
++	  monitoring or control devices.
++
++	  Additional drivers must be enabled in order to use the functionality
++	  of the device.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called intel-peci-client.
++
+ config MFD_INTEL_PMT
+ 	tristate "Intel Platform Monitoring Technology (PMT) support"
+ 	depends on PCI
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 2ba6646e874c..0865657f54eb 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -212,6 +212,7 @@ obj-$(CONFIG_MFD_INTEL_LPSS)	+= intel-lpss.o
+ obj-$(CONFIG_MFD_INTEL_LPSS_PCI)	+= intel-lpss-pci.o
+ obj-$(CONFIG_MFD_INTEL_LPSS_ACPI)	+= intel-lpss-acpi.o
+ obj-$(CONFIG_MFD_INTEL_PMC_BXT)	+= intel_pmc_bxt.o
++obj-$(CONFIG_MFD_INTEL_PECI_CLIENT)	+= intel-peci-client.o
+ obj-$(CONFIG_MFD_INTEL_PMT)	+= intel_pmt.o
+ obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
+ obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
+-- 
+2.25.1
+

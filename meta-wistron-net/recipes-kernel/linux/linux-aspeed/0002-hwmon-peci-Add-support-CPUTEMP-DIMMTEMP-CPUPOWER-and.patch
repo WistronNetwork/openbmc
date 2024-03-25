@@ -1,0 +1,97 @@
+From 6182e4ef5ba623e066ad99960062af21f4fba2ff Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Mon, 23 May 2022 16:38:22 +0800
+Subject: [PATCH 2/3] hwmon: peci: Add support CPUTEMP, DIMMTEMP, CPUPOWER and
+ DIMMPOWER
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ drivers/hwmon/Kconfig  | 56 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/hwmon/Makefile |  4 +++
+ 2 files changed, 60 insertions(+)
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index fa2356398744..81e7d40e76d2 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1534,6 +1534,62 @@ config SENSORS_NZXT_KRAKEN2
+ 
+ source "drivers/hwmon/occ/Kconfig"
+ 
++config SENSORS_PECI_CPUTEMP
++	tristate "PECI CPU temperature monitoring client"
++	depends on PECI
++	select MFD_INTEL_PECI_CLIENT
++	help
++	  If you say yes here you get support for the generic Intel PECI
++	  cputemp driver which provides Digital Thermal Sensor (DTS) thermal
++	  readings of the CPU package and CPU cores that are accessible using
++	  the PECI Client Command Suite via the processor PECI client.
++	  Check <file:Documentation/hwmon/peci-cputemp.rst> for details.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called peci-cputemp.
++
++config SENSORS_PECI_DIMMTEMP
++	tristate "PECI DIMM temperature monitoring client"
++	depends on PECI
++	select MFD_INTEL_PECI_CLIENT
++	help
++	  If you say yes here you get support for the generic Intel PECI hwmon
++	  driver which provides Digital Thermal Sensor (DTS) thermal readings of
++	  DIMM components that are accessible using the PECI Client Command
++	  Suite via the processor PECI client.
++	  Check <file:Documentation/hwmon/peci-dimmtemp.rst> for details.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called peci-dimmtemp.
++
++config SENSORS_PECI_CPUPOWER
++	tristate "PECI CPU power monitoring support"
++	depends on PECI
++	select MFD_INTEL_PECI_CLIENT
++	help
++	  If you say yes here you get support for the generic Intel PECI
++	  cpupower driver which provides average engergy readings of the CPU package,
++	  current package power limit, maximal (TDP) and minimal power setting using
++	  the PECI Client Command Suite via the processor PECI client.
++	  Check Documentation/hwmon/peci-cpupower for details.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called peci-cpupower.
++
++config SENSORS_PECI_DIMMPOWER
++	tristate "PECI DIMM power monitoring support"
++	depends on PECI
++	select MFD_INTEL_PECI_CLIENT
++	help
++	  If you say yes here you get support for the generic Intel PECI
++	  dimmpower driver which provides average engergy readings of the memory
++	  package, current power limit, maximal and minimal power setting using
++	  the PECI Client Command Suite via the processor PECI client.
++	  Check Documentation/hwmon/peci-dimmpower for details.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called peci-dimmpower.
++
+ config SENSORS_PCF8591
+ 	tristate "Philips PCF8591 ADC/DAC"
+ 	depends on I2C
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index d2497b2644e6..a5be35143af5 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -162,6 +162,10 @@ obj-$(CONFIG_SENSORS_NZXT_KRAKEN2) += nzxt-kraken2.o
+ obj-$(CONFIG_SENSORS_PC87360)	+= pc87360.o
+ obj-$(CONFIG_SENSORS_PC87427)	+= pc87427.o
+ obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
++obj-$(CONFIG_SENSORS_PECI_CPUTEMP)	+= peci-cputemp.o
++obj-$(CONFIG_SENSORS_PECI_DIMMTEMP)	+= peci-dimmtemp.o
++obj-$(CONFIG_SENSORS_PECI_CPUPOWER)	+= peci-cpupower.o
++obj-$(CONFIG_SENSORS_PECI_DIMMPOWER)	+= peci-dimmpower.o
+ obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
+ obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
+ obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
+-- 
+2.25.1
+

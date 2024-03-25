@@ -1,0 +1,142 @@
+From d471ca06bdc4e10bedc54eba34f051c76aa4b75d Mon Sep 17 00:00:00 2001
+From: Neal Chen <neal_chen@wistron.com>
+Date: Mon, 23 May 2022 17:24:57 +0800
+Subject: [PATCH 4/4] arm: dtsi: aspeed-g4/aspeed-g5/aspeed-g6: Add PECI
+ adapter support
+
+Signed-off-by: Neal Chen <neal_chen@wistron.com>
+---
+ arch/arm/boot/dts/aspeed-g4.dtsi | 23 +++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed-g5.dtsi | 23 +++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed-g6.dtsi | 26 ++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
+
+diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+index d3d919dcb8d4..781bf46a84d6 100644
+--- a/arch/arm/boot/dts/aspeed-g4.dtsi
++++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+@@ -400,6 +400,13 @@ uart_routing: uart-routing@9c {
+ 				};
+ 			};
+ 
++			peci: bus@1e78b000 {
++				compatible = "simple-bus";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x1e78b000 0x60>;
++			};
++
+ 			uart2: serial@1e78d000 {
+ 				compatible = "ns16550a";
+ 				reg = <0x1e78d000 0x20>;
+@@ -443,6 +450,22 @@ i2c: bus@1e78a000 {
+ 	};
+ };
+ 
++&peci {
++	peci0: peci-bus@0 {
++		compatible = "aspeed,ast2400-peci";
++		reg = <0x0 0x60>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <15>;
++		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
++		resets = <&syscon ASPEED_RESET_PECI>;
++		clock-frequency = <12000>;
++		rd-sampling-point = <8>;
++		cmd-timeout-ms = <1000>;
++		status = "disabled";
++	};
++};
++
+ &i2c {
+ 	i2c_ic: interrupt-controller@0 {
+ 		#interrupt-cells = <1>;
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 29bf017899b6..ea5c645f1d71 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -520,6 +520,13 @@ ibt: ibt@140 {
+ 				};
+ 			};
+ 
++			peci: bus@1e78b000 {
++				compatible = "simple-bus";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x1e78b000 0x60>;
++			};
++
+ 			uart2: serial@1e78d000 {
+ 				compatible = "ns16550a";
+ 				reg = <0x1e78d000 0x20>;
+@@ -563,6 +570,22 @@ i2c: bus@1e78a000 {
+ 	};
+ };
+ 
++&peci {
++	peci0: peci-bus@0 {
++		compatible = "aspeed,ast2500-peci";
++		reg = <0x0 0x60>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <15>;
++		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
++		resets = <&syscon ASPEED_RESET_PECI>;
++		clock-frequency = <12000>;
++		rd-sampling-point = <8>;
++		cmd-timeout-ms = <1000>;
++		status = "disabled";
++	};
++};
++
+ &i2c {
+ 	i2c_ic: interrupt-controller@0 {
+ 		#interrupt-cells = <1>;
+diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
+index c821fd366e27..0a48f495a300 100644
+--- a/arch/arm/boot/dts/aspeed-g6.dtsi
++++ b/arch/arm/boot/dts/aspeed-g6.dtsi
+@@ -683,6 +683,13 @@ emmc: sdhci@1e750100 {
+ 				};
+ 			};
+ 
++			peci: bus@1e78b000 {
++				compatible = "simple-bus";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x1e78b000 0x100>;
++			};
++
+ 			vuart1: serial@1e787000 {
+ 				compatible = "aspeed,ast2500-vuart";
+ 				reg = <0x1e787000 0x40>;
+@@ -777,6 +784,25 @@ fsim1: fsi@1e79b100 {
+ 
+ #include "aspeed-g6-pinctrl.dtsi"
+ 
++&peci {
++	peci0: peci-bus@0 {
++		compatible = "aspeed,ast2600-peci";
++		reg = <0x0 0x100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&syscon ASPEED_CLK_GATE_REF0CLK>,
++			<&syscon ASPEED_CLK_AHB>;
++		clock-names = "ref-clk", "hclk";
++		clock-sel-hclk;
++		resets = <&syscon ASPEED_RESET_PECI>;
++		clock-frequency = <12000>;
++		rd-sampling-point = <8>;
++		cmd-timeout-ms = <1000>;
++		status = "disabled";
++	};
++};
++
+ &i2c {
+ 	i2c0: i2c-bus@80 {
+ 		#address-cells = <1>;
+-- 
+2.25.1
+

@@ -1,0 +1,51 @@
+{
+    "gpio_configs":[
+        {
+            "Name" : "PostComplete",
+            "LineName" : "PostComplete",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveLow"
+        },
+        {
+            "Name" : "PowerOut",
+            "LineName" : "FM_PWR_BTN_BMC_N",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveLow"
+        },
+        {
+            "Name" : "ResetOut",
+            "LineName" : "FM_BMC_RST_BTN_N",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveLow"
+        },
+        {
+            "Name" : "PowerButton",
+            "LineName" : "PowerButton",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveHigh"
+        },
+        {
+            "Name" : "ResetButton",
+            "LineName" : "ResetButton",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveHigh"
+        },
+        {
+            "Name" : "PowerOk",
+            "LineName" : "PWRGD_SYSTEM",
+            "Type" : "GPIO",
+            "Polarity" : "ActiveHigh"
+        }
+    ],
+    "timing_configs":{
+        "PowerPulseMs": 200,
+        "ForceOffPulseMs": 15000,
+        "ResetPulseMs": 500,
+        "PowerCycleMs": 5000,
+        "SioPowerGoodWatchdogMs": 1000,
+        "PsPowerOKWatchdogMs": 8000,
+        "GracefulPowerOffS": 300,
+        "WarmResetCheckMs": 500,
+        "PowerOffSaveMs": 7000
+    }
+}

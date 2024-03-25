@@ -12,6 +12,7 @@ SRC_URI:append = " \
     file://0004-Add-SFPHWMON-device-type.patch \
     file://0005-Fix-build-error-when-ENABLE_FRU_AREA_RESIZE.patch \
     file://0006-Add-XDPE132G5C-and-XDPE132G5D-device-type.patch \
+    file://0007-add-device-type-tmp432-and-isl68239.patch \
     file://fruid.hpp \
     "
 

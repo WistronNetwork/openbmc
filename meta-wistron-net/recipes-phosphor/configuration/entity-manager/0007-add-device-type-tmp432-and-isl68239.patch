@@ -1,0 +1,36 @@
+From 007d1483be4f43b3717ab133e4801e16ca4c6e5d Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 10 Nov 2022 17:43:39 +0800
+Subject: [PATCH] add-device-type-tmp432-and-isl68239
+
+---
+ include/devices.hpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/devices.hpp b/include/devices.hpp
+index b0370d7..e7ed882 100644
+--- a/include/devices.hpp
++++ b/include/devices.hpp
+@@ -116,6 +116,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"ISL68223",
+           ExportTemplate("isl68223 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"ISL68239",
++          ExportTemplate("isl68239 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
+          {"ISL69243",
+           ExportTemplate("isl69243 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+@@ -227,6 +230,9 @@ const boost::container::flat_map<const char*, ExportTemplate, CmpStr>
+          {"TMP421",
+           ExportTemplate("tmp421 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
++         {"TMP432",
++          ExportTemplate("tmp432 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
++                         "new_device", "delete_device", true)},
+          {"TMP441",
+           ExportTemplate("tmp441 $Address", "/sys/bus/i2c/devices/i2c-$Bus",
+                          "new_device", "delete_device", true)},
+-- 
+2.25.1
+

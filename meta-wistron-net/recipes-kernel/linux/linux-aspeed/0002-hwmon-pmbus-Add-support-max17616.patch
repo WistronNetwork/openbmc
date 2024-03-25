@@ -1,0 +1,45 @@
+From 42be64e2ba9bdb0eab865cef21c9d14fb6ca44c4 Mon Sep 17 00:00:00 2001
+From: jarvis_wc_chen <jarvis_wc_chen@wistron.com>
+Date: Fri, 10 Nov 2023 13:45:32 +0800
+Subject: [PATCH] hwmon-pmbus-Add-support-max17616
+
+---
+ drivers/hwmon/pmbus/Kconfig  | 9 +++++++++
+ drivers/hwmon/pmbus/Makefile | 1 +
+ 2 files changed, 10 insertions(+)
+
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index 571b615c18e8..7b230cefec98 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -58,6 +58,15 @@ config SENSORS_ADM1275
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called adm1275.
+ 
++config SENSORS_MAX17616
++	tristate "Analog Devices MAX17616"
++	help
++	  If you say yes here you get hardware monitoring support for Analog
++	  Devices MAX17616.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called max17616.
++
+ config SENSORS_BEL_PFE
+ 	tristate "Bel PFE Compatible Power Supplies"
+ 	help
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index 3365e690ac37..94440a5aa659 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_SENSORS_PMBUS)	+= pmbus.o
+ obj-$(CONFIG_SENSORS_PMBUS_PSU)	+= pmbus_psu.o
+ obj-$(CONFIG_SENSORS_ADM1266)	+= adm1266.o
+ obj-$(CONFIG_SENSORS_ADM1275)	+= adm1275.o
++obj-$(CONFIG_SENSORS_MAX17616)	+= max17616.o
+ obj-$(CONFIG_SENSORS_BEL_PFE)	+= bel-pfe.o
+ obj-$(CONFIG_SENSORS_BPA_RS600)	+= bpa-rs600.o
+ obj-$(CONFIG_SENSORS_FSP_3Y)	+= fsp-3y.o
+-- 
+2.25.1
+

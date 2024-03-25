@@ -44,6 +44,7 @@ RDEPENDS:${PN}-system = " \
         dbus-sensors \
         entity-manager \
         fan-hotswap \
+        factory-reset \
         phosphor-gpio-monitor \
         phosphor-gpio-monitor-monitor \
         phosphor-sel-logger \

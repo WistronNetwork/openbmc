@@ -1,0 +1,6 @@
+[Unit]
+Description=OBMC factory reset operation
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/phosphor-gpio-monitor/factory-reset

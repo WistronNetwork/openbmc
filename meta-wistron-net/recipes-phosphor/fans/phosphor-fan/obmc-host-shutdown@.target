@@ -1,0 +1,4 @@
+[Unit]
+Description=Chassis%i (Soft Power Off)
+After=multi-user.target
+Requires=obmc-poweroff.service

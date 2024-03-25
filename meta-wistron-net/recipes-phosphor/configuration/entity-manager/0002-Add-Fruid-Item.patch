@@ -1,0 +1,32 @@
+From 968ea7132f44dce0e43b3db40c0b54f0eb43ba3f Mon Sep 17 00:00:00 2001
+From: Jarvis_WC_Chen <jarvis_wc_chen@wistron.com>
+Date: Thu, 14 Jul 2022 16:29:55 +0800
+Subject: [PATCH] Add fruid item
+
+---
+ src/fru_device.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/fru_device.cpp b/src/fru_device.cpp
+index b4c3668..5c2ec8e 100644
+--- a/src/fru_device.cpp
++++ b/src/fru_device.cpp
+@@ -50,6 +50,7 @@
+ #include <utility>
+ #include <variant>
+ #include <vector>
++#include <fruid.hpp>
+ 
+ extern "C"
+ {
+@@ -788,6 +789,7 @@ void addFruObjectToDbus(
+     }
+ 
+     // baseboard will be 0, 0
++    iface->register_property("FRUID", fruid_map[{bus, address}]);
+     iface->register_property("BUS", bus);
+     iface->register_property("ADDRESS", address);
+ 
+-- 
+2.25.1
+

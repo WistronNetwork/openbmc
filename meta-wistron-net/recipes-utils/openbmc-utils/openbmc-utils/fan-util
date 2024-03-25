@@ -55,14 +55,22 @@ OPERATION="$1"
 shift
 
 if [ "$OPERATION" = "--get" ]; then
-    get_fan_speed "$@"
+    if declare -F platform_get_fan_speed &> /dev/null; then
+        platform_get_fan_speed "$@"
+    else
+        get_fan_speed "$@"
+    fi
     ret=$?
 
     if [ $ret -eq 1 ]; then
         usage
     fi
 elif [ "$OPERATION" = "--set" ]; then
-    set_fan_speed "$@"
+    if declare -F platform_set_fan_speed &> /dev/null; then
+        platform_set_fan_speed "$@"
+    else
+        set_fan_speed "$@"
+    fi
     ret=$?
 
     if [ $ret -eq 1 ]; then

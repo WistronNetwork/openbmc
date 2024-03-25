@@ -8,7 +8,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 #shellcheck disable=SC1091
 . /usr/local/bin/openbmc-utils.sh
 
-PID_FILE=/var/run/select-util.pid
+PID_FILE=/var/run/mux-util.pid
 
 trap pid_file_remove INT TERM QUIT EXIT
 
@@ -55,14 +55,22 @@ OPERATION="$1"
 shift
 
 if [ "$OPERATION" = "--get" ]; then
-    get_mux_master "$@"
+    if declare -F platform_get_mux_master &> /dev/null; then
+        platform_get_mux_master "$@"
+    else
+        get_mux_master "$@"
+    fi
     ret=$?
 
     if [ $ret -eq 1 ]; then
         usage
     fi
 elif [ "$OPERATION" = "--set" ]; then
-    set_mux_master "$@"
+    if declare -F platform_set_mux_master &> /dev/null; then
+        platform_set_mux_master "$@"
+    else
+        set_mux_master "$@"
+    fi
     ret=$?
 
     if [ $ret -eq 1 ]; then

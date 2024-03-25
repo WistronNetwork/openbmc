@@ -13,6 +13,12 @@ SRC_URI:append = " \
 
 inherit pkgconfig meson systemd python3native
 
-do_configure:prepend() {
-    cp -rfv ${WORKDIR}/fruid.hpp ${S}/include/fruid.hpp
+do_compile:prepend() {
+    fruid_file="${WORKDIR}/${MACHINE}_fruid.hpp"
+
+    if [ -f "$fruid_file" ]; then
+        cp -rfv ${fruid_file} ${S}/include/fruid.hpp
+    else
+        cp -rfv ${WORKDIR}/fruid.hpp ${S}/include/fruid.hpp
+    fi
 }

@@ -10,19 +10,27 @@
 
 #include "cpld_sysfs.h"
 
-static struct attribute *cpu_cpld_attrs[] =  {
+static struct attribute *cpu_cpld_attrs[] = {
   NULL,
 };
 
-static struct attribute *system_cpld1_attrs[] =  {
+static struct attribute *system_cpld0_attrs[] = {
   NULL,
 };
 
-static struct attribute *system_cpld2_attrs[] =  {
+static struct attribute *system_cpld1_attrs[] = {
   NULL,
 };
 
-static struct attribute *fan_cpld_attrs[] =  {
+static struct attribute *system_cpld2_attrs[] = {
+  NULL,
+};
+
+static struct attribute *fan_cpld_attrs[] = {
+  NULL,
+};
+
+static struct attribute *fpga_attrs[] = {
   NULL,
 };
 

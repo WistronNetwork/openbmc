@@ -14,14 +14,16 @@ SRC_URI = " file://obmc-factory-reset@.service \
 
 SYSTEMD_SERVICE:${PN} += "obmc-factory-reset@.service"
 
+RESET_INSTANCES = ""
+
 TMPL_GPIO = "phosphor-gpio-monitor@.service"
 GPIO_TGT = "multi-user.target"
 
-INSTFMT_FACTORY_RESET = "phosphor-gpio-monitor@factory_reset.service"
+INSTFMT_FACTORY_RESET = "phosphor-gpio-monitor@factory-reset.service"
 FMT_FACTORY_RESET = "../${TMPL_GPIO}:${GPIO_TGT}.requires/${INSTFMT_FACTORY_RESET}"
-FACTORY_RESET_ENV_FMT = "obmc/gpio/factory_reset.conf"
-
-INSTFMT_FACTORY_RESET = "obmc-factory-reset@.service:obmc-factory-reset@factory_reset.service"
+FACTORY_RESET_ENV_FMT = "obmc/gpio/factory-reset.conf"
+SYSTEMD_LINK:${PN} += " ${FMT_FACTORY_RESET}"
+SYSTEMD_ENVIRONMENT_FILE:${PN} = " ${FACTORY_RESET_ENV_FMT}"
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}

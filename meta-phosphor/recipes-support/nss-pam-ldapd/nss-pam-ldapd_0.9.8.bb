@@ -6,7 +6,8 @@ DESCRIPTION = "\
  libpam-ldapd packages but is not very useful by itself. \
  "
 
-HOMEPAGE = "http://arthurdejong.org/nss-pam-ldapd/"
+HOMEPAGE = "https://github.com/arthurdejong/nss-pam-ldapd"
+S = "${WORKDIR}/git"
 
 LICENSE = "LGPLv2.1"
 LIC_FILES_CHKSUM = "file://COPYING;md5=fbc093901857fcd118f065f900982c24"
@@ -15,15 +16,14 @@ SECTION = "base"
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "\
-	http://arthurdejong.org/nss-pam-ldapd/${BPN}-${PV}.tar.gz \
+	git://github.com/arthurdejong/nss-pam-ldapd;branch=master;protocol=https \
 	file://nslcd.init \
 	file://nslcd.service \
 	"
 
 inherit autotools
 
-SRC_URI[md5sum] = "8c99fdc54f4bf9aca8c5f53fdb1403ff"
-SRC_URI[sha256sum] = "ef7362e7f2003da8c7beb7bcc03c30494acf712625aaac8badc6e7eb16f3453f"
+SRCREV="47fd03bc80d470de881c025ff934325bd7def0b5"
 
 DEPENDS += "libpam openldap krb5"
 
